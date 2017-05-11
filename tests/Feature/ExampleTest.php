@@ -2,13 +2,11 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-
 /**
  * Class ExampleTest
  * @package Tests\Feature
  */
-class ExampleTest extends TestCase
+class ExampleTest extends FeatureTestCase
 {
     /**
      * A basic test example.
@@ -17,6 +15,6 @@ class ExampleTest extends TestCase
      */
     public function testBasicTest(): void
     {
-        $this->get('api/v1')->assertStatus(200);
+        $this->get('api/v1')->assertJson(['message' => 'Social API v1'])->assertStatus(200);
     }
 }
