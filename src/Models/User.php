@@ -1,18 +1,15 @@
 <?php
 
-namespace Social;
+namespace Social\Models;
 
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class User
- * @package Social
+ * @package Social\Models
  */
 class User extends Authenticatable
 {
-    use Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *

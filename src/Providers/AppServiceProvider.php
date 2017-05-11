@@ -3,6 +3,8 @@
 namespace Social\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Social\Contracts\UserRepository;
+use Social\Repositories\EloquentUserRepository;
 
 /**
  * Class AppServiceProvider
@@ -10,6 +12,13 @@ use Illuminate\Support\ServiceProvider;
  */
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array
+     */
+    private $singletons = [
+        UserRepository::class => EloquentUserRepository::class
+    ];
+
     /**
      * Bootstrap any application services.
      *
@@ -27,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        foreach ($this->singletons as $contract => $implementation) {
+            $this->app->singleton($contract, $implementation);
+        }
     }
 }
