@@ -3,10 +3,11 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
+/**
+ * Class ExampleTest
+ * @package Tests\Feature
+ */
 class ExampleTest extends TestCase
 {
     /**
@@ -14,10 +15,8 @@ class ExampleTest extends TestCase
      *
      * @return void
      */
-    public function testBasicTest()
+    public function testBasicTest(): void
     {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
+        $this->get('api/v1')->assertStatus(200);
     }
 }

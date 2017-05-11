@@ -5,6 +5,10 @@ namespace Social\Http\Controllers\Auth;
 use Social\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
+/**
+ * Class LoginController
+ * @package Social\Http\Controllers\Auth
+ */
 class LoginController extends Controller
 {
     /*

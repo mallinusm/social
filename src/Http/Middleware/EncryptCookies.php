@@ -4,6 +4,10 @@ namespace Social\Http\Middleware;
 
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncrypter;
 
+/**
+ * Class EncryptCookies
+ * @package Social\Http\Middleware
+ */
 class EncryptCookies extends BaseEncrypter
 {
     /**

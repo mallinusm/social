@@ -5,6 +5,10 @@ namespace Social\Http\Controllers\Auth;
 use Social\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
+/**
+ * Class ResetPasswordController
+ * @package Social\Http\Controllers\Auth
+ */
 class ResetPasswordController extends Controller
 {
     /*

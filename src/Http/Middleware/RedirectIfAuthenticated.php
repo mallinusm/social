@@ -5,6 +5,10 @@ namespace Social\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class RedirectIfAuthenticated
+ * @package Social\Http\Middleware
+ */
 class RedirectIfAuthenticated
 {
     /**

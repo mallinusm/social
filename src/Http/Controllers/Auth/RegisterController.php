@@ -7,6 +7,10 @@ use Social\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+/**
+ * Class RegisterController
+ * @package Social\Http\Controllers\Auth
+ */
 class RegisterController extends Controller
 {
     /*

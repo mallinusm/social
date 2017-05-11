@@ -5,6 +5,10 @@ namespace Social\Http\Controllers\Auth;
 use Social\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 
+/**
+ * Class ForgotPasswordController
+ * @package Social\Http\Controllers\Auth
+ */
 class ForgotPasswordController extends Controller
 {
     /*

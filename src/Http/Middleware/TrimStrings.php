@@ -4,6 +4,10 @@ namespace Social\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\TrimStrings as BaseTrimmer;
 
+/**
+ * Class TrimStrings
+ * @package Social\Http\Middleware
+ */
 class TrimStrings extends BaseTrimmer
 {
     /**
