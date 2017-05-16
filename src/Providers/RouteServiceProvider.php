@@ -4,6 +4,7 @@ namespace Social\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Social\Models\User;
 
 /**
  * Class RouteServiceProvider
@@ -19,6 +20,16 @@ class RouteServiceProvider extends ServiceProvider
     public function map(): void
     {
         $this->mapApiRoutes();
+    }
+
+    /**
+     * @return void
+     */
+    public function boot(): void
+    {
+        parent::boot();
+
+        Route::model('user', User::class);
     }
 
     /**

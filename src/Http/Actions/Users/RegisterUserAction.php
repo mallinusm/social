@@ -2,10 +2,9 @@
 
 namespace Social\Http\Actions\Users;
 
-use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Http\JsonResponse;
-use Social\Contracts\UserRepository;
-use Social\Http\Requests\Users\RegisterUserRequest;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
+use Social\Models\User;
 
 /**
  * Class RegisterUserAction
@@ -13,37 +12,16 @@ use Social\Http\Requests\Users\RegisterUserRequest;
  */
 class RegisterUserAction
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    use ValidatesRequests;
 
     /**
-     * @var Hasher
+     * @param Request $request
+     * @return User
      */
-    private $hasher;
-
-    /**
-     * RegisterUserAction constructor.
-     * @param UserRepository $userRepository
-     * @param Hasher $hasher
-     */
-    public function __construct(UserRepository $userRepository, Hasher $hasher)
+    public function __invoke(Request $request): User
     {
-        $this->userRepository = $userRepository;
-        $this->hasher = $hasher;
-    }
+        $this->validate($request, User::$createRules);
 
-    /**
-     * @param RegisterUserRequest $registerUserRequest
-     * @return JsonResponse
-     */
-    public function __invoke(RegisterUserRequest $registerUserRequest): JsonResponse
-    {
-        [$name, $email, $password] = array_values($registerUserRequest->only(['name', 'email', 'password']));
-
-        return new JsonResponse(
-            $this->userRepository->register($name, $email, $this->hasher->make($password))->toArray()
-        );
+        return User::create($request->only('name', 'email', 'password'));
     }
 }

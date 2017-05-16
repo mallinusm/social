@@ -2,6 +2,8 @@
 
 namespace Social\Models;
 
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
@@ -10,6 +12,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  */
 class User extends Authenticatable
 {
+    /**
+     * @var array
+     */
+    public static $createRules = [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6|confirmed'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -27,4 +38,29 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * @param string $password
+     */
+    public function setPasswordAttribute(string $password): void
+    {
+        /**
+         * @var Hasher $hasher
+         */
+        $hasher = app(Hasher::class);
+
+        if ($hasher->needsRehash($password)) {
+            $this->attributes['password'] = $hasher->make($password);
+        } else {
+            $this->attributes['password'] = $password;
+        }
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
 }
