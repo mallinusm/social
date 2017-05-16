@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
-use Social\Models\User;
+use Social\Models\{
+    Post,
+    User
+};
 
 /**
  * Trait CreatesModels
@@ -17,5 +20,14 @@ trait CreatesModels
     public function createUser(array $attributes = []): User
     {
         return factory(User::class)->create($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return Post
+     */
+    public function createPost(array $attributes = []): Post
+    {
+        return factory(Post::class)->create($attributes);
     }
 }

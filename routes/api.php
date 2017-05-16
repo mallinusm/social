@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Social\Http\Actions\Posts\{
+    PublishPostAction,
+    PaginatePostsAction
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +29,6 @@ Route::group(['middleware' => 'auth:api'], function() {
         return $request->user();
     });
 
-    Route::post('/users/{user}/posts', \Social\Http\Actions\Posts\PublishPostAction::class);
+    Route::post('/users/{user}/posts', PublishPostAction::class);
+    Route::get('/users/{user}/posts', PaginatePostsAction::class);
 });
