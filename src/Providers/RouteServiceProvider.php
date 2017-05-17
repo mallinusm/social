@@ -2,9 +2,13 @@
 
 namespace Social\Providers;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Social\Models\User;
+use Social\Models\{
+    Post,
+    User
+};
 
 /**
  * Class RouteServiceProvider
@@ -12,6 +16,14 @@ use Social\Models\User;
  */
 class RouteServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array
+     */
+    private $routeModelBindings = [
+        'post' => Post::class,
+        'user' => User::class
+    ];
+
     /**
      * Define the routes for the application.
      *
@@ -29,7 +41,12 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Route::model('user', User::class);
+        foreach ($this->routeModelBindings as $key => $modelClass) {
+            /**
+             * @var $this Router
+             */
+            $this->model($key, $modelClass);
+        }
     }
 
     /**

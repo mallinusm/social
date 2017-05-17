@@ -41,4 +41,28 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return (int)($this->getAttribute('user_id'));
+    }
+
+    /**
+     * @return int
+     */
+    public function getAuthorId(): int
+    {
+        return (int)($this->getAttribute('author_id'));
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int)($this->getAttribute('id'));
+    }
 }

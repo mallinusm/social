@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Social\Http\Actions\Posts\{
     PublishPostAction,
-    PaginatePostsAction
+    PaginatePostsAction,
+    UnpublishPostAction
 };
 
 /*
@@ -31,4 +32,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::post('/users/{user}/posts', PublishPostAction::class);
     Route::get('/users/{user}/posts', PaginatePostsAction::class);
+
+    Route::delete('/posts/{post}', UnpublishPostAction::class);
 });

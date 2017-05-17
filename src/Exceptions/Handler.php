@@ -3,6 +3,7 @@
 namespace Social\Exceptions;
 
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -39,7 +40,7 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
+            return new JsonResponse(['error' => 'Unauthenticated.'], 401);
         }
 
         return redirect()->guest(route('login'));
@@ -54,6 +55,10 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof ModelNotFoundException) {
             return new JsonResponse(['error' => $e->getMessage()], 404);
+        }
+
+        if ($e instanceof AuthorizationException) {
+            return new JsonResponse(['error' => $e->getMessage()], 403);
         }
 
         return parent::render($request, $e);
