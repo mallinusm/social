@@ -15,7 +15,7 @@ class PaginatePostsTest extends FeatureTestCase
      */
     public function testCannotPaginatePostsWhenUnauthenticated(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->getJson('api/v1/users/1/posts')
             ->assertStatus(401)
             ->assertJson(['error' => 'Unauthenticated.']);
@@ -27,7 +27,7 @@ class PaginatePostsTest extends FeatureTestCase
     public function testCannotPaginatePostsForUnknownUser(): void
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->getJson('api/v1/users/123456789/posts')
             ->assertStatus(404)
             ->assertJson(['error' => 'No query results for model [Social\\Models\\User].']);
@@ -50,7 +50,7 @@ class PaginatePostsTest extends FeatureTestCase
         $this->assertDatabaseHas('posts', $post->toArray());
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/{$userId}/posts")
             ->assertStatus(200)
             ->assertJsonStructure($this->simplePaginationStructure())

@@ -19,7 +19,7 @@ class UnpublishPostTest extends FeatureTestCase
      */
     public function testCannotUnpublishPostWhenUnauthenticated(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->deleteJson('api/v1/posts/1')
             ->assertStatus(401)
             ->assertJson(['error' => 'Unauthenticated.']);
@@ -31,7 +31,7 @@ class UnpublishPostTest extends FeatureTestCase
     public function testCannotUnpublishUnknownPost(): void
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->deleteJson('api/v1/posts/123456789')
             ->assertStatus(404)
             ->assertJson(['error' => 'No query results for model [Social\\Models\\Post].']);
@@ -53,7 +53,7 @@ class UnpublishPostTest extends FeatureTestCase
         $this->assertDatabaseHas('posts', $postArray);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(403)
             ->assertJson(['error' => 'This action is unauthorized.']);
@@ -77,7 +77,7 @@ class UnpublishPostTest extends FeatureTestCase
         $this->assertDatabaseHas('posts', $postArray);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(200)
             ->assertJson(['message' => 'The post was deleted.']);

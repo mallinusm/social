@@ -15,7 +15,7 @@ class PublishPostTest extends FeatureTestCase
      */
     public function testCannotPublishPostWhenUnauthenticated(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users/1/posts')
             ->assertStatus(401)
             ->assertJson(['error' => 'Unauthenticated.']);
@@ -27,7 +27,7 @@ class PublishPostTest extends FeatureTestCase
     public function testCannotPublishPostForUnknownUser(): void
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->postJson('api/v1/users/123456789/posts')
             ->assertStatus(404)
             ->assertJson(['error' => 'No query results for model [Social\\Models\\User].']);
@@ -41,7 +41,7 @@ class PublishPostTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts")
             ->assertStatus(422)
             ->assertJsonFragment(['content' => ['The content field is required.']]);
@@ -55,7 +55,7 @@ class PublishPostTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts", ['content' => str_random(256)])
             ->assertStatus(422)
             ->assertJsonFragment(['content' => ['The content may not be greater than 255 characters.']]);
@@ -77,7 +77,7 @@ class PublishPostTest extends FeatureTestCase
         $database = $data + ['author_id' => $userId, 'user_id' => $userId];
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated()
+            ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$userId}/posts", $data)
             ->assertStatus(200)
             ->assertJsonFragment($database)

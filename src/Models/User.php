@@ -66,4 +66,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return (string)($this->getAttribute('email'));
+    }
 }

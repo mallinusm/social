@@ -15,7 +15,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithoutName(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
             ->assertStatus(422)
             ->assertJsonFragment(['name' => ['The name field is required.']]);
@@ -26,7 +26,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithTooLongName(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['name' => str_random(256)])
             ->assertStatus(422)
             ->assertJsonFragment(['name' => ['The name may not be greater than 255 characters.']]);
@@ -37,7 +37,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithoutEmail(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
             ->assertStatus(422)
             ->assertJsonFragment(['email' => ['The email field is required.']]);
@@ -48,7 +48,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithInvalidEmail(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['email' => str_random()])
             ->assertStatus(422)
             ->assertJsonFragment(['email' => ['The email must be a valid email address.']]);
@@ -59,7 +59,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithTakenEmail(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['email' => $this->createUser()->getAttribute('email')])
             ->assertStatus(422)
             ->assertJsonFragment(['email' => ['The email has already been taken.']]);
@@ -70,7 +70,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithoutPassword(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
             ->assertStatus(422)
             ->assertJsonFragment(['password' => ['The password field is required.']]);
@@ -81,7 +81,7 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCannotRegisterUserWithoutPasswordConfirmation(): void
     {
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['password' => str_random()])
             ->assertStatus(422)
             ->assertJsonFragment(['password' => ['The password confirmation does not match.']]);
@@ -94,7 +94,7 @@ class RegisterUserTest extends FeatureTestCase
     {
         $password = '12345';
 
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['password' => $password, 'password_confirmation' => $password])
             ->assertStatus(422)
             ->assertJsonFragment(['password' => ['The password must be at least 6 characters.']]);
@@ -114,7 +114,7 @@ class RegisterUserTest extends FeatureTestCase
             'password' => $password = str_random()
         ];
 
-        $this->dontSeeIsAuthenticated()
+        $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', $visible + $hidden + ['password_confirmation' => $password])
             ->assertStatus(200)
             ->assertJsonFragment($visible)
