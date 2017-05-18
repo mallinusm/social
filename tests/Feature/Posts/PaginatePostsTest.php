@@ -26,7 +26,7 @@ class PaginatePostsTest extends FeatureTestCase
      */
     public function testCannotPaginatePostsForUnknownUser(): void
     {
-        $this->actingAs($this->createUser())
+        $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated()
             ->getJson('api/v1/users/123456789/posts')
             ->assertStatus(404)
@@ -49,7 +49,7 @@ class PaginatePostsTest extends FeatureTestCase
 
         $this->assertDatabaseHas('posts', $post->toArray());
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'api')
             ->seeIsAuthenticated()
             ->getJson("api/v1/users/{$userId}/posts")
             ->assertStatus(200)

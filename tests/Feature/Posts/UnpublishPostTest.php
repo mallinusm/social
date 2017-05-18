@@ -30,7 +30,7 @@ class UnpublishPostTest extends FeatureTestCase
      */
     public function testCannotUnpublishUnknownPost(): void
     {
-        $this->actingAs($this->createUser())
+        $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated()
             ->deleteJson('api/v1/posts/123456789')
             ->assertStatus(404)
@@ -52,7 +52,7 @@ class UnpublishPostTest extends FeatureTestCase
 
         $this->assertDatabaseHas('posts', $postArray);
 
-        $this->actingAs($this->createUser())
+        $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated()
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(403)
@@ -76,7 +76,7 @@ class UnpublishPostTest extends FeatureTestCase
 
         $this->assertDatabaseHas('posts', $postArray);
 
-        $this->actingAs($author)
+        $this->actingAs($author, 'api')
             ->seeIsAuthenticated()
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(200)

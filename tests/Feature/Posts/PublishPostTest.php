@@ -26,7 +26,7 @@ class PublishPostTest extends FeatureTestCase
      */
     public function testCannotPublishPostForUnknownUser(): void
     {
-        $this->actingAs($this->createUser())
+        $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated()
             ->postJson('api/v1/users/123456789/posts')
             ->assertStatus(404)
@@ -40,7 +40,7 @@ class PublishPostTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'api')
             ->seeIsAuthenticated()
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts")
             ->assertStatus(422)
@@ -54,7 +54,7 @@ class PublishPostTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'api')
             ->seeIsAuthenticated()
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts", ['content' => str_random(256)])
             ->assertStatus(422)
@@ -76,7 +76,7 @@ class PublishPostTest extends FeatureTestCase
 
         $database = $data + ['author_id' => $userId, 'user_id' => $userId];
 
-        $this->actingAs($user)
+        $this->actingAs($user, 'api')
             ->seeIsAuthenticated()
             ->postJson("api/v1/users/{$userId}/posts", $data)
             ->assertStatus(200)
