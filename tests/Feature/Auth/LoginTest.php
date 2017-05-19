@@ -30,6 +30,8 @@ class LoginTest extends FeatureTestCase
             null, ' acceptance-test-suite', 'http://localhost'
         );
 
+        $this->assertDatabaseHas('oauth_clients', $client->toArray());
+
         $user = $this->createUser([
             'password' => $password = str_random()
         ]);

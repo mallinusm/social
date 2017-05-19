@@ -8,7 +8,8 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Handler
@@ -22,8 +23,8 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        \Illuminate\Auth\AuthenticationException::class,
-        \Illuminate\Auth\Access\AuthorizationException::class,
+        AuthenticationException::class,
+        AuthorizationException::class,
         \Symfony\Component\HttpKernel\Exception\HttpException::class,
         \Illuminate\Database\Eloquent\ModelNotFoundException::class,
         \Illuminate\Session\TokenMismatchException::class,
@@ -31,34 +32,32 @@ class Handler extends ExceptionHandler
     ];
 
     /**
-     * Convert an authentication exception into an unauthenticated response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return Response|JsonResponse
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return Response
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated(Request $request, AuthenticationException $exception): Response
     {
         if ($request->expectsJson()) {
-            return new JsonResponse(['error' => 'Unauthenticated.'], 401);
+            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
         }
 
         return redirect()->guest(route('login'));
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param Exception $e
-     * @return JsonResponse|\Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $e): Response
     {
         if ($e instanceof ModelNotFoundException) {
-            return new JsonResponse(['error' => $e->getMessage()], 404);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
 
         if ($e instanceof AuthorizationException) {
-            return new JsonResponse(['error' => $e->getMessage()], 403);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_FORBIDDEN);
         }
 
         return parent::render($request, $e);
