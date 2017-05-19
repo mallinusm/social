@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Posts;
 
+use Illuminate\Http\Response;
+use Social\Models\User;
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -17,7 +19,7 @@ class PaginatePostsTest extends FeatureTestCase
     {
         $this->dontSeeIsAuthenticated('api')
             ->getJson('api/v1/users/1/posts')
-            ->assertStatus(401)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertJson(['error' => 'Unauthenticated.']);
     }
 
@@ -29,8 +31,8 @@ class PaginatePostsTest extends FeatureTestCase
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->getJson('api/v1/users/123456789/posts')
-            ->assertStatus(404)
-            ->assertJson(['error' => 'No query results for model [Social\\Models\\User].']);
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJson($this->modelNotFoundMessage(User::class));
     }
 
     /**
@@ -52,8 +54,8 @@ class PaginatePostsTest extends FeatureTestCase
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/{$userId}/posts")
-            ->assertStatus(200)
+            ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
-            ->assertJsonFragment( $post->load('author')->toArray());
+            ->assertJsonFragment($post->load('author')->toArray());
     }
 }

@@ -2,11 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Social\Http\Actions\Comments\LeaveCommentAction;
 use Social\Http\Actions\Posts\{
     PublishPostAction,
     PaginatePostsAction,
     UnpublishPostAction
 };
+use Social\Http\Actions\Users\RegisterUserAction;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +25,7 @@ Route::get('/', function() {
    return ['message' => 'Social API v1'];
 });
 
-Route::post('/users', \Social\Http\Actions\Users\RegisterUserAction::class);
+Route::post('/users', RegisterUserAction::class);
 
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/user', function (Request $request) {
@@ -34,4 +36,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/users/{user}/posts', PaginatePostsAction::class);
 
     Route::delete('/posts/{post}', UnpublishPostAction::class);
+    Route::post('/posts/{post}/comments', LeaveCommentAction::class);
 });

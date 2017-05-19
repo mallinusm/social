@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Posts;
 
+use Illuminate\Http\Response;
+use Social\Models\User;
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -17,7 +19,7 @@ class PublishPostTest extends FeatureTestCase
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users/1/posts')
-            ->assertStatus(401)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertJson(['error' => 'Unauthenticated.']);
     }
 
@@ -29,8 +31,8 @@ class PublishPostTest extends FeatureTestCase
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/users/123456789/posts')
-            ->assertStatus(404)
-            ->assertJson(['error' => 'No query results for model [Social\\Models\\User].']);
+            ->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJson($this->modelNotFoundMessage(User::class));
     }
 
     /**
@@ -43,7 +45,7 @@ class PublishPostTest extends FeatureTestCase
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts")
-            ->assertStatus(422)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['content' => ['The content field is required.']]);
     }
 
@@ -57,7 +59,7 @@ class PublishPostTest extends FeatureTestCase
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts", ['content' => str_random(256)])
-            ->assertStatus(422)
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['content' => ['The content may not be greater than 255 characters.']]);
     }
 
@@ -79,7 +81,7 @@ class PublishPostTest extends FeatureTestCase
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$userId}/posts", $data)
-            ->assertStatus(200)
+            ->assertStatus(Response::HTTP_OK)
             ->assertJsonFragment($database)
             ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id']);
 
