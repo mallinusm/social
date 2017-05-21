@@ -9,12 +9,13 @@ namespace Tests\Feature;
 class ExampleTest extends FeatureTestCase
 {
     /**
-     * A basic test example.
-     *
      * @return void
      */
     public function testBasicTest(): void
     {
-        $this->get('api/v1')->assertJson(['message' => 'Social API v1'])->assertStatus(200);
+        $this->dontSeeIsAuthenticated('api')
+            ->getJson('api/v1')
+            ->assertStatus(200)
+            ->assertJson(['message' => 'Social API v1']);
     }
 }

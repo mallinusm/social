@@ -17,6 +17,6 @@ class PaginatePostsAction
      */
     public function __invoke(User $user): Paginator
     {
-        return $user->posts()->with('author')->simplePaginate();
+        return $user->posts()->with('author', 'comments', 'comments.author')->simplePaginate();
     }
 }
