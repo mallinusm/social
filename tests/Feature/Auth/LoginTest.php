@@ -24,7 +24,7 @@ class LoginTest extends FeatureTestCase
     /**
      * @return void
      */
-    public function testCannotLogin(): void
+    public function testCanLogin(): void
     {
         $client = (new ClientRepository)->createPasswordGrantClient(
             null, ' acceptance-test-suite', 'http://localhost'

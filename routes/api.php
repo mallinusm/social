@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Social\Http\Actions\Comments\LeaveCommentAction;
+use Social\Http\Actions\Conversations\StartConversationAction;
 use Social\Http\Actions\Posts\{
     PublishPostAction,
     PaginatePostsAction,
@@ -37,4 +38,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::delete('/posts/{post}', UnpublishPostAction::class);
     Route::post('/posts/{post}/comments', LeaveCommentAction::class);
+
+    Route::post('/users/{user}/conversations', StartConversationAction::class);
 });
