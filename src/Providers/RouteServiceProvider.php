@@ -6,6 +6,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Social\Models\{
+    Conversation,
     Post,
     User
 };
@@ -20,8 +21,9 @@ class RouteServiceProvider extends ServiceProvider
      * @var array
      */
     private $routeModelBindings = [
+        'conversation' => Conversation::class,
         'post' => Post::class,
-        'user' => User::class
+        'user' => User::class,
     ];
 
     /**

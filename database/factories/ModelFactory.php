@@ -12,9 +12,7 @@
 */
 
 use Social\Models\{
-    Comment,
-    Post,
-    User
+    Comment, Conversation, Post, User
 };
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
@@ -43,4 +41,8 @@ $factory->define(Comment::class, function (Faker\Generator $faker) {
         'content' => $faker->sentence(),
         'post_id' => $faker->numberBetween(1),
     ];
+});
+
+$factory->define(Conversation::class, function (Faker\Generator $faker) {
+    return [];
 });
