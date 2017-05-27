@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Social\Models\{
-    Comment, Conversation, Post, User
+    Comment, Conversation, Message, Post, User
 };
 
 /**
@@ -46,5 +46,14 @@ trait CreatesModels
     public function createConversation(array $attributes = []): Conversation
     {
         return factory(Conversation::class)->create($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return Message
+     */
+    public function createMessage(array $attributes = []): Message
+    {
+        return factory(Message::class)->create($attributes);
     }
 }

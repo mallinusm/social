@@ -28,6 +28,13 @@ class Message extends Model
     ];
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'conversation_id' => 'int', 'user_id' => 'int'
+    ];
+
+    /**
      * @return BelongsTo
      */
     public function user(): BelongsTo

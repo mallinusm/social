@@ -3,7 +3,9 @@
 namespace Social\Models;
 
 use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\{
+    BelongsToMany, HasMany
+};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 
@@ -73,5 +75,13 @@ class User extends Authenticatable
     public function getEmail(): string
     {
         return (string)($this->getAttribute('email'));
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class);
     }
 }

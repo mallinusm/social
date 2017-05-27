@@ -3,25 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Social\Http\Actions\Comments\LeaveCommentAction;
-use Social\Http\Actions\Conversations\StartConversationAction;
+use Social\Http\Actions\Conversations\{
+    PaginateConversationsAction, StartConversationAction
+};
 use Social\Http\Actions\Messages\SendMessageAction;
 use Social\Http\Actions\Posts\{
-    PublishPostAction,
-    PaginatePostsAction,
-    UnpublishPostAction
+    PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
 use Social\Http\Actions\Users\RegisterUserAction;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::get('/', function() {
    return ['message' => 'Social API v1'];
@@ -40,7 +29,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::delete('/posts/{post}', UnpublishPostAction::class);
     Route::post('/posts/{post}/comments', LeaveCommentAction::class);
 
+    Route::get('/conversations', PaginateConversationsAction::class);
     Route::post('/users/{user}/conversations', StartConversationAction::class);
-
     Route::post('/conversations/{conversation}/messages', SendMessageAction::class);
 });

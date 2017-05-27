@@ -11,12 +11,14 @@
 |
 */
 
+use Faker\Generator;
+use Illuminate\Database\Eloquent\Factory;
 use Social\Models\{
-    Comment, Conversation, Post, User
+    Comment, Conversation, Message, Post, User
 };
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-$factory->define(User::class, function (Faker\Generator $faker) {
+/** @var Factory $factory */
+$factory->define(User::class, function (Generator $faker) {
     static $password;
 
     return [
@@ -27,7 +29,7 @@ $factory->define(User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Post::class, function (Faker\Generator $faker) {
+$factory->define(Post::class, function (Generator $faker) {
     return [
         'author_id' => $faker->numberBetween(1),
         'content' => $faker->sentence(),
@@ -35,7 +37,7 @@ $factory->define(Post::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Comment::class, function (Faker\Generator $faker) {
+$factory->define(Comment::class, function (Generator $faker) {
     return [
         'author_id' => $faker->numberBetween(1),
         'content' => $faker->sentence(),
@@ -43,6 +45,14 @@ $factory->define(Comment::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Conversation::class, function (Faker\Generator $faker) {
+$factory->define(Conversation::class, function (Generator $faker) {
     return [];
+});
+
+$factory->define(Message::class, function (Generator $faker) {
+    return [
+        'content' => $faker->sentence(),
+        'conversation_id' => $faker->numberBetween(1),
+        'user_id' => $faker->numberBetween(1)
+    ];
 });

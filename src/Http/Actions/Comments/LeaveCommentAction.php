@@ -5,9 +5,7 @@ namespace Social\Http\Actions\Comments;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Models\{
-    Comment,
-    Post,
-    User
+    Comment, Post
 };
 
 /**
@@ -27,13 +25,8 @@ class LeaveCommentAction
     {
         $this->validate($request, array_except(Comment::$createRules, ['author_id', 'post_id']));
 
-        /**
-         * @var User $author
-         */
-        $author = $request->user();
-
         return $post->comments()->create([
-            'author_id' => $author->getAuthIdentifier(),
+            'author_id' => $request->user()->getAuthIdentifier(),
             'content' => $request->input('content')
         ]);
     }

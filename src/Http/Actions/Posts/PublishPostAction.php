@@ -24,13 +24,8 @@ class PublishPostAction
     {
         $this->validate($request, array_except(Post::$createRules, ['author_id', 'user_id']));
 
-        /**
-         * @var User $author
-         */
-        $author = $request->user();
-
         return $user->posts()->create([
-            'author_id' => $author->getAuthIdentifier(),
+            'author_id' => $request->user()->getAuthIdentifier(),
             'content' => $request->input('content')
         ]);
     }

@@ -24,14 +24,9 @@ class StartConversationAction
          */
         $conversation = Conversation::create();
 
-        /**
-         * @var User $author
-         */
-        $author = $request->user();
-
         $conversation->users()->attach([
             $user->getAuthIdentifier(),
-            $author->getAuthIdentifier()
+            $request->user()->getAuthIdentifier()
         ]);
 
         return $conversation;
