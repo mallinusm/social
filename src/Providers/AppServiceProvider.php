@@ -8,7 +8,4 @@ use Illuminate\Support\ServiceProvider;
  * Class AppServiceProvider
  * @package Social\Providers
  */
-class AppServiceProvider extends ServiceProvider
-{
-
-}
+class AppServiceProvider extends ServiceProvider { }

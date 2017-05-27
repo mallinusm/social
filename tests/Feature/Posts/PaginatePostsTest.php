@@ -42,15 +42,9 @@ class PaginatePostsTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $post = $this->createPost([
-            'author_id' => $userId = $user->getAuthIdentifier(),
-            'user_id' => $userId
-        ]);
+        $post = $this->createPost(['author_id' => $userId = $user->getAuthIdentifier(), 'user_id' => $userId]);
 
-        $comment = $this->createComment([
-            'author_id' => $userId,
-            'post_id' => $post->getId()
-        ]);
+        $comment = $this->createComment(['author_id' => $userId, 'post_id' => $post->getId()]);
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')

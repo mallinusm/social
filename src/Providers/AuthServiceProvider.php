@@ -4,8 +4,12 @@ namespace Social\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
-use Social\Models\Post;
-use Social\Policies\PostPolicy;
+use Social\Models\{
+    Message, Post
+};
+use Social\Policies\{
+    MessagePolicy, PostPolicy
+};
 
 /**
  * Class AuthServiceProvider
@@ -19,7 +23,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        Post::class => PostPolicy::class,
+        Message::class => MessagePolicy::class,
+        Post::class => PostPolicy::class
     ];
 
     /**

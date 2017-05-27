@@ -69,12 +69,9 @@ class PublishPostTest extends FeatureTestCase
     public function testCanPublishPost(): void
     {
         $user = $this->createUser();
-
         $userId = $user->getAuthIdentifier();
 
-        $data = [
-            'content' => str_random()
-        ];
+        $data = ['content' => str_random()];
 
         $database = $data + ['author_id' => $userId, 'user_id' => $userId];
 

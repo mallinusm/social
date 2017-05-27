@@ -32,9 +32,7 @@ class LoginTest extends FeatureTestCase
 
         $this->assertDatabaseHas('oauth_clients', $client->toArray());
 
-        $user = $this->createUser([
-            'password' => $password = str_random()
-        ]);
+        $user = $this->createUser(['password' => $password = str_random()]);
 
         $this->dontSeeIsAuthenticated('api')
             ->postJson('oauth/token', [

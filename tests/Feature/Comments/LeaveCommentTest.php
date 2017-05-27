@@ -54,7 +54,9 @@ class LeaveCommentTest extends FeatureTestCase
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/posts/{$this->createPost()->getId()}/comments", ['content' => str_random(256)])
+            ->postJson("api/v1/posts/{$this->createPost()->getId()}/comments", [
+                'content' => str_random(256)
+            ])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJson(['content' => ['The content may not be greater than 255 characters.']]);
     }
@@ -64,14 +66,13 @@ class LeaveCommentTest extends FeatureTestCase
      */
     public function testCanLeaveComment(): void
     {
-        $content = [
-            'content' => str_random()
-        ];
+        $content = ['content' => str_random()];
 
-        $data = $content + [
-            'author_id' => ($author = $this->createUser())->getAuthIdentifier(),
-            'post_id' => $postId = $this->createPost()->getId()
-        ];
+        $author = $this->createUser();
+
+        $postId = $postId = $this->createPost()->getId();
+
+        $data = $content + ['author_id' => $author->getAuthIdentifier(), 'post_id' => $postId];
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')

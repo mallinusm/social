@@ -64,11 +64,36 @@ class SendMessageTest extends FeatureTestCase
     /**
      * @return void
      */
-    public function testCanSendMessage(): void
+    public function testCannotSendMessageWhenUserNotInConversation(): void
     {
         $user = $this->createUser();
 
         $conversationId = $this->createConversation()->getId();
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->postJson("api/v1/conversations/{$conversationId}/messages", ['content' => $content = str_random()])
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertJson(['error' => 'This action is unauthorized.']);
+
+        $this->assertDatabaseMissing('messages', [
+            'conversation_id' => $conversationId,
+            'content' => $content,
+            'user_id' => $user->getAuthIdentifier()
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function testCanSendMessage(): void
+    {
+        $user = $this->createUser();
+        $userId = $user->getAuthIdentifier();
+
+        $conversation = $this->createConversation();
+        $conversationId = $conversation->getId();
+        $conversation->users()->attach($userId);
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
@@ -80,7 +105,7 @@ class SendMessageTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'conversation_id' => $conversationId,
             'content' => $content,
-            'user_id' => $user->getAuthIdentifier()
+            'user_id' => $userId
         ]);
     }
 }

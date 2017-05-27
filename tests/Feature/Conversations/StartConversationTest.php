@@ -43,7 +43,6 @@ class StartConversationTest extends FeatureTestCase
         $author = $this->createUser();
 
         $user = $this->createUser();
-
         $userId = $user->getAuthIdentifier();
 
         $response = $this->actingAs($author, 'api')

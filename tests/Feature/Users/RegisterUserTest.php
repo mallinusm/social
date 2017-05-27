@@ -106,14 +106,9 @@ class RegisterUserTest extends FeatureTestCase
      */
     public function testCanRegisterUser(): void
     {
-        $visible = [
-            'name' => str_random(),
-            'email' => str_random() . '@mail.com'
-        ];
+        $visible = ['name' => str_random(), 'email' => str_random() . '@mail.com'];
 
-        $hidden = [
-            'password' => $password = str_random()
-        ];
+        $hidden = ['password' => $password = str_random()];
 
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', $visible + $hidden + ['password_confirmation' => $password])

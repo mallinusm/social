@@ -42,13 +42,8 @@ class UnpublishPostTest extends FeatureTestCase
     {
         $author = $this->createUser();
 
-        $post = $this->createPost([
-            'author_id' => $author->getAuthIdentifier()
-        ]);
-
+        $post = $this->createPost(['author_id' => $author->getAuthIdentifier()]);
         $postArray = $post->toArray();
-
-        $this->assertDatabaseHas('posts', $postArray);
 
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
@@ -66,13 +61,8 @@ class UnpublishPostTest extends FeatureTestCase
     {
         $author = $this->createUser();
 
-        $post = $this->createPost([
-            'author_id' => $author->getAuthIdentifier()
-        ]);
-
+        $post = $this->createPost(['author_id' => $author->getAuthIdentifier()]);
         $postArray = $post->toArray();
-
-        $this->assertDatabaseHas('posts', $postArray);
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')

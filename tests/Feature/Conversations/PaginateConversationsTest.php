@@ -27,20 +27,15 @@ class PaginateConversationsTest extends FeatureTestCase
      */
     public function testCanPaginateConversations(): void
     {
-        $conversation = $this->createConversation();
-
         $user = $this->createUser();
-        $userId = $user->getAuthIdentifier();
 
         $author = $this->createUser();
         $authorId = $author->getAuthIdentifier();
 
-        $conversation->users()->attach([$userId, $authorId]);
+        $conversation = $this->createConversation();
+        $conversation->users()->attach([$user->getAuthIdentifier(), $authorId]);
 
-        $message = $this->createMessage([
-            'conversation_id' => $conversation->getId(),
-            'user_id' => $authorId
-        ]);
+        $message = $this->createMessage(['conversation_id' => $conversation->getId(), 'user_id' => $authorId]);
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')

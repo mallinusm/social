@@ -2,6 +2,7 @@
 
 namespace Social\Http\Actions\Messages;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Models\{
@@ -14,7 +15,7 @@ use Social\Models\{
  */
 class SendMessageAction
 {
-    use ValidatesRequests;
+    use ValidatesRequests, AuthorizesRequests;
 
     /***
      * @param Conversation $conversation
@@ -25,9 +26,11 @@ class SendMessageAction
     {
         $this->validate($request, array_except(Message::$createRules, ['conversation_id', 'user_id']));
 
+        $this->authorizeForUser($user = $request->user(), 'create', [Message::class, $conversation]);
+
         return $conversation->messages()->create([
             'content' => $request->input('content'),
-            'user_id' => $request->user()->getAuthIdentifier()
+            'user_id' => $user->getAuthIdentifier()
         ])->load('user');
     }
 }
