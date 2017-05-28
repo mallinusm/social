@@ -17,7 +17,7 @@ class PaginateConversationsAction
      */
     public function __invoke(Request $request): Paginator
     {
-        return $request->user()->conversations()->with(['messages' => function($query) {
+        return $request->user()->conversations()->with(['messages' => function($query): void {
             $query->orderBy('created_at', 'DESC')->take(1);
         }, 'messages.user', 'users'])->orderBy('created_at', 'DESC')->simplePaginate();
     }

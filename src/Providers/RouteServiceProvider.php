@@ -6,9 +6,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Social\Models\{
-    Conversation,
-    Post,
-    User
+    Conversation, Post, User
 };
 
 /**

@@ -24,7 +24,7 @@ class Message extends Model
      * @var array
      */
     protected $fillable = [
-        'content', 'conversation_id', 'user_id'
+        'content', 'conversation_id', 'created_at', 'id', 'updated_at', 'user_id'
     ];
 
     /**
@@ -40,5 +40,13 @@ class Message extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return int
+     */
+    public function getConversationId(): int
+    {
+        return (int)($this->getAttribute('conversation_id'));
     }
 }

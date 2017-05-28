@@ -19,16 +19,8 @@ class StartConversationAction
      */
     public function __invoke(User $user, Request $request): Conversation
     {
-        /**
-         * @var Conversation $conversation
-         */
-        $conversation = Conversation::create();
-
-        $conversation->users()->attach([
-            $user->getAuthIdentifier(),
-            $request->user()->getAuthIdentifier()
-        ]);
-
-        return $conversation;
+        return tap(Conversation::create(), function(Conversation $conversation) use($user, $request): void {
+            $conversation->users()->attach([$user->getAuthIdentifier(), $request->user()->getAuthIdentifier()]);
+        });
     }
 }

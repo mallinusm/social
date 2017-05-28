@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Messages;
 
+use Social\Events\Messages\MessageWasSentEvent;
 use Social\Models\Conversation;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;
@@ -95,17 +96,16 @@ class SendMessageTest extends FeatureTestCase
         $conversationId = $conversation->getId();
         $conversation->users()->attach($userId);
 
+        $data = ['conversation_id' => $conversationId, 'content' => $content = str_random(), 'user_id' => $userId];
+
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/conversations/{$conversationId}/messages", ['content' => $content = str_random()])
+            ->postJson("api/v1/conversations/{$conversationId}/messages", ['content' => $content])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['content', 'conversation_id', 'created_at', 'id', 'updated_at', 'user_id'])
+            ->assertJsonFragment($data)
             ->assertJsonFragment($user->toArray());
 
-        $this->assertDatabaseHas('messages', [
-            'conversation_id' => $conversationId,
-            'content' => $content,
-            'user_id' => $userId
-        ]);
+        $this->assertDatabaseHas('messages', $data);
     }
 }
