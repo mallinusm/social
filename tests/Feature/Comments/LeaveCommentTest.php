@@ -79,7 +79,8 @@ class LeaveCommentTest extends FeatureTestCase
             ->postJson("api/v1/posts/{$postId}/comments", $content)
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'post_id'])
-            ->assertJsonFragment($data);
+            ->assertJsonFragment($data)
+            ->assertJsonFragment($author->toArray());
 
         $this->assertDatabaseHas('comments', $data);
     }

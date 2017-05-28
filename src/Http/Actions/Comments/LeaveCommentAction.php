@@ -4,6 +4,7 @@ namespace Social\Http\Actions\Comments;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\CommentRepository;
 use Social\Models\{
     Comment, Post
 };
@@ -15,6 +16,19 @@ use Social\Models\{
 class LeaveCommentAction
 {
     use ValidatesRequests;
+    /**
+     * @var CommentRepository
+     */
+    private $commentRepository;
+
+    /**
+     * LeaveCommentAction constructor.
+     * @param CommentRepository $commentRepository
+     */
+    public function __construct(CommentRepository $commentRepository)
+    {
+        $this->commentRepository = $commentRepository;
+    }
 
     /**
      * @param Post $post
@@ -25,9 +39,12 @@ class LeaveCommentAction
     {
         $this->validate($request, array_except(Comment::$createRules, ['author_id', 'post_id']));
 
-        return $post->comments()->create([
-            'author_id' => $request->user()->getAuthIdentifier(),
-            'content' => $request->input('content')
-        ]);
+        $author =  $request->user();
+
+        return tap($this->commentRepository->leave(
+            $author->getAuthIdentifier(), $request->input('content'), $post->getId()
+        ), function(Comment $comment) use($author): void {
+            $comment->setAttribute('author', $author);
+        });
     }
 }
