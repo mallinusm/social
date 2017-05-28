@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Conversation extends Model
 {
     /**
+     * @var array
+     */
+    protected $fillable = [
+        'created_at', 'id', 'updated_at'
+    ];
+
+    /**
      * @return BelongsToMany
      */
     public function users(): BelongsToMany

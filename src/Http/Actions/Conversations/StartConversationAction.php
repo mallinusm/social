@@ -3,8 +3,10 @@
 namespace Social\Http\Actions\Conversations;
 
 use Illuminate\Http\Request;
-use Social\Models\Conversation;
-use Social\Models\User;
+use Social\Contracts\ConversationRepository;
+use Social\Models\{
+    Conversation, User
+};
 
 /**
  * Class StartConversationAction
@@ -13,14 +15,33 @@ use Social\Models\User;
 class StartConversationAction
 {
     /**
+     * @var ConversationRepository
+     */
+    private $conversationRepository;
+
+    /**
+     * StartConversationAction constructor.
+     * @param ConversationRepository $conversationRepository
+     */
+    public function __construct(ConversationRepository $conversationRepository)
+    {
+        $this->conversationRepository = $conversationRepository;
+    }
+
+    /**
      * @param User $user
      * @param Request $request
      * @return Conversation
      */
     public function __invoke(User $user, Request $request): Conversation
     {
-        return tap(Conversation::create(), function(Conversation $conversation) use($user, $request): void {
-            $conversation->users()->attach([$user->getAuthIdentifier(), $request->user()->getAuthIdentifier()]);
+        $author = $request->user();
+
+        return tap($this->conversationRepository->start([
+            $user->getAuthIdentifier(),
+            $author->getAuthIdentifier()
+        ]), function(Conversation $conversation) use($user, $author): void {
+            $conversation->setAttribute('users', [$user, $author]);
         });
     }
 }

@@ -3,8 +3,12 @@
 namespace Social\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Social\Contracts\MessageRepository;
-use Social\Repositories\QueryBuilderMessageRepository;
+use Social\Contracts\{
+    ConversationRepository, MessageRepository
+};
+use Social\Repositories\{
+    QueryBuilderConversationRepository, QueryBuilderMessageRepository
+};
 
 /**
  * Class AppServiceProvider
@@ -16,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $singletons = [
+        ConversationRepository::class => QueryBuilderConversationRepository::class,
         MessageRepository::class => QueryBuilderMessageRepository::class
     ];
 
