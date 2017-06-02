@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Social\Models\Message;
 
 /**
@@ -17,4 +18,10 @@ interface MessageRepository
      * @return Message
      */
     public function send(string $content, int $conversationId, int $userId): Message;
+
+    /**
+     * @param int $conversationId
+     * @return Paginator
+     */
+    public function paginate(int $conversationId): Paginator;
 }

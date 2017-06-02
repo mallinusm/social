@@ -2,7 +2,8 @@
 
 namespace Social\Http\Actions\Posts;
 
-use Illuminate\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Social\Contracts\PostRepository;
 use Social\Models\User;
 
 /**
@@ -12,14 +13,25 @@ use Social\Models\User;
 class PaginatePostsAction
 {
     /**
+     * @var PostRepository
+     */
+    private $postRepository;
+
+    /**
+     * PaginatePostsAction constructor.
+     * @param PostRepository $postRepository
+     */
+    public function __construct(PostRepository $postRepository)
+    {
+        $this->postRepository = $postRepository;
+    }
+
+    /**
      * @param User $user
      * @return Paginator
      */
     public function __invoke(User $user): Paginator
     {
-        return $user->posts()
-            ->with('author', 'comments', 'comments.author')
-            ->orderBy('created_at', 'DESC')
-            ->simplePaginate();
+        return $this->postRepository->paginate($user->getAuthIdentifier());
     }
 }

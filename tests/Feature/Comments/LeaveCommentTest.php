@@ -72,15 +72,15 @@ class LeaveCommentTest extends FeatureTestCase
 
         $postId = $postId = $this->createPost()->getId();
 
-        $data = $content + ['author_id' => $author->getAuthIdentifier(), 'post_id' => $postId];
+        $data = $content + ['user_id' => $author->getAuthIdentifier(), 'post_id' => $postId];
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/posts/{$postId}/comments", $content)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'post_id'])
+            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at', 'post_id', 'user_id'])
             ->assertJsonFragment($data)
-            ->assertJsonFragment($author->toArray());
+            ->assertJsonFragment(['user' => $author->toArray()]);
 
         $this->assertDatabaseHas('comments', $data);
     }

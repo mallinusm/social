@@ -2,6 +2,8 @@
 
 namespace Social\Repositories;
 
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Social\Contracts\ConversationRepository;
 use Social\Models\Conversation;
@@ -45,5 +47,18 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
         );
 
         return (new Conversation)->fill($attributes + compact('id'));
+    }
+
+    /**
+     * @param int $userId
+     * @return Paginator
+     */
+    public function paginate(int $userId): Paginator
+    {
+        return (new Conversation)->newQuery()->whereHas('users', function(Builder $query) use($userId): void {
+            $query->where('user_id', $userId);
+        })->with(['messages' => function(Builder $query): void {
+            $query->latest()->take(1);
+        }])->with('messages.user', 'users')->latest()->paginate();
     }
 }

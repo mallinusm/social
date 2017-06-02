@@ -20,19 +20,19 @@ class QueryBuilderCommentRepository extends QueryBuilderRepository implements Co
     }
 
     /**
-     * @param int $authorId
      * @param string $content
      * @param int $postId
+     * @param int $userId
      * @return Comment
      */
-    public function leave(int $authorId, string $content, int $postId): Comment
+    public function leave(string $content, int $postId, int $userId): Comment
     {
         return (new Comment)->fill($this->insert([
-            'author_id' => $authorId,
             'content' => $content,
             'created_at' => $now = $this->freshTimestamp(),
             'post_id' => $postId,
-            'updated_at' => $now
+            'updated_at' => $now,
+            'user_id' => $userId,
         ]));
     }
 }

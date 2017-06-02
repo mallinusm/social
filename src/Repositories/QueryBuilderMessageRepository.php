@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Social\Contracts\MessageRepository;
 use Social\Models\Message;
 
@@ -34,5 +35,18 @@ class QueryBuilderMessageRepository extends QueryBuilderRepository implements Me
             'updated_at' => $now,
             'user_id' => $userId
         ]));
+    }
+
+    /**
+     * @param int $conversationId
+     * @return Paginator
+     */
+    public function paginate(int $conversationId): Paginator
+    {
+        return (new Message)->newQuery()
+            ->where('conversation_id', $conversationId)
+            ->with('user')
+            ->latest()
+            ->paginate();
     }
 }

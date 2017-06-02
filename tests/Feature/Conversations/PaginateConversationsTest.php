@@ -43,6 +43,6 @@ class PaginateConversationsTest extends FeatureTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
             ->assertJsonFragment($conversation->load('users')->toArray())
-            ->assertJsonFragment($message->load('user')->toArray());
+            ->assertJsonFragment($message->setAttribute('user', $author->toArray())->toArray());
     }
 }

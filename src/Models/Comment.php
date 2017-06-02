@@ -15,29 +15,29 @@ class Comment extends Model
      * @var array
      */
     public static $createRules = [
-        'author_id' => 'required|integer|exists:users,id',
         'content' => 'required|string|max:255',
-        'post_id' => 'required|integer|exists:posts,id'
+        'post_id' => 'required|integer|exists:posts,id',
+        'user_id' => 'required|integer|exists:users,id',
     ];
 
     /**
      * @var array
      */
     protected $fillable = [
-        'author_id', 'content', 'created_at', 'id', 'post_id', 'updated_at'
+        'content', 'created_at', 'id', 'post_id', 'updated_at', 'user_id'
     ];
 
     /**
      * @var array
      */
     protected $casts = [
-        'post_id' => 'int'
+        'post_id' => 'int', 'user_id' => 'int'
     ];
 
     /**
      * @return BelongsTo
      */
-    public function author(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

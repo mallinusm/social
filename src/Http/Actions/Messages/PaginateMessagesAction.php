@@ -5,6 +5,7 @@ namespace Social\Http\Actions\Messages;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\MessageRepository;
 use Social\Models\{
     Conversation, Message
 };
@@ -18,6 +19,20 @@ class PaginateMessagesAction
     use AuthorizesRequests;
 
     /**
+     * @var MessageRepository
+     */
+    private $messageRepository;
+
+    /**
+     * PaginateMessagesAction constructor.
+     * @param MessageRepository $messageRepository
+     */
+    public function __construct(MessageRepository $messageRepository)
+    {
+        $this->messageRepository = $messageRepository;
+    }
+
+    /**
      * @param Conversation $conversation
      * @param Request $request
      * @return Paginator
@@ -26,6 +41,6 @@ class PaginateMessagesAction
     {
         $this->authorizeForUser($request->user(), 'read', [Message::class, $conversation]);
 
-        return $conversation->messages()->with('user')->orderBy('created_at', 'DESC')->simplePaginate();
+        return $this->messageRepository->paginate($conversation->getId());
     }
 }

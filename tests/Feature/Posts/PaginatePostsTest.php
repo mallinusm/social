@@ -41,17 +41,18 @@ class PaginatePostsTest extends FeatureTestCase
     public function testCanPaginatePosts(): void
     {
         $user = $this->createUser();
+        $userId = $user->getAuthIdentifier();
 
-        $post = $this->createPost(['author_id' => $userId = $user->getAuthIdentifier(), 'user_id' => $userId]);
+        $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
 
-        $comment = $this->createComment(['author_id' => $userId, 'post_id' => $post->getId()]);
+        $comment = $this->createComment(['user_id' => $userId, 'post_id' => $post->getId()]);
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/{$userId}/posts")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
-            ->assertJsonFragment($post->load('author')->toArray())
-            ->assertJsonFragment($comment->load('author')->toArray());
+            ->assertJsonFragment(['author' => $user->toArray()])
+            ->assertJsonFragment(['comments' => [$comment->setAttribute('user', $user->toArray())->toArray()]]);
     }
 }

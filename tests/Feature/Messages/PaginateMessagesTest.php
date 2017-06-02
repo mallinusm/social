@@ -66,6 +66,6 @@ class PaginateMessagesTest extends FeatureTestCase
             ->getJson("api/v1/conversations/{$conversation->getId()}/messages")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
-            ->assertJsonFragment($message->load('user')->toArray());
+            ->assertJsonFragment($message->setAttribute('user', $user->toArray())->toArray());
     }
 }

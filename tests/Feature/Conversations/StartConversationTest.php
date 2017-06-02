@@ -50,8 +50,7 @@ class StartConversationTest extends FeatureTestCase
             ->postJson("api/v1/users/{$userId}/conversations")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['created_at', 'id', 'updated_at'])
-            ->assertJsonFragment($author->toArray())
-            ->assertJsonFragment($user->toArray());
+            ->assertJsonFragment(['users' => [$user->toArray(), $author->toArray()]]);
 
         $conversationId = $response->json()['id'];
 

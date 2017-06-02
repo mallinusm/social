@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Social\Models\Conversation;
 
 /**
@@ -15,4 +16,10 @@ interface ConversationRepository
      * @return Conversation
      */
     public function start(array $userIds): Conversation;
+
+    /**
+     * @param int $userId
+     * @return Paginator
+     */
+    public function paginate(int $userId): Paginator;
 }

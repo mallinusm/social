@@ -104,7 +104,7 @@ class SendMessageTest extends FeatureTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['content', 'conversation_id', 'created_at', 'id', 'updated_at', 'user_id'])
             ->assertJsonFragment($data)
-            ->assertJsonFragment($user->toArray());
+            ->assertJsonFragment(['user' => $user->toArray()]);
 
         $this->assertDatabaseHas('messages', $data);
     }

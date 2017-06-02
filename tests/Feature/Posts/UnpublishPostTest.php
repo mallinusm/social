@@ -62,7 +62,6 @@ class UnpublishPostTest extends FeatureTestCase
         $author = $this->createUser();
 
         $post = $this->createPost(['author_id' => $author->getAuthIdentifier()]);
-        $postArray = $post->toArray();
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
@@ -70,6 +69,6 @@ class UnpublishPostTest extends FeatureTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJson(['message' => 'The post was deleted.']);
 
-        $this->assertDatabaseMissing('posts', $postArray);
+        $this->assertDatabaseMissing('posts', $post->toArray());
     }
 }

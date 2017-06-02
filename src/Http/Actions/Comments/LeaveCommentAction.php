@@ -38,12 +38,12 @@ class LeaveCommentAction
      */
     public function __invoke(Post $post, Request $request): Comment
     {
-        $this->validate($request, array_except(Comment::$createRules, ['author_id', 'post_id']));
+        $this->validate($request, array_only(Comment::$createRules, 'content'));
 
         $author =  $request->user();
 
         return $this->commentRepository->leave(
-            $author->getAuthIdentifier(), $request->input('content'), $post->getId()
-        )->setAttribute('author', $author);
+            $request->input('content'), $post->getId(), $author->getAuthIdentifier()
+        )->setAttribute('user', $author);
     }
 }

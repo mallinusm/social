@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Social\Contracts\PostRepository;
 use Social\Models\Post;
 
@@ -34,5 +35,18 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
             'updated_at' => $now,
             'user_id' => $userId
         ]));
+    }
+
+    /**
+     * @param int $userId
+     * @return Paginator
+     */
+    public function paginate(int $userId): Paginator
+    {
+        return (new Post)->newQuery()
+            ->with('author', 'comments', 'comments.user')
+            ->where('user_id', $userId)
+            ->latest()
+            ->simplePaginate();
     }
 }

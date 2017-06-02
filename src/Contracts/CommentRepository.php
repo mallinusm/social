@@ -11,10 +11,10 @@ use Social\Models\Comment;
 interface CommentRepository
 {
     /**
-     * @param int $authorId
      * @param string $content
      * @param int $postId
+     * @param int $userId
      * @return Comment
      */
-    public function leave(int $authorId, string $content, int $postId): Comment;
+    public function leave(string $content, int $postId, int $userId): Comment;
 }

@@ -25,7 +25,7 @@ $factory->define(User::class, function (Generator $faker) {
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?? bcrypt('secret'),
-        'remember_token' => str_random(10),
+        'remember_token' => str_random(10)
     ];
 });
 
@@ -33,15 +33,15 @@ $factory->define(Post::class, function (Generator $faker) {
     return [
         'author_id' => $faker->numberBetween(1),
         'content' => $faker->sentence(),
-        'user_id' => $faker->numberBetween(1),
+        'user_id' => $faker->numberBetween(1)
     ];
 });
 
 $factory->define(Comment::class, function (Generator $faker) {
     return [
-        'author_id' => $faker->numberBetween(1),
         'content' => $faker->sentence(),
         'post_id' => $faker->numberBetween(1),
+        'user_id' => $faker->numberBetween(1)
     ];
 });
 
