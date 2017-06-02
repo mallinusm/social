@@ -12,11 +12,6 @@ use Illuminate\Database\Query\Builder;
 abstract class QueryBuilderRepository
 {
     /**
-     * @var array
-     */
-    private static $cache = [];
-
-    /**
      * @var Builder
      */
     private $builder;
@@ -49,5 +44,16 @@ abstract class QueryBuilderRepository
     protected function freshTimestamp(): int
     {
         return Carbon::now()->getTimestamp();
+    }
+
+    /**
+     * @param array $attributes
+     * @return array
+     */
+    protected function insert(array $attributes): array
+    {
+        $id = $this->getBuilder()->insertGetId($attributes);
+
+        return $attributes + compact('id');
     }
 }

@@ -4,10 +4,10 @@ namespace Social\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Social\Contracts\{
-    CommentRepository, ConversationRepository, MessageRepository
+    CommentRepository, ConversationRepository, MessageRepository, PostRepository, UserRepository
 };
 use Social\Repositories\{
-    QueryBuilderCommentRepository, QueryBuilderConversationRepository, QueryBuilderMessageRepository
+    QueryBuilderCommentRepository, QueryBuilderConversationRepository, QueryBuilderMessageRepository, QueryBuilderPostRepository, QueryBuilderUserRepository
 };
 
 /**
@@ -22,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
     private $singletons = [
         CommentRepository::class => QueryBuilderCommentRepository::class,
         ConversationRepository::class => QueryBuilderConversationRepository::class,
-        MessageRepository::class => QueryBuilderMessageRepository::class
+        MessageRepository::class => QueryBuilderMessageRepository::class,
+        PostRepository::class => QueryBuilderPostRepository::class,
+        UserRepository::class => QueryBuilderUserRepository::class
     ];
 
     /**

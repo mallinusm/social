@@ -27,14 +27,12 @@ class QueryBuilderMessageRepository extends QueryBuilderRepository implements Me
      */
     public function send(string $content, int $conversationId, int $userId): Message
     {
-        $id = $this->getBuilder()->insertGetId($attributes = [
+        return (new Message)->fill($this->insert([
             'conversation_id' => $conversationId,
             'content' => $content,
-            'user_id' => $userId,
             'created_at' => $now = $this->freshTimestamp(),
-            'updated_at' => $now
-        ]);
-
-        return (new Message)->fill($attributes + compact('id'));
+            'updated_at' => $now,
+            'user_id' => $userId
+        ]));
     }
 }

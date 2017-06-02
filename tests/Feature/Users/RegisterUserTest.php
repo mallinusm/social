@@ -113,9 +113,9 @@ class RegisterUserTest extends FeatureTestCase
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', $visible + $hidden + ['password_confirmation' => $password])
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(['id', 'name', 'email', 'created_at', 'updated_at'])
             ->assertJsonFragment($visible)
-            ->assertJsonMissing($hidden)
-            ->assertJsonStructure(['id', 'name', 'email', 'created_at', 'updated_at']);
+            ->assertJsonMissing($hidden);
 
         $this->assertDatabaseHas('users', $visible);
 

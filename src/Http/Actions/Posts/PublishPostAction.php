@@ -4,8 +4,10 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Models\Post;
-use Social\Models\User;
+use Social\Contracts\PostRepository;
+use Social\Models\{
+    Post, User
+};
 
 /**
  * Class PublishPostAction
@@ -16,6 +18,20 @@ class PublishPostAction
     use ValidatesRequests;
 
     /**
+     * @var PostRepository
+     */
+    private $postRepository;
+
+    /**
+     * PublishPostAction constructor.
+     * @param PostRepository $postRepository
+     */
+    public function __construct(PostRepository $postRepository)
+    {
+        $this->postRepository = $postRepository;
+    }
+
+    /**
      * @param User $user
      * @param Request $request
      * @return Post
@@ -24,9 +40,10 @@ class PublishPostAction
     {
         $this->validate($request, array_except(Post::$createRules, ['author_id', 'user_id']));
 
-        return $user->posts()->create([
-            'author_id' => $request->user()->getAuthIdentifier(),
-            'content' => $request->input('content')
-        ]);
+        $author = $request->user();
+
+        return $this->postRepository->publish(
+            $author->getAuthIdentifier(), $request->input('content'), $user->getAuthIdentifier()
+        )->setAttribute('user', $user)->setAttribute('author', $author);
     }
 }

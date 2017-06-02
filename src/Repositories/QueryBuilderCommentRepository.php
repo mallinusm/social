@@ -27,14 +27,12 @@ class QueryBuilderCommentRepository extends QueryBuilderRepository implements Co
      */
     public function leave(int $authorId, string $content, int $postId): Comment
     {
-        $id = $this->getBuilder()->insertGetId($attributes = [
+        return (new Comment)->fill($this->insert([
             'author_id' => $authorId,
             'content' => $content,
             'created_at' => $now = $this->freshTimestamp(),
             'post_id' => $postId,
             'updated_at' => $now
-        ]);
-
-        return (new Comment)->fill($attributes + compact('id'));
+        ]));
     }
 }

@@ -16,6 +16,7 @@ use Social\Models\{
 class LeaveCommentAction
 {
     use ValidatesRequests;
+
     /**
      * @var CommentRepository
      */
@@ -41,10 +42,8 @@ class LeaveCommentAction
 
         $author =  $request->user();
 
-        return tap($this->commentRepository->leave(
+        return $this->commentRepository->leave(
             $author->getAuthIdentifier(), $request->input('content'), $post->getId()
-        ), function(Comment $comment) use($author): void {
-            $comment->setAttribute('author', $author);
-        });
+        )->setAttribute('author', $author);
     }
 }

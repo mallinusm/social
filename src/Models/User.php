@@ -2,7 +2,6 @@
 
 namespace Social\Models;
 
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\Eloquent\Relations\{
     BelongsToMany, HasMany
 };
@@ -32,7 +31,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'created_at', 'email', 'id', 'name', 'password', 'updated_at'
     ];
 
     /**
@@ -43,23 +42,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    /**
-     * @param string $password
-     */
-    public function setPasswordAttribute(string $password): void
-    {
-        /**
-         * @var Hasher $hasher
-         */
-        $hasher = app(Hasher::class);
-
-        if ($hasher->needsRehash($password)) {
-            $this->attributes['password'] = $hasher->make($password);
-        } else {
-            $this->attributes['password'] = $password;
-        }
-    }
 
     /**
      * @return HasMany

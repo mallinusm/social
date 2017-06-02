@@ -43,10 +43,8 @@ class SendMessageAction
 
         $this->authorizeForUser($user = $request->user(), 'create', [Message::class, $conversation]);
 
-        return tap($this->messageRepository->send(
+        return $this->messageRepository->send(
             $request->input('content'), $conversation->getId(), $user->getAuthIdentifier()
-        ), function(Message $message) use($user) {
-           $message->setAttribute('user', $user);
-        });
+        )->setAttribute('user', $user);
     }
 }

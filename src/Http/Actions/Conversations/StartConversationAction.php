@@ -37,11 +37,9 @@ class StartConversationAction
     {
         $author = $request->user();
 
-        return tap($this->conversationRepository->start([
+        return $this->conversationRepository->start([
             $user->getAuthIdentifier(),
             $author->getAuthIdentifier()
-        ]), function(Conversation $conversation) use($user, $author): void {
-            $conversation->setAttribute('users', [$user, $author]);
-        });
+        ])->setAttribute('users', [$user, $author]);
     }
 }

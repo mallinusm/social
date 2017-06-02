@@ -68,19 +68,23 @@ class PublishPostTest extends FeatureTestCase
      */
     public function testCanPublishPost(): void
     {
+        $author = $this->createUser();
+
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();
 
         $data = ['content' => str_random()];
 
-        $database = $data + ['author_id' => $userId, 'user_id' => $userId];
+        $database = $data + ['author_id' => $author->getAuthIdentifier(), 'user_id' => $userId];
 
-        $this->actingAs($user, 'api')
+        $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$userId}/posts", $data)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonFragment($database)
-            ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id']);
+            ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id'])
+            ->assertJsonFragment(['user' => $user->toArray()])
+            ->assertJsonFragment(['author' => $author->toArray()])
+            ->assertJsonFragment($database);
 
         $this->assertDatabaseHas('posts', $database);
     }
