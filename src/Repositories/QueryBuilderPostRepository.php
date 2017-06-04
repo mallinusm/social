@@ -31,8 +31,6 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
         return (new Post)->fill($this->insert([
             'author_id' => $authorId,
             'content' => $content,
-            'created_at' => $now = $this->freshTimestamp(),
-            'updated_at' => $now,
             'user_id' => $userId
         ]));
     }

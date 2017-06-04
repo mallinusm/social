@@ -29,9 +29,7 @@ class QueryBuilderCommentRepository extends QueryBuilderRepository implements Co
     {
         return (new Comment)->fill($this->insert([
             'content' => $content,
-            'created_at' => $now = $this->freshTimestamp(),
             'post_id' => $postId,
-            'updated_at' => $now,
             'user_id' => $userId,
         ]));
     }

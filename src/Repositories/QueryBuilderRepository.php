@@ -47,12 +47,23 @@ abstract class QueryBuilderRepository
     }
 
     /**
+     * @return array
+     */
+    private function getTimestamps(): array
+    {
+        return [
+            'created_at' => $now = $this->freshTimestamp(),
+            'updated_at' => $now
+        ];
+    }
+
+    /**
      * @param array $attributes
      * @return array
      */
-    protected function insert(array $attributes): array
+    protected function insert(array $attributes = []): array
     {
-        $id = $this->getBuilder()->insertGetId($attributes);
+        $id = $this->getBuilder()->insertGetId($attributes += $this->getTimestamps());
 
         return $attributes + compact('id');
     }

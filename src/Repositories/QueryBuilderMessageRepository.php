@@ -31,8 +31,6 @@ class QueryBuilderMessageRepository extends QueryBuilderRepository implements Me
         return (new Message)->fill($this->insert([
             'conversation_id' => $conversationId,
             'content' => $content,
-            'created_at' => $now = $this->freshTimestamp(),
-            'updated_at' => $now,
             'user_id' => $userId
         ]));
     }

@@ -28,17 +28,16 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
      */
     public function start(array $userIds): Conversation
     {
-        $id = $this->getBuilder()->insertGetId($attributes = [
-            'created_at' => $now = $this->freshTimestamp(),
-            'updated_at' => $now
-        ]);
+        $attributes = $this->insert();
+
+        $conversationId = $attributes['id'];
 
         $now = $this->freshTimestamp();
 
         $this->getBuilder()->from('conversation_user')->insert(
-            (new Collection($userIds))->transform(function($userId) use($id, $now): array {
+            (new Collection($userIds))->transform(function($userId) use($conversationId, $now): array {
                 return [
-                    'conversation_id' => $id,
+                    'conversation_id' => $conversationId,
                     'user_id' => $userId,
                     'created_at' => $now,
                     'updated_at' => $now
@@ -46,7 +45,7 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
             })->all()
         );
 
-        return (new Conversation)->fill($attributes + compact('id'));
+        return (new Conversation)->fill($attributes);
     }
 
     /**

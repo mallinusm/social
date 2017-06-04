@@ -28,11 +28,9 @@ class QueryBuilderUserRepository extends QueryBuilderRepository implements UserR
     public function register(string $email, string $name, string $password): User
     {
         return (new User)->fill($this->insert([
-            'created_at' => $now = $this->freshTimestamp(),
             'email' => $email,
             'name' => $name,
-            'password' => $password,
-            'updated_at' => $now
+            'password' => $password
         ]));
     }
 }
