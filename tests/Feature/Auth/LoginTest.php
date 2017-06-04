@@ -17,7 +17,7 @@ class LoginTest extends FeatureTestCase
     public function testCannotLoginWithInvalidCredentials(): void
     {
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('oauth/token')
+            ->postJson('api/v1/oauth/token')
             ->assertStatus(400);
     }
 
@@ -37,7 +37,7 @@ class LoginTest extends FeatureTestCase
         $user = $this->createUser(['password' => bcrypt($password)]);
 
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('oauth/token', [
+            ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $client->getAttribute('id'),
                 'client_secret' => $client->getAttribute('secret'),
