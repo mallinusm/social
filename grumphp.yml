@@ -4,3 +4,6 @@ parameters:
     tasks:
         phplint: ~
         phpunit: ~
+    ascii:
+        failed: ~
+        succeeded: ~
