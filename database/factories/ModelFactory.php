@@ -1,20 +1,9 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| Here you may define all of your model factories. Model factories give
-| you a convenient way to create models for testing and seeding your
-| database. Just tell the factory how a default model should look.
-|
-*/
-
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Social\Models\{
-    Comment, Conversation, Message, Post, User
+    Comment, Conversation, Follower, Message, Post, User
 };
 
 /** @var Factory $factory */
@@ -53,6 +42,13 @@ $factory->define(Message::class, function (Generator $faker) {
     return [
         'content' => $faker->sentence(),
         'conversation_id' => $faker->numberBetween(1),
+        'user_id' => $faker->numberBetween(1)
+    ];
+});
+
+$factory->define(Follower::class, function (Generator $faker) {
+    return [
+        'author_id' => $faker->numberBetween(1),
         'user_id' => $faker->numberBetween(1)
     ];
 });

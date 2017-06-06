@@ -31,4 +31,13 @@ class QueryBuilderFollowerRepository extends QueryBuilderRepository implements F
             'user_id' => $userId
         ]));
     }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function unfollow(int $id): bool
+    {
+        return ((int)($this->getBuilder()->delete($id)) === 1);
+    }
 }

@@ -3,8 +3,7 @@
 namespace Social\Policies;
 
 use Social\Models\{
-    Post,
-    User
+    Post, User
 };
 
 /**

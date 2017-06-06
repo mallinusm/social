@@ -57,4 +57,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Conversation::class);
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int)($this->getAttribute('id'));
+    }
 }
