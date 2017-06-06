@@ -47,6 +47,8 @@ class UnfollowUserTest extends FeatureTestCase
             ->deleteJson("api/v1/followers/{$follower->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertJson(['error' => 'This action is unauthorized.']);
+
+        $this->assertDatabaseHas('followers', $follower->toArray());
     }
 
     /**

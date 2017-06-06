@@ -15,7 +15,9 @@ use Social\Http\Actions\Messages\{
 use Social\Http\Actions\Posts\{
     PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
-use Social\Http\Actions\Users\RegisterUserAction;
+use Social\Http\Actions\Users\{
+    RegisterUserAction, VisitUserAction
+};
 
 Route::get('/', function() {
    return ['message' => 'Social API v1'];
@@ -29,17 +31,18 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::get('/users/{user}', VisitUserAction::class);
 
     Route::post('/users/{user}/posts', PublishPostAction::class);
     Route::get('/users/{user}/posts', PaginatePostsAction::class);
-
     Route::delete('/posts/{post}', UnpublishPostAction::class);
+
     Route::post('/posts/{post}/comments', LeaveCommentAction::class);
 
     Route::get('/conversations', PaginateConversationsAction::class);
     Route::post('/users/{user}/conversations', StartConversationAction::class);
-    Route::post('/conversations/{conversation}/messages', SendMessageAction::class);
 
+    Route::post('/conversations/{conversation}/messages', SendMessageAction::class);
     Route::get('/conversations/{conversation}/messages', PaginateMessagesAction::class);
 
     Route::post('/users/{user}/followers', FollowUserAction::class);

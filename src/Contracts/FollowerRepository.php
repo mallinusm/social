@@ -22,4 +22,11 @@ interface FollowerRepository
      * @return bool
      */
     public function unfollow(int $id): bool;
+
+    /**
+     * @param int $authorId
+     * @param int $userId
+     * @return bool
+     */
+    public function isFollowing(int $authorId, int $userId): bool;
 }
