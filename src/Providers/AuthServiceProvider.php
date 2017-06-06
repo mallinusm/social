@@ -37,7 +37,8 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Passport::routes(null , [
-            'prefix' => 'api/v1/oauth'
+            'prefix' => 'api/v1/oauth',
+            'middleware' => \Barryvdh\Cors\HandleCors::class,
         ]);
     }
 }
