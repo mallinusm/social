@@ -3,7 +3,6 @@
 namespace Social\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Laravel\Passport\Passport;
 use Social\Models\{
     Message, Post
 };
@@ -35,10 +34,5 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-
-        Passport::routes(null , [
-            'prefix' => 'api/v1/oauth',
-            'middleware' => \Barryvdh\Cors\HandleCors::class,
-        ]);
     }
 }

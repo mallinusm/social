@@ -20,6 +20,8 @@ Route::get('/', function() {
 
 Route::post('/users', RegisterUserAction::class);
 
+Route::post('/oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
+
 Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/user', function (Request $request) {
         return $request->user();
