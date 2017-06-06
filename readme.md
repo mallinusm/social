@@ -6,6 +6,6 @@
     - key:generate
     - migrate
     - db:seed
-    - passport:install
+    - passport:keys
     - passport:client --password
 
