@@ -39,7 +39,9 @@ class SendMessageAction
      */
     public function __invoke(Conversation $conversation, Request $request): Message
     {
-        $this->validate($request, array_except(Message::$createRules, ['conversation_id', 'user_id']));
+        $this->validate($request, [
+            'content' => 'required|string|max:255'
+        ]);
 
         $this->authorizeForUser($user = $request->user(), 'create', [Message::class, $conversation]);
 

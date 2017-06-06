@@ -6,6 +6,7 @@ use Social\Http\Actions\Comments\LeaveCommentAction;
 use Social\Http\Actions\Conversations\{
     PaginateConversationsAction, StartConversationAction
 };
+use Social\Http\Actions\Followers\FollowUserAction;
 use Social\Http\Actions\Messages\{
     PaginateMessagesAction, SendMessageAction
 };
@@ -38,4 +39,6 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('/conversations/{conversation}/messages', SendMessageAction::class);
 
     Route::get('/conversations/{conversation}/messages', PaginateMessagesAction::class);
+
+    Route::post('/users/{user}/followers', FollowUserAction::class);
 });

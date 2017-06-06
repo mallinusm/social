@@ -27,7 +27,7 @@ class LoginTest extends FeatureTestCase
     public function testCanLogin(): void
     {
         $client = (new ClientRepository)->createPasswordGrantClient(
-            null, 'acceptance-test-suite', 'http://localhost'
+            null, config('app.name'), config('app.url')
         );
 
         $this->assertDatabaseHas('oauth_clients', $client->toArray());

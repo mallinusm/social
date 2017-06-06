@@ -17,15 +17,6 @@ class User extends Authenticatable
     use HasApiTokens;
 
     /**
-     * @var array
-     */
-    public static $createRules = [
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:6|confirmed'
-    ];
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array

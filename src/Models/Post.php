@@ -17,15 +17,6 @@ class Post extends Model
     /**
      * @var array
      */
-    public static $createRules = [
-        'author_id' => 'required|integer|exists:users,id',
-        'content' => 'required|string|max:255',
-        'user_id' => 'required|integer|exists:users,id'
-    ];
-
-    /**
-     * @var array
-     */
     protected $fillable = [
         'author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id'
     ];

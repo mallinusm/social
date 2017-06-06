@@ -38,7 +38,9 @@ class PublishPostAction
      */
     public function __invoke(User $user, Request $request): Post
     {
-        $this->validate($request, array_except(Post::$createRules, ['author_id', 'user_id']));
+        $this->validate($request, [
+            'content' => 'required|string|max:255'
+        ]);
 
         $author = $request->user();
 

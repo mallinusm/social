@@ -14,15 +14,6 @@ class Message extends Model
     /**
      * @var array
      */
-    public static $createRules = [
-        'content' => 'required|string|max:255',
-        'conversation_id' => 'required|integer|exists:conversations,id',
-        'user_id' => 'required|integer|exists:users,id'
-    ];
-
-    /**
-     * @var array
-     */
     protected $fillable = [
         'content', 'conversation_id', 'created_at', 'id', 'updated_at', 'user_id'
     ];

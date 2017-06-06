@@ -14,15 +14,6 @@ class Comment extends Model
     /**
      * @var array
      */
-    public static $createRules = [
-        'content' => 'required|string|max:255',
-        'post_id' => 'required|integer|exists:posts,id',
-        'user_id' => 'required|integer|exists:users,id',
-    ];
-
-    /**
-     * @var array
-     */
     protected $fillable = [
         'content', 'created_at', 'id', 'post_id', 'updated_at', 'user_id'
     ];

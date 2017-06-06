@@ -3,7 +3,9 @@ parameters:
     bin_dir: vendor/bin
     tasks:
         phplint: ~
-        phpcsfixer2: ~
+        phpcsfixer2:
+            rules:
+                single_import_per_statement: false
         phpunit: ~
     ascii:
         failed: ~

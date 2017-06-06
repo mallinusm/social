@@ -38,7 +38,9 @@ class LeaveCommentAction
      */
     public function __invoke(Post $post, Request $request): Comment
     {
-        $this->validate($request, array_only(Comment::$createRules, 'content'));
+        $this->validate($request, [
+            'content' => 'required|string|max:255'
+        ]);
 
         $author =  $request->user();
 
