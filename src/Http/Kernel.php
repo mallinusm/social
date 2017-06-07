@@ -32,6 +32,7 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'api' => [
             \Barryvdh\Cors\HandleCors::class,
+            \Social\Http\Middleware\OnlyJsonAllowed::class,
             'throttle:60,1',
             'bindings',
         ],
