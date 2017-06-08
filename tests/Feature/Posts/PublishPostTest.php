@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class PublishPostTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotPublishPostWhenUnauthenticated(): void
+    /** @test */
+    function publish_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users/1/posts')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPublishPostForUnknownUser(): void
+    /** @test */
+    function publish_post_for_unknown_user()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/users/123456789/posts')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->modelNotFoundMessage(User::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPublishPostWithoutContent(): void
+    /** @test */
+    function publish_post_without_content()
     {
         $user = $this->createUser();
 
@@ -46,13 +40,11 @@ class PublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonFragment(['content' => ['The content field is required.']]);
+            ->assertExactJson(['content' => ['The content field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPublishPostWithTooLargeContent(): void
+    /** @test */
+    function publish_post_with_too_long_content()
     {
         $user = $this->createUser();
 
@@ -60,13 +52,11 @@ class PublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts", ['content' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonFragment(['content' => ['The content may not be greater than 255 characters.']]);
+            ->assertExactJson(['content' => ['The content may not be greater than 255 characters.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanPublishPost(): void
+    /** @test */
+    function publish_post()
     {
         $author = $this->createUser();
 

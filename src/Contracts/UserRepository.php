@@ -16,5 +16,5 @@ interface UserRepository
      * @param string $password
      * @return User
      */
-    public function register(string $email, string $name, string $password): User;
+    function register(string $email, string $name, string $password): User;
 }

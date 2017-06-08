@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class VisitUserTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotVisitUserWithoutName(): void
+    /** @test */
+    function visit_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->getJson('api/v1/users/1')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJsonFragment(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotVisitUnknownUser(): void
+    /** @test */
+    function visit_unknown_user()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->getJson('api/v1/users/123456789')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJsonFragment($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->modelNotFoundMessage(User::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCanVisitUser(): void
+    /** @test */
+    function visit_user_when_not_following()
     {
         $user = $this->createUser();
 
@@ -47,14 +41,12 @@ class VisitUserTest extends FeatureTestCase
             ->getJson("api/v1/users/{$user->getId()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['created_at', 'email', 'id', 'name', 'updated_at', 'following'])
-            ->assertJson($user->toArray())
+            ->assertJsonFragment($user->toArray())
             ->assertJsonFragment(['following' => false]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanVisitUserWhenFollower(): void
+    /** @test */
+    function visit_user_when_following()
     {
         $author = $this->createUser();
 
@@ -68,7 +60,7 @@ class VisitUserTest extends FeatureTestCase
             ->getJson("api/v1/users/{$userId}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['created_at', 'email', 'id', 'name', 'updated_at', 'following'])
-            ->assertJson($user->toArray())
+            ->assertJsonFragment($user->toArray())
             ->assertJsonFragment(['following' => true]);
     }
 }

@@ -12,45 +12,37 @@ use Tests\Feature\FeatureTestCase;
  */
 class LeaveCommentTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotLeaveCommentWhenUnauthenticated(): void
+    /** @test */
+    function leave_comment_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/posts/1/comments')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotLeaveCommentForUnknownPost(): void
+    /** @test */
+    function leave_comment_for_unknown_post()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/posts/123456789/comments')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(Post::class));
+            ->assertExactJson($this->modelNotFoundMessage(Post::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotLeaveCommentWithoutContent(): void
+    /** @test */
+    function leave_comment_without_content()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/posts/{$this->createPost()->getId()}/comments")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['content' => ['The content field is required.']]);
+            ->assertExactJson(['content' => ['The content field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotLeaveCommentWithTooLargeContent(): void
+    /** @test */
+    function leave_comment_with_too_long_content()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
@@ -58,13 +50,11 @@ class LeaveCommentTest extends FeatureTestCase
                 'content' => str_random(256)
             ])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['content' => ['The content may not be greater than 255 characters.']]);
+            ->assertExactJson(['content' => ['The content may not be greater than 255 characters.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanLeaveComment(): void
+    /** @test */
+    function leave_comment()
     {
         $content = ['content' => str_random()];
 

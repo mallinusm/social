@@ -16,5 +16,5 @@ interface CommentRepository
      * @param int $userId
      * @return Comment
      */
-    public function leave(string $content, int $postId, int $userId): Comment;
+    function leave(string $content, int $postId, int $userId): Comment;
 }

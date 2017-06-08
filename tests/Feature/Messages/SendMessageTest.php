@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Messages;
 
-use Social\Events\Messages\MessageWasSentEvent;
 use Social\Models\Conversation;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;
@@ -13,45 +12,37 @@ use Tests\Feature\FeatureTestCase;
  */
 class SendMessageTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotSendMessageWhenUnauthenticated(): void
+    /** @test */
+    function send_message_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/conversations/1/messages')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotSendMessageForUnknownConversation(): void
+    /** @test */
+    function send_message_for_unknown_conversation()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/conversations/123456789/messages')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(Conversation::class));
+            ->assertExactJson($this->modelNotFoundMessage(Conversation::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotSendMessageWithoutContent(): void
+    /** @test */
+    function send_message_without_content()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/conversations/{$this->createConversation()->getId()}/messages")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['content' => ['The content field is required.']]);
+            ->assertExactJson(['content' => ['The content field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotSendMessageWithTooLongContent(): void
+    /** @test */
+    function send_message_with_too_long_content()
     {
         $conversationId = $this->createConversation()->getId();
 
@@ -59,13 +50,11 @@ class SendMessageTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/conversations/{$conversationId}/messages", ['content' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJson(['content' => ['The content may not be greater than 255 characters.']]);
+            ->assertExactJson(['content' => ['The content may not be greater than 255 characters.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotSendMessageWhenUserNotInConversation(): void
+    /** @test */
+    function send_message_when_user_is_not_in_conversation()
     {
         $user = $this->createUser();
 
@@ -75,7 +64,7 @@ class SendMessageTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/conversations/{$conversationId}/messages", ['content' => $content = str_random()])
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
 
         $this->assertDatabaseMissing('messages', [
             'conversation_id' => $conversationId,
@@ -84,10 +73,8 @@ class SendMessageTest extends FeatureTestCase
         ]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanSendMessage(): void
+    /** @test */
+    function send_message()
     {
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();

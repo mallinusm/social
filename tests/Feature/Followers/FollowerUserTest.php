@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class FollowerUserTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotFollowUserWhenUnauthenticated(): void
+    /** @test */
+    function follow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users/1/followers')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotFollowUnknownUser(): void
+    /** @test */
+    function follow_unknown_user()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/users/123456789/followers')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->modelNotFoundMessage(User::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCanFollowUser(): void
+    /** @test */
+    function follow_user()
     {
         $author = $this->createUser();
 

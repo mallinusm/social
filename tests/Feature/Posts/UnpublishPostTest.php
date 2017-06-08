@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class UnpublishPostTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotUnpublishPostWhenUnauthenticated(): void
+    /** @test */
+    function unpublish_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->deleteJson('api/v1/posts/1')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotUnpublishUnknownPost(): void
+    /** @test */
+    function unpublish_unknown_post()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->deleteJson('api/v1/posts/123456789')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(Post::class));
+            ->assertExactJson($this->modelNotFoundMessage(Post::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotUnpublishPostWhenNotAuthor(): void
+    /** @test */
+    function unpublish_post_when_not_author()
     {
         $author = $this->createUser();
 
@@ -49,15 +43,13 @@ class UnpublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
 
         $this->assertDatabaseHas('posts', $postArray);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanUnpublishPostWhenAuthor(): void
+    /** @test */
+    function unpublish_post_when_author()
     {
         $author = $this->createUser();
 
@@ -67,7 +59,7 @@ class UnpublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJson(['message' => 'The post was deleted.']);
+            ->assertExactJson(['message' => 'The post was deleted.']);
 
         $this->assertDatabaseMissing('posts', $post->toArray());
     }

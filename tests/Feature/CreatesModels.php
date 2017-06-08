@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Social\Models\{
-    Comment, Conversation, Follower, Message, Post, User
+    Comment, Conversation, Follower, Message, Post, Reaction, ReactionType, User
 };
 
 /**
@@ -64,5 +64,23 @@ trait CreatesModels
     public function createFollower(array $attributes = []): Follower
     {
         return factory(Follower::class)->create($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return ReactionType
+     */
+    public function createReactionType(array $attributes = []): ReactionType
+    {
+        return factory(ReactionType::class)->create($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return Reaction
+     */
+    public function createReaction(array $attributes = []): Reaction
+    {
+        return factory(Reaction::class)->create($attributes);
     }
 }

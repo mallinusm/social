@@ -17,11 +17,11 @@ interface MessageRepository
      * @param int $userId
      * @return Message
      */
-    public function send(string $content, int $conversationId, int $userId): Message;
+    function send(string $content, int $conversationId, int $userId): Message;
 
     /**
      * @param int $conversationId
      * @return Paginator
      */
-    public function paginate(int $conversationId): Paginator;
+    function paginate(int $conversationId): Paginator;
 }

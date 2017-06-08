@@ -11,21 +11,17 @@ use Tests\Feature\FeatureTestCase;
  */
 class PaginateConversationsTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotPaginateConversationsWhenUnauthenticated(): void
+    /** @test */
+    function paginate_conversations_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->getJson('api/v1/conversations')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanPaginateConversations(): void
+    /** @test */
+    function paginate_conversations()
     {
         $user = $this->createUser();
 

@@ -11,10 +11,8 @@ use Tests\Feature\FeatureTestCase;
  */
 class RegisterUserTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithoutName(): void
+    /** @test */
+    function register_user_without_name()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
@@ -22,10 +20,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['name' => ['The name field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithTooLongName(): void
+    /** @test */
+    function register_user_with_too_long_name()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['name' => str_random(256)])
@@ -33,10 +29,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['name' => ['The name may not be greater than 255 characters.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithoutEmail(): void
+    /** @test */
+    function register_user_without_email()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
@@ -44,10 +38,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['email' => ['The email field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithInvalidEmail(): void
+    /** @test */
+    function register_user_with_invalid_email()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['email' => str_random()])
@@ -55,10 +47,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['email' => ['The email must be a valid email address.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithTakenEmail(): void
+    /** @test */
+    function register_user_with_taken_email()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['email' => $this->createUser()->getAttribute('email')])
@@ -66,10 +56,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['email' => ['The email has already been taken.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithoutPassword(): void
+    /** @test */
+    function register_user_without_password()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users')
@@ -77,10 +65,19 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['password' => ['The password field is required.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithoutPasswordConfirmation(): void
+    /** @test */
+    function register_user_with_too_long_password()
+    {
+        $password = str_random(256);
+
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/users', ['password' => $password, 'password_confirmation' => $password])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonFragment(['password' => ['The password may not be greater than 255 characters.']]);
+    }
+
+    /** @test */
+    function register_user_without_password_confirmation()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users', ['password' => str_random()])
@@ -88,10 +85,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['password' => ['The password confirmation does not match.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotRegisterUserWithTooSmallPassword(): void
+    /** @test */
+    function register_user_with_too_small_password()
     {
         $password = '12345';
 
@@ -101,10 +96,8 @@ class RegisterUserTest extends FeatureTestCase
             ->assertJsonFragment(['password' => ['The password must be at least 6 characters.']]);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanRegisterUser(): void
+    /** @test */
+    function register_user()
     {
         $visible = ['name' => str_random(), 'email' => str_random() . '@mail.com'];
 

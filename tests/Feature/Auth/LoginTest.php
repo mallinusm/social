@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use Laravel\Passport\ClientRepository;
+use Laravel\Passport\{
+    Client, ClientRepository
+};
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -12,26 +14,116 @@ use Tests\Feature\FeatureTestCase;
 class LoginTest extends FeatureTestCase
 {
     /**
-     * @return void
+     * @var Client
      */
-    public function testCannotLoginWithInvalidCredentials(): void
+    private $client;
+
+    /**
+     * Create a password grant client.
+     */
+    function setUp()
+    {
+        parent::setUp();
+
+        $this->client = (new ClientRepository)->createPasswordGrantClient(
+            null, config('app.name'), config('app.url')
+        );
+    }
+
+    /** @test */
+    function login_without_grant_type()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/oauth/token')
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'message' => 'The authorization grant type is not supported by the authorization server.'
+            ]);
+    }
+
+    /** @test */
+    function login_with_unknown_grant_type()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', ['grant_type' => str_random()])
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'message' => 'The authorization grant type is not supported by the authorization server.'
+            ]);
+    }
+
+    /** @test */
+    function login_without_client_id()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', ['grant_type' => 'password'])
             ->assertStatus(400);
     }
 
-    /**
-     * @return void
-     */
-    public function testCanLogin(): void
+    /** @test */
+    function login_with_unknown_client_id()
     {
-        $client = (new ClientRepository)->createPasswordGrantClient(
-            null, config('app.name'), config('app.url')
-        );
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', ['grant_type' => 'password', 'client_id' => str_random()])
+            ->assertStatus(401)
+            ->assertJsonFragment(['message' => 'Client authentication failed']);
+    }
 
-        $this->assertDatabaseHas('oauth_clients', $client->toArray());
+    /** @test */
+    function login_without_client_secret()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => $this->client->getAttribute('id')
+            ])
+            ->assertStatus(401)
+            ->assertJsonFragment(['message' => 'Client authentication failed']);
+    }
 
+    /** @test */
+    function login_with_unknown_client_secret()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => $this->client->getAttribute('id'),
+                'client_secret' => str_random()
+            ])
+            ->assertStatus(401)
+            ->assertJsonFragment(['message' => 'Client authentication failed']);
+    }
+
+    /** @test */
+    function login_without_credentials()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => $this->client->getAttribute('id'),
+                'client_secret' => $this->client->getAttribute('secret')
+            ])
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    function login_with_invalid_credentials()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => $this->client->getAttribute('id'),
+                'client_secret' => $this->client->getAttribute('secret'),
+                'username' => str_random(),
+                'password' => str_random()
+            ])
+            ->assertStatus(401)
+            ->assertJsonFragment(['message' => 'The user credentials were incorrect.']);
+    }
+
+    /** @test */
+    function login_with_valid_credentials()
+    {
         $password = str_random();
 
         $user = $this->createUser(['password' => bcrypt($password)]);
@@ -39,8 +131,8 @@ class LoginTest extends FeatureTestCase
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
-                'client_id' => $client->getAttribute('id'),
-                'client_secret' => $client->getAttribute('secret'),
+                'client_id' => $this->client->getAttribute('id'),
+                'client_secret' => $this->client->getAttribute('secret'),
                 'username' => $user->getEmail(),
                 'password' => $password
             ])

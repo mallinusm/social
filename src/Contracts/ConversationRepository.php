@@ -15,11 +15,11 @@ interface ConversationRepository
      * @param array $userIds
      * @return Conversation
      */
-    public function start(array $userIds): Conversation;
+    function start(array $userIds): Conversation;
 
     /**
      * @param int $userId
      * @return Paginator
      */
-    public function paginate(int $userId): Paginator;
+    function paginate(int $userId): Paginator;
 }

@@ -2,13 +2,17 @@
 
 namespace Social\Providers;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Social\Contracts\{
-    CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository, UserRepository
+    CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository,
+    ReactionRepository, UserRepository
 };
+use Social\Models\Post;
 use Social\Repositories\{
     QueryBuilderCommentRepository, QueryBuilderConversationRepository, QueryBuilderFollowerRepository,
-    QueryBuilderMessageRepository, QueryBuilderPostRepository, QueryBuilderUserRepository
+    QueryBuilderMessageRepository, QueryBuilderPostRepository, QueryBuilderReactionRepository,
+    QueryBuilderUserRepository
 };
 
 /**
@@ -26,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         FollowerRepository::class => QueryBuilderFollowerRepository::class,
         MessageRepository::class => QueryBuilderMessageRepository::class,
         PostRepository::class => QueryBuilderPostRepository::class,
+        ReactionRepository::class => QueryBuilderReactionRepository::class,
         UserRepository::class => QueryBuilderUserRepository::class
     ];
 
@@ -37,5 +42,15 @@ class AppServiceProvider extends ServiceProvider
         foreach ($this->singletons as $contract => $implementation) {
             $this->app->singleton($contract, $implementation);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function boot(): void
+    {
+        Relation::morphMap([
+            'posts' => Post::class
+        ]);
     }
 }

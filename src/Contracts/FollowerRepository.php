@@ -15,18 +15,18 @@ interface FollowerRepository
      * @param int $userId
      * @return Follower
      */
-    public function follow(int $authorId, int $userId): Follower;
+    function follow(int $authorId, int $userId): Follower;
 
     /**
      * @param int $id
      * @return bool
      */
-    public function unfollow(int $id): bool;
+    function unfollow(int $id): bool;
 
     /**
      * @param int $authorId
      * @param int $userId
      * @return bool
      */
-    public function isFollowing(int $authorId, int $userId): bool;
+    function isFollowing(int $authorId, int $userId): bool;
 }

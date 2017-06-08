@@ -24,26 +24,34 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
 
     /**
      * @param array $userIds
+     * @param int $conversationId
+     * @return array
+     */
+    private function parseConversationUsers(array $userIds, int $conversationId): array
+    {
+        $now = $this->freshTimestamp();
+
+        return (new Collection($userIds))->transform(function(int $userId) use($conversationId, $now): array {
+            return [
+                'conversation_id' => $conversationId,
+                'user_id' => $userId,
+                'created_at' => $now,
+                'updated_at' => $now
+            ];
+        })->all();
+    }
+
+    /**
+     * @param array $userIds
      * @return Conversation
      */
     public function start(array $userIds): Conversation
     {
         $attributes = $this->insert();
 
-        $conversationId = $attributes['id'];
-
-        $now = $this->freshTimestamp();
-
-        $this->getBuilder()->from('conversation_user')->insert(
-            (new Collection($userIds))->transform(function($userId) use($conversationId, $now): array {
-                return [
-                    'conversation_id' => $conversationId,
-                    'user_id' => $userId,
-                    'created_at' => $now,
-                    'updated_at' => $now
-                ];
-            })->all()
-        );
+        (clone $this->getBuilder())
+            ->from('conversation_user')
+            ->insert($this->parseConversationUsers($userIds, $attributes['id']));
 
         return (new Conversation)->fill($attributes);
     }

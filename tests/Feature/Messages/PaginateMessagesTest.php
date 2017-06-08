@@ -12,45 +12,37 @@ use Tests\Feature\FeatureTestCase;
  */
 class PaginateMessagesTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotPaginateMessagesWhenUnauthenticated(): void
+    /** @test */
+    function paginate_messages_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->getJson('api/v1/conversations/1/messages')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPaginateMessagesForUnknownConversation(): void
+    /** @test */
+    function paginate_messages_for_unknown_conversation()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->getJson('api/v1/conversations/123456789/messages')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(Conversation::class));
+            ->assertExactJson($this->modelNotFoundMessage(Conversation::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPaginateMessagesWhenUserNotInConversation(): void
+    /** @test */
+    function paginate_messages_when_user_is_not_in_conversation()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/conversations/{$this->createConversation()->getId()}/messages")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotPaginateMessages(): void
+    /** @test */
+    function paginate_messages()
     {
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();

@@ -3,7 +3,7 @@
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Social\Models\{
-    Comment, Conversation, Follower, Message, Post, User
+    Comment, Conversation, Follower, Message, Post, Reaction, ReactionType, User
 };
 
 /** @var Factory $factory */
@@ -49,6 +49,21 @@ $factory->define(Message::class, function (Generator $faker) {
 $factory->define(Follower::class, function (Generator $faker) {
     return [
         'author_id' => $faker->numberBetween(1),
+        'user_id' => $faker->numberBetween(1)
+    ];
+});
+
+$factory->define(ReactionType::class, function (Generator $faker) {
+    return [
+        'name' => $faker->word
+    ];
+});
+
+$factory->define(Reaction::class, function (Generator $faker) {
+    return [
+        'reactionable_id' => $faker->numberBetween(1),
+        'reactionable_type' => $faker->numberBetween(1),
+        'reaction_type_id' => $faker->numberBetween(1),
         'user_id' => $faker->numberBetween(1)
     ];
 });

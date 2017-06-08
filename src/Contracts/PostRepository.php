@@ -17,11 +17,11 @@ interface PostRepository
      * @param int $userId
      * @return Post
      */
-    public function publish(int $authorId, string $content, int $userId): Post;
+    function publish(int $authorId, string $content, int $userId): Post;
 
     /**
      * @param int $userId
      * @return Paginator
      */
-    public function paginate(int $userId): Paginator;
+    function paginate(int $userId): Paginator;
 }

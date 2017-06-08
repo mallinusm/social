@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class StartConversationTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotStartConversationWhenUnauthenticated(): void
+    /** @test */
+    function start_conversation_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/users/1/conversations')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotStartConversationWithUnknownUser(): void
+    /** @test */
+    function start_conversation_with_unknown_user()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/users/123456789/conversations')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->modelNotFoundMessage(User::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCanStartConversation(): void
+    /** @test */
+    function start_conversation()
     {
         $author = $this->createUser();
 

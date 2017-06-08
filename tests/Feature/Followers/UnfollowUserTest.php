@@ -12,33 +12,27 @@ use Tests\Feature\FeatureTestCase;
  */
 class UnfollowUserTest extends FeatureTestCase
 {
-    /**
-     * @return void
-     */
-    public function testCannotUnfollowUserWhenUnauthenticated(): void
+    /** @test */
+    function unfollow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
             ->deleteJson('api/v1/followers/1')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotUnfollowUnknownFollower(): void
+    /** @test */
+    function unfollow_unknown_user_following()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->deleteJson('api/v1/followers/123456789')
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertJson($this->modelNotFoundMessage(Follower::class));
+            ->assertExactJson($this->modelNotFoundMessage(Follower::class));
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotUnfollowUserWhenNotAuthor(): void
+    /** @test */
+    function unfollow_user_when_not_author()
     {
         $follower = $this->createFollower(['author_id' => $this->createUser()->getId()]);
 
@@ -46,15 +40,13 @@ class UnfollowUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/followers/{$follower->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
 
         $this->assertDatabaseHas('followers', $follower->toArray());
     }
 
-    /**
-     * @return void
-     */
-    public function testCannotUnfollowUser(): void
+    /** @test */
+    function unfollow_user()
     {
         $author = $this->createUser();
 
@@ -64,7 +56,7 @@ class UnfollowUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/followers/{$follower->getId()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJson(['message' => 'User unfollowed.']);
+            ->assertExactJson(['message' => 'User unfollowed.']);
 
         $this->assertDatabaseMissing('followers', $follower->toArray());
     }
