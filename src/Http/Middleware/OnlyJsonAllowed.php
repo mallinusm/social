@@ -20,7 +20,7 @@ class OnlyJsonAllowed
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->isJson() && $request->wantsJson()) {
+        if ($request->expectsJson()) {
             return $next($request);
         }
 
