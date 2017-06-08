@@ -3,6 +3,7 @@
 namespace Social\Repositories;
 
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Social\Contracts\PostRepository;
 use Social\Models\Post;
 

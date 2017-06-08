@@ -2,7 +2,7 @@
 
 namespace Social\Contracts;
 
-use Social\Models\Reaction;
+use Social\Models\Reactionable;
 
 /**
  * Interface ReactionRepository
@@ -14,23 +14,23 @@ interface ReactionRepository
      * @param string $name
      * @return int
      */
-    function getReactionTypeId(string $name): int;
+    function getReactionId(string $name): int;
 
     /**
      * @param int $reactionableId
      * @param string $reactionableType
-     * @param int $reactionTypeId
+     * @param int $reactionId
      * @param int $userId
      * @return bool
      */
-    function hasReacted(int $reactionableId, string $reactionableType, int $reactionTypeId, int $userId): bool;
+    function hasReacted(int $reactionableId, string $reactionableType, int $reactionId, int $userId): bool;
 
     /**
      * @param int $reactionableId
      * @param string $reactionableType
-     * @param int $reactionTypeId
+     * @param int $reactionId
      * @param int $userId
-     * @return Reaction
+     * @return Reactionable
      */
-    function react(int $reactionableId, string $reactionableType, int $reactionTypeId, int $userId): Reaction;
+    function react(int $reactionableId, string $reactionableType, int $reactionId, int $userId): Reactionable;
 }

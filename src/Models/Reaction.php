@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Model;
 class Reaction extends Model
 {
     /**
-     * @var array
+     * @return int
      */
-    protected $fillable = [
-        'created_at', 'id', 'reactionable_id', 'reactionable_type', 'reaction_type_id', 'updated_at', 'user_id'
-    ];
+    public function getId(): int
+    {
+        return (int) $this->getAttribute('id');
+    }
 }

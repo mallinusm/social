@@ -6,7 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Social\Contracts\ReactionRepository;
 use Social\Models\{
-    Post, Reaction
+    Post, Reactionable
 };
 
 /**
@@ -32,24 +32,24 @@ class UpvotePostAction
     /**
      * @param Post $post
      * @param Request $request
-     * @return Reaction
+     * @return Reactionable
      * @throws AuthorizationException
      */
-    public function __invoke(Post $post, Request $request): Reaction
+    public function __invoke(Post $post, Request $request): Reactionable
     {
         $user = $request->user();
         $userId = $request->user()->getAuthIdentifier();
 
         $postId = $post->getId();
 
-        $reactionTypeId = $this->reactionRepository->getReactionTypeId('upvote');
+        $reactionId = $this->reactionRepository->getReactionId('upvote');
 
-        if ($this->reactionRepository->hasReacted($postId, 'posts', $reactionTypeId, $userId)) {
+        if ($this->reactionRepository->hasReacted($postId, 'posts', $reactionId, $userId)) {
             throw new AuthorizationException('This action is unauthorized.');
         }
 
         return $this->reactionRepository
-            ->react($postId, 'posts', $reactionTypeId, $userId)
+            ->react($postId, 'posts', $reactionId, $userId)
             ->setAttribute('user', $user);
     }
 }

@@ -47,6 +47,6 @@ class PaginatePostsTest extends FeatureTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
             ->assertJsonFragment(['author' => $user->toArray()])
-            ->assertJsonFragment(['comments' => [$comment->setAttribute('user', $user->toArray())->toArray()]]);
+            ->assertJsonFragment(['comments' => [$comment->toArray() + ['user' => $user->toArray()]]]);
     }
 }

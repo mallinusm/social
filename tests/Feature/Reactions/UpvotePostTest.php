@@ -3,7 +3,7 @@
 namespace Tests\Feature\Reactions;
 
 use Social\Models\{
-    Post, ReactionType
+    Post, Reaction
 };
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;
@@ -40,7 +40,7 @@ class UpvotePostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/posts/{$this->createPost()->getId()}/upvote")
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertExactJson($this->modelNotFoundMessage(ReactionType::class));
+            ->assertExactJson($this->modelNotFoundMessage(Reaction::class));
     }
 
     /** @test */
@@ -48,14 +48,14 @@ class UpvotePostTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $reactionTypeId = $this->createReactionType(['name' => 'upvote'])->getId();
+        $reactionId = $this->createReaction(['name' => 'upvote'])->getId();
 
         $postId = $this->createPost()->getId();
 
-        $reaction = $this->createReaction($attributes = [
+        $reactionable = $this->createReactionable($attributes = [
             'reactionable_id' => $postId,
             'reactionable_type' => 'posts',
-            'reaction_type_id' => $reactionTypeId,
+            'reaction_id' => $reactionId,
             'user_id' => $user->getId()
         ]);
 
@@ -68,12 +68,12 @@ class UpvotePostTest extends FeatureTestCase
         /**
          * Delete the original upvote reaction.
          */
-        $reaction->delete();
+        $reactionable->delete();
 
         /**
          * Make sure the upvote reaction was not inserted twice.
          */
-        $this->assertDatabaseMissing('reactions', $attributes);
+        $this->assertDatabaseMissing('reactionables', $attributes);
     }
 
     /** @test */
@@ -81,7 +81,7 @@ class UpvotePostTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $reactionTypeId = $this->createReactionType(['name' => 'upvote'])->getId();
+        $reactionId = $this->createReaction(['name' => 'upvote'])->getId();
 
         $postId = $this->createPost()->getId();
 
@@ -90,17 +90,17 @@ class UpvotePostTest extends FeatureTestCase
             ->postJson("api/v1/posts/{$postId}/upvote")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
-                'created_at', 'id', 'reactionable_id', 'reactionable_type', 'reaction_type_id', 'updated_at', 'user',
+                'created_at', 'id', 'reactionable_id', 'reactionable_type', 'reaction_id', 'updated_at', 'user',
                 'user_id'
             ])
             ->assertJsonFragment($attributes = [
                 'reactionable_id' => $postId,
                 'reactionable_type' => 'posts',
-                'reaction_type_id' => $reactionTypeId,
+                'reaction_id' => $reactionId,
                 'user_id' => $user->getId()
             ])
             ->assertJsonFragment(['user' => $user->toArray()]);
 
-        $this->assertDatabaseHas('reactions', $attributes);
+        $this->assertDatabaseHas('reactionables', $attributes);
     }
 }
