@@ -46,7 +46,66 @@ class PaginatePostsTest extends FeatureTestCase
             ->getJson("api/v1/users/{$userId}/posts")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
+            ->assertJsonFragment($post->toArray())
             ->assertJsonFragment(['author' => $user->toArray()])
             ->assertJsonFragment(['comments' => [$comment->toArray() + ['user' => $user->toArray()]]]);
+    }
+
+    /** @test */
+    function paginate_posts_when_upvoting()
+    {
+        $user = $this->createUser();
+        $userId = $user->getAuthIdentifier();
+
+        $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
+
+        $reactionId = $this->createReaction(['name' => 'upvote']);
+
+        $this->createReactionable([
+            'reactionable_id' => $post->getId(),
+            'reactionable_type' => 'posts',
+            'reaction_id' => $reactionId,
+            'user_id' => $userId
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/users/{$userId}/posts")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->simplePaginationStructure())
+            ->assertJsonFragment(
+                $post->setAttribute('has_upvoting_count', true)
+                    ->setAttribute('has_downvoting_count', false)
+                    ->toArray()
+            );
+    }
+
+    /** @test */
+    function paginate_posts_when_downvoting()
+    {
+        $user = $this->createUser();
+        $userId = $user->getAuthIdentifier();
+
+        $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
+
+        $reactionId = $this->createReaction(['name' => 'downvote']);
+
+        $this->createReactionable([
+            'reactionable_id' => $post->getId(),
+            'reactionable_type' => 'posts',
+            'reaction_id' => $reactionId,
+            'user_id' => $userId
+        ]);
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/users/{$userId}/posts")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->simplePaginationStructure())
+            ->assertJsonFragment(
+                $post->setAttribute('has_upvoting_count', false)
+                    ->setAttribute('has_downvoting_count', true)
+                    ->toArray()
+            );
     }
 }

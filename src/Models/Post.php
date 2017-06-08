@@ -4,7 +4,7 @@ namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{
-    BelongsTo, HasMany, MorphToMany
+    BelongsTo, BelongsToMany, HasMany, MorphToMany
 };
 
 /**
@@ -24,7 +24,7 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'author_id' => 'int', 'user_id' => 'int'
+        'author_id' => 'int', 'has_downvoting_count' => 'bool', 'has_upvoting_count' => 'bool', 'user_id' => 'int'
     ];
 
     /**
@@ -65,5 +65,21 @@ class Post extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function reactions(): MorphToMany
+    {
+        return $this->morphToMany(Reaction::class, 'reactionable');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function isReacting(): BelongsToMany
+    {
+        return $this->reactions()->wherePivot('user_id', auth()->user()->getAuthIdentifier());
     }
 }
