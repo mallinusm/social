@@ -4,6 +4,7 @@ namespace Social\Repositories;
 
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Social\Contracts\PostRepository;
 use Social\Models\Post;
 
@@ -43,7 +44,10 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
     public function paginate(int $userId): Paginator
     {
         return (new Post)->newQuery()
-            ->with('author', 'comments', 'comments.user')
+            ->with('author', 'comments.user')
+            ->with(['comments' => function(HasMany $query) {
+                $query->getQuery()->latest()->take(10);
+            }])
             ->where('user_id', $userId)
             ->withCount(['hasReacted as has_upvoting' => function(Builder $query) {
                 $query->where('name', 'upvote');
