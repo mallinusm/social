@@ -38,6 +38,7 @@ class PaginatePostsTest extends FeatureTestCase
         $userId = $user->getAuthIdentifier();
 
         $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
+        $postTwo = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
 
         $comment = $this->createComment(['user_id' => $userId, 'post_id' => $post->getId()]);
 
@@ -47,6 +48,7 @@ class PaginatePostsTest extends FeatureTestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->simplePaginationStructure())
             ->assertJsonFragment($post->toArray())
+            ->assertJsonFragment($postTwo->toArray())
             ->assertJsonFragment(['author' => $user->toArray()])
             ->assertJsonFragment(['comments' => [$comment->toArray() + ['user' => $user->toArray()]]]);
     }
@@ -68,6 +70,13 @@ class PaginatePostsTest extends FeatureTestCase
             'user_id' => $userId
         ]);
 
+        $this->createReactionable([
+            'reactionable_id' => $post->getId(),
+            'reactionable_type' => 'posts',
+            'reaction_id' => $reactionId,
+            'user_id' => $this->createUser()->getId()
+        ]);
+
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/{$userId}/posts")
@@ -76,6 +85,8 @@ class PaginatePostsTest extends FeatureTestCase
             ->assertJsonFragment(
                 $post->setAttribute('has_upvoting_count', true)
                     ->setAttribute('has_downvoting_count', false)
+                    ->setAttribute('upvoting_count', 2)
+                    ->setAttribute('downvoting_count', 0)
                     ->toArray()
             );
     }
@@ -97,6 +108,13 @@ class PaginatePostsTest extends FeatureTestCase
             'user_id' => $userId
         ]);
 
+        $this->createReactionable([
+            'reactionable_id' => $post->getId(),
+            'reactionable_type' => 'posts',
+            'reaction_id' => $reactionId,
+            'user_id' => $this->createUser()->getId()
+        ]);
+
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/{$userId}/posts")
@@ -105,6 +123,8 @@ class PaginatePostsTest extends FeatureTestCase
             ->assertJsonFragment(
                 $post->setAttribute('has_upvoting_count', false)
                     ->setAttribute('has_downvoting_count', true)
+                    ->setAttribute('upvoting_count', 0)
+                    ->setAttribute('downvoting_count', 2)
                     ->toArray()
             );
     }

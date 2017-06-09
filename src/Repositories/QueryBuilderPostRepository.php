@@ -45,10 +45,16 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
         return (new Post)->newQuery()
             ->with('author', 'comments', 'comments.user')
             ->where('user_id', $userId)
-            ->withCount(['isReacting as has_upvoting' => function(Builder $query) {
+            ->withCount(['hasReacted as has_upvoting' => function(Builder $query) {
                 $query->where('name', 'upvote');
             }])
-            ->withCount(['isReacting as has_downvoting' => function(Builder $query) {
+            ->withCount(['hasReacted as has_downvoting' => function(Builder $query) {
+                $query->where('name', 'downvote');
+            }])
+            ->withCount(['reactions as upvoting' => function(Builder $query) {
+                $query->where('name', 'upvote');
+            }])
+            ->withCount(['reactions as downvoting' => function(Builder $query) {
                 $query->where('name', 'downvote');
             }])
             ->latest()
