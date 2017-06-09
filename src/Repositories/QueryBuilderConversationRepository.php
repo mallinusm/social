@@ -49,9 +49,7 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
     {
         $attributes = $this->insert();
 
-        (clone $this->getBuilder())
-            ->from('conversation_user')
-            ->insert($this->parseConversationUsers($userIds, $attributes['id']));
+        $this->getBuilder('conversation_user')->insert($this->parseConversationUsers($userIds, $attributes['id']));
 
         return (new Conversation)->fill($attributes);
     }

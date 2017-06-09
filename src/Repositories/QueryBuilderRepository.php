@@ -31,11 +31,21 @@ abstract class QueryBuilderRepository
     }
 
     /**
+     * @param string|null $tableName
      * @return Builder
      */
-    protected function getBuilder(): Builder
+    protected function getBuilder(string $tableName = null): Builder
     {
-        return $this->builder;
+        if ($tableName === null) {
+            return $this->builder;
+        }
+
+        /**
+         * We need to clone the query builder because we are changing its table name property. If we change the table
+         * name of the original query builder we will encounter unwanted behaviour, for instance the wrong table getting
+         * queried in other methods, especially if this class is used as a singleton within the application.
+         */
+        return (clone $this->getBuilder())->from($tableName);
     }
 
     /**

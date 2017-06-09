@@ -28,10 +28,7 @@ class QueryBuilderReactionRepository extends QueryBuilderRepository implements R
      */
     public function getReactionId(string $name): int
     {
-        $id = (clone $this->getBuilder())
-            ->from('reactions')
-            ->where('name', $name)
-            ->value('id');
+        $id = $this->getBuilder('reactions')->where('name', $name)->value('id');
 
         if ($id === null) {
             throw (new ModelNotFoundException)->setModel(Reaction::class);
@@ -72,5 +69,22 @@ class QueryBuilderReactionRepository extends QueryBuilderRepository implements R
             'reaction_id' => $reactionId,
             'user_id' => $userId
         ]));
+    }
+
+    /**
+     * @param int $reactionableId
+     * @param string $reactionableType
+     * @param int $reactionId
+     * @param int $userId
+     * @return bool
+     */
+    public function undoReaction(int $reactionableId, string $reactionableType, int $reactionId, int $userId): bool
+    {
+        return (bool) $this->getBuilder()
+            ->where('reactionable_id', $reactionableId)
+            ->where('reactionable_type', $reactionableType)
+            ->where('reaction_id', $reactionId)
+            ->where('user_id', $userId)
+            ->delete();
     }
 }

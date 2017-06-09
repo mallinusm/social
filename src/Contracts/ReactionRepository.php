@@ -33,4 +33,13 @@ interface ReactionRepository
      * @return Reactionable
      */
     function react(int $reactionableId, string $reactionableType, int $reactionId, int $userId): Reactionable;
+
+    /**
+     * @param int $reactionableId
+     * @param string $reactionableType
+     * @param int $reactionId
+     * @param int $userId
+     * @return bool
+     */
+    function undoReaction(int $reactionableId, string $reactionableType, int $reactionId, int $userId): bool;
 }

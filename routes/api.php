@@ -15,7 +15,9 @@ use Social\Http\Actions\Messages\{
 use Social\Http\Actions\Posts\{
     PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
-use Social\Http\Actions\Reactions\UpvotePostAction;
+use Social\Http\Actions\Reactions\{
+    UndoUpvotePostAction, UpvotePostAction
+};
 use Social\Http\Actions\Users\{
     RegisterUserAction, VisitUserAction
 };
@@ -50,4 +52,5 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::delete('/followers/{follower}', UnfollowUserAction::class);
 
     Route::post('/posts/{post}/upvote', UpvotePostAction::class);
+    Route::delete('/posts/{post}/upvote', UndoUpvotePostAction::class);
 });
