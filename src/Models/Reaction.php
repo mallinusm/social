@@ -3,6 +3,7 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Social\Models\Attributes\HasId;
 
 /**
  * Class Reaction
@@ -10,11 +11,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Reaction extends Model
 {
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return (int) $this->getAttribute('id');
-    }
+    use HasId;
 }

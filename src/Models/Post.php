@@ -2,10 +2,13 @@
 
 namespace Social\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{
-    BelongsTo, BelongsToMany, HasMany, MorphToMany
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Social\Models\Attributes\{
+    HasAuthorId, HasId, HasUserId
+};
+use Social\Models\Relations\{
+    BelongsToAuthor, HasManyComments, MorphToManyReactions
 };
 
 /**
@@ -14,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\{
  */
 class Post extends Model
 {
+    use BelongsToAuthor, HasAuthorId, HasManyComments, HasId, HasUserId, MorphToManyReactions;
+
     /**
      * @var array
      */
@@ -32,54 +37,6 @@ class Post extends Model
         'upvoting_count' => 'int',
         'user_id' => 'int'
     ];
-
-    /**
-     * @return BelongsTo
-     */
-    public function author(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return (int)($this->getAttribute('user_id'));
-    }
-
-    /**
-     * @return int
-     */
-    public function getAuthorId(): int
-    {
-        return (int)($this->getAttribute('author_id'));
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return (int)($this->getAttribute('id'));
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function reactions(): MorphToMany
-    {
-        return $this->morphToMany(Reaction::class, 'reactionable');
-    }
 
     /**
      * @return BelongsToMany

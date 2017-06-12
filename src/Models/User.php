@@ -2,11 +2,14 @@
 
 namespace Social\Models;
 
-use Illuminate\Database\Eloquent\Relations\{
-    BelongsToMany, HasMany
-};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use Social\Models\Attributes\{
+    HasEmail, HasId
+};
+use Social\Models\Relations\{
+    BelongsToManyConversations, HasManyPosts
+};
 
 /**
  * Class User
@@ -14,11 +17,9 @@ use Laravel\Passport\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens;
+    use BelongsToManyConversations, HasApiTokens, HasEmail, HasId, HasManyPosts;
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
@@ -26,43 +27,9 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
      * @var array
      */
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    /**
-     * @return HasMany
-     */
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return (string)($this->getAttribute('email'));
-    }
-
-    /**
-     * @return BelongsToMany
-     */
-    public function conversations(): BelongsToMany
-    {
-        return $this->belongsToMany(Conversation::class);
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return (int)($this->getAttribute('id'));
-    }
 }

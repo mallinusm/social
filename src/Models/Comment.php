@@ -3,7 +3,8 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Social\Models\Attributes\HasId;
+use Social\Models\Relations\BelongsToUser;
 
 /**
  * Class Comment
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Comment extends Model
 {
+    use BelongsToUser, HasId;
+
     /**
      * @var array
      */
@@ -24,20 +27,4 @@ class Comment extends Model
     protected $casts = [
         'post_id' => 'int', 'user_id' => 'int'
     ];
-
-    /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return (int) $this->getAttribute('id');
-    }
 }

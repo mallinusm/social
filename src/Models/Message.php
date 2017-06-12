@@ -3,7 +3,8 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Social\Models\Attributes\HasConversationId;
+use Social\Models\Relations\BelongsToUser;
 
 /**
  * Class Message
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Message extends Model
 {
+    use BelongsToUser, HasConversationId;
+
     /**
      * @var array
      */
@@ -24,20 +27,4 @@ class Message extends Model
     protected $casts = [
         'conversation_id' => 'int', 'user_id' => 'int'
     ];
-
-    /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return int
-     */
-    public function getConversationId(): int
-    {
-        return (int)($this->getAttribute('conversation_id'));
-    }
 }

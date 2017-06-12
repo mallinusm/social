@@ -2,8 +2,9 @@
 
 namespace Tests\Feature\Reactions;
 
-use Social\Models\Comment;
-use Social\Models\Reaction;
+use Social\Models\{
+    Comment, Reaction
+};
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;
 
