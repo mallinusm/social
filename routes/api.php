@@ -16,7 +16,7 @@ use Social\Http\Actions\Posts\{
     PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
 use Social\Http\Actions\Reactions\{
-    UndoUpvotePostAction, UpvotePostAction
+    UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
 };
 use Social\Http\Actions\Users\{
     RegisterUserAction, VisitUserAction
@@ -53,4 +53,5 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::post('/posts/{post}/upvote', UpvotePostAction::class);
     Route::delete('/posts/{post}/upvote', UndoUpvotePostAction::class);
+    Route::post('/comments/{comment}/upvote', UpvoteCommentAction::class);
 });

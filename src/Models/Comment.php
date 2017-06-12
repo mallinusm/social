@@ -32,4 +32,12 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int) $this->getAttribute('id');
+    }
 }

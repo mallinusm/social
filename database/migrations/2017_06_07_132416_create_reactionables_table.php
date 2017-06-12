@@ -30,6 +30,6 @@ class CreateReactionablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reactions');
+        Schema::dropIfExists('reactionables');
     }
 }

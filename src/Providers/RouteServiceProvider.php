@@ -3,10 +3,9 @@
 namespace Social\Providers;
 
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Social\Models\{
-    Conversation, Follower, Post, User
+    Comment, Conversation, Follower, Post, User
 };
 
 /**
@@ -19,6 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var array
      */
     private $routeModelBindings = [
+        'comment' => Comment::class,
         'conversation' => Conversation::class,
         'follower' => Follower::class,
         'post' => Post::class,
@@ -59,8 +59,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        Route::prefix('api/v1')
-             ->middleware('api')
-             ->group(base_path('routes/api.php'));
+        /**
+         * @var $this Router
+         */
+        $this->group([
+            'prefix' => 'api/v1',
+            'middleware' => 'api'
+        ], base_path('routes/api.php'));
     }
 }

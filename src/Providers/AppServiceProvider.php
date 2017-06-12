@@ -8,7 +8,9 @@ use Social\Contracts\{
     CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository,
     ReactionRepository, UserRepository
 };
-use Social\Models\Post;
+use Social\Models\{
+    Comment, Post
+};
 use Social\Repositories\{
     QueryBuilderCommentRepository, QueryBuilderConversationRepository, QueryBuilderFollowerRepository,
     QueryBuilderMessageRepository, QueryBuilderPostRepository, QueryBuilderReactionRepository,
@@ -50,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
+            'comments' => Comment::class,
             'posts' => Post::class
         ]);
     }

@@ -8,12 +8,22 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * @var array
+     */
+    private $seeders = [
+        ReactionsTableSeeder::class,
+        UsersTableSeeder::class
+    ];
+
+    /**
      * Run the database seeds.
      *
      * @return void
      */
     public function run(): void
     {
-        $this->call(UsersTableSeeder::class);
+        foreach ($this->seeders as $seeder) {
+            $this->call($seeder);
+        }
     }
 }
