@@ -46,6 +46,6 @@ class PublishPostAction
 
         return $this->postRepository->publish(
             $author->getAuthIdentifier(), $request->input('content'), $user->getAuthIdentifier()
-        )->setAttribute('user', $user)->setAttribute('author', $author);
+        )->setAttribute('user', $user)->setAttribute('author', $author)->setAttribute('comments', []);
     }
 }

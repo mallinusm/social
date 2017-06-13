@@ -74,6 +74,7 @@ class PublishPostTest extends FeatureTestCase
             ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id'])
             ->assertJsonFragment(['user' => $user->toArray()])
             ->assertJsonFragment(['author' => $author->toArray()])
+            ->assertJsonFragment(['comments' => []])
             ->assertJsonFragment($database);
 
         $this->assertDatabaseHas('posts', $database);
