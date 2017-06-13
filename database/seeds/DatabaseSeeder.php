@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
      * @var array
      */
     private $seeders = [
+        CommentsTableSeeder::class,
+        PostsTableSeeder::class,
         ReactionsTableSeeder::class,
         UsersTableSeeder::class
     ];

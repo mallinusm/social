@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Social\Contracts\PostRepository;
 use Social\Models\Post;
 
@@ -39,22 +40,13 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
     }
 
     /**
+     * @param string $name
      * @return Closure
      */
-    private function upvoteClosure(): Closure
+    private function reactionClosure(string $name): Closure
     {
-        return function(Builder $query) {
-            $query->where('name', 'upvote');
-        };
-    }
-
-    /**
-     * @return Closure
-     */
-    private function downvoteClosure(): Closure
-    {
-        return function(Builder $query) {
-            $query->where('name', 'downvote');
+        return function(Builder $query) use($name): void {
+            $query->where('name', $name);
         };
     }
 
@@ -69,17 +61,17 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
             ->with('comments.user')
             ->with(['comments' => function(HasMany $query) {
                 $query->getQuery()
-                    ->withCount(['hasReacted as has_upvoting' => $this->upvoteClosure()])
-                    ->withCount(['hasReacted as has_downvoting' => $this->downvoteClosure()])
-                    ->withCount(['reactions as upvoting' => $this->upvoteClosure()])
-                    ->withCount(['reactions as downvoting' => $this->downvoteClosure()])
+                    ->withCount(['hasReacted as has_upvoting' => $this->reactionClosure('upvote')])
+                    ->withCount(['hasReacted as has_downvoting' => $this->reactionClosure('downvote')])
+                    ->withCount(['reactions as upvoting' => $this->reactionClosure('upvote')])
+                    ->withCount(['reactions as downvoting' => $this->reactionClosure('downvote')])
                     ->latest()
                     ->take(10);
             }])
-            ->withCount(['hasReacted as has_upvoting' => $this->upvoteClosure()])
-            ->withCount(['hasReacted as has_downvoting' => $this->downvoteClosure()])
-            ->withCount(['reactions as upvoting' => $this->upvoteClosure()])
-            ->withCount(['reactions as downvoting' => $this->downvoteClosure()])
+            ->withCount(['hasReacted as has_upvoting' => $this->reactionClosure('upvote')])
+            ->withCount(['hasReacted as has_downvoting' => $this->reactionClosure('downvote')])
+            ->withCount(['reactions as upvoting' => $this->reactionClosure('upvote')])
+            ->withCount(['reactions as downvoting' => $this->reactionClosure('downvote')])
             ->where('user_id', $userId)
             ->latest()
             ->simplePaginate();
