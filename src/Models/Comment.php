@@ -5,6 +5,7 @@ namespace Social\Models;
 use Illuminate\Database\Eloquent\Model;
 use Social\Models\Attributes\HasId;
 use Social\Models\Relations\BelongsToUser;
+use Social\Models\Relations\MorphToManyReactions;
 
 /**
  * Class Comment
@@ -12,7 +13,7 @@ use Social\Models\Relations\BelongsToUser;
  */
 class Comment extends Model
 {
-    use BelongsToUser, HasId;
+    use BelongsToUser, HasId, MorphToManyReactions;
 
     /**
      * @var array
@@ -25,6 +26,11 @@ class Comment extends Model
      * @var array
      */
     protected $casts = [
-        'post_id' => 'int', 'user_id' => 'int'
+        'downvoting_count' => 'int',
+        'has_downvoting_count' => 'bool',
+        'has_upvoting_count' => 'bool',
+        'upvoting_count' => 'int',
+        'post_id' => 'int',
+        'user_id' => 'int'
     ];
 }

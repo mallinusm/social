@@ -37,12 +37,4 @@ class Post extends Model
         'upvoting_count' => 'int',
         'user_id' => 'int'
     ];
-
-    /**
-     * @return BelongsToMany
-     */
-    public function hasReacted(): BelongsToMany
-    {
-        return $this->reactions()->wherePivot('user_id', auth()->user()->getAuthIdentifier());
-    }
 }
