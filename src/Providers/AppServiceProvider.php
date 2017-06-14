@@ -6,11 +6,13 @@ use Illuminate\Bus\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Social\Commands\Reactions\ReactionCommand;
+use Social\Commands\Reactions\UndoReactionCommand;
 use Social\Contracts\{
     CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository,
     ReactionRepository, UserRepository
 };
 use Social\Handlers\Reactions\ReactionCommandHandler;
+use Social\Handlers\Reactions\UndoReactionCommandHandler;
 use Social\Models\{
     Comment, Post
 };
@@ -30,7 +32,8 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $busCommands = [
-        ReactionCommand::class => ReactionCommandHandler::class
+        ReactionCommand::class => ReactionCommandHandler::class,
+        UndoReactionCommand::class => UndoReactionCommandHandler::class
     ];
 
     /**

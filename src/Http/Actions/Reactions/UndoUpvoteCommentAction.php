@@ -3,8 +3,9 @@
 namespace Social\Http\Actions\Reactions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
-use Social\Contracts\ReactionRepository;
+use Social\Commands\Reactions\UndoReactionCommand;
 use Social\Models\Comment;
 
 /**
@@ -14,17 +15,17 @@ use Social\Models\Comment;
 class UndoUpvoteCommentAction
 {
     /**
-     * @var ReactionRepository
+     * @var Dispatcher
      */
-    private $reactionRepository;
+    private $dispatcher;
 
     /**
-     * UndoUpvotePostAction constructor.
-     * @param ReactionRepository $reactionRepository
+     * UndoUpvoteCommentAction constructor.
+     * @param Dispatcher $dispatcher
      */
-    public function __construct(ReactionRepository $reactionRepository)
+    public function __construct(Dispatcher $dispatcher)
     {
-        $this->reactionRepository = $reactionRepository;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -35,15 +36,9 @@ class UndoUpvoteCommentAction
      */
     public function __invoke(Comment $comment, Request $request): array
     {
-        $userId = $request->user()->getAuthIdentifier();
-
-        $reactionId = $this->reactionRepository->getReactionId('upvote');
-
-        if ( ! $this->reactionRepository->hasReacted($comment->getId(), 'comments', $reactionId, $userId)) {
-            throw new AuthorizationException('This action is unauthorized.');
-        }
-
-        $this->reactionRepository->undoReaction($comment->getId(), 'comments', $reactionId, $userId);
+        $this->dispatcher->dispatchNow(new UndoReactionCommand(
+            $comment->getId(), 'comments', 'upvote', $request->user()->getAuthIdentifier()
+        ));
 
         return ['message' => 'Upvote undone.'];
     }
