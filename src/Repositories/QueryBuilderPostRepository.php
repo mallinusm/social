@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 use Social\Contracts\PostRepository;
 use Social\Models\Post;
 

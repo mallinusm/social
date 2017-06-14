@@ -16,7 +16,7 @@ use Social\Http\Actions\Posts\{
     PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
 use Social\Http\Actions\Reactions\{
-    UndoUpvoteCommentAction, UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
+    DownvotePostAction, UndoUpvoteCommentAction, UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
 };
 use Social\Http\Actions\Users\{
     RegisterUserAction, VisitUserAction
@@ -33,7 +33,7 @@ $router->post('/oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenCon
 
 $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     /**
-     * User routes.
+     * User
      */
     $router->get('/user', function (Request $request) {
         return $request->user();
@@ -41,19 +41,19 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('/users/{user}', VisitUserAction::class);
 
     /**
-     * Post routes.
+     * Post
      */
     $router->post('/users/{user}/posts', PublishPostAction::class);
     $router->get('/users/{user}/posts', PaginatePostsAction::class);
     $router->delete('/posts/{post}', UnpublishPostAction::class);
 
     /**
-     * Comment routes.
+     * Comment
      */
     $router->post('/posts/{post}/comments', LeaveCommentAction::class);
 
     /**
-     * Conversation routes.
+     * Conversation
      */
     $router->get('/conversations', PaginateConversationsAction::class);
     $router->post('/users/{user}/conversations', StartConversationAction::class);
@@ -65,16 +65,21 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('/conversations/{conversation}/messages', PaginateMessagesAction::class);
 
     /**
-     * Follower routes.
+     * Follower
      */
     $router->post('/users/{user}/followers', FollowUserAction::class);
     $router->delete('/followers/{follower}', UnfollowUserAction::class);
 
     /**
-     * Reaction routes.
+     * Upvote
      */
     $router->post('/posts/{post}/upvote', UpvotePostAction::class);
     $router->delete('/posts/{post}/upvote', UndoUpvotePostAction::class);
     $router->post('/comments/{comment}/upvote', UpvoteCommentAction::class);
     $router->delete('/comments/{comment}/upvote', UndoUpvoteCommentAction::class);
+
+    /**
+     * Downvote
+     */
+    $router->post('/posts/{post}/downvote', DownvotePostAction::class);
 });
