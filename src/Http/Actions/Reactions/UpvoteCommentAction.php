@@ -2,9 +2,9 @@
 
 namespace Social\Http\Actions\Reactions;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
-use Social\Contracts\ReactionRepository;
+use Social\Commands\Reactions\ReactionCommand;
 use Social\Models\{
     Comment, Reactionable
 };
@@ -16,40 +16,34 @@ use Social\Models\{
 class UpvoteCommentAction
 {
     /**
-     * @var ReactionRepository
+     * @var Dispatcher
      */
-    private $reactionRepository;
+    private $dispatcher;
 
     /**
-     * UpvoteCommentAction constructor.
-     * @param ReactionRepository $reactionRepository
+     * UpvotePostAction constructor.
+     * @param Dispatcher $dispatcher
      */
-    public function __construct(ReactionRepository $reactionRepository)
+    public function __construct(Dispatcher $dispatcher)
     {
-        $this->reactionRepository = $reactionRepository;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
      * @param Comment $comment
      * @param Request $request
      * @return Reactionable
-     * @throws AuthorizationException
      */
     public function __invoke(Comment $comment, Request $request): Reactionable
     {
         $user = $request->user();
-        $userId = $request->user()->getAuthIdentifier();
+        $userId = $user->getAuthIdentifier();
 
-        $commentId = $comment->getId();
+        /** @var Reactionable $reactionable */
+        $reactionable = $this->dispatcher->dispatchNow(new ReactionCommand(
+            $comment->getId(), 'comments', 'upvote', $userId
+        ));
 
-        $reactionId = $this->reactionRepository->getReactionId('upvote');
-
-        if ($this->reactionRepository->hasReacted($commentId, 'comments', $reactionId, $userId)) {
-            throw new AuthorizationException('This action is unauthorized.');
-        }
-
-        return $this->reactionRepository
-            ->react($commentId, 'comments', $reactionId, $userId)
-            ->setAttribute('user', $user);
+        return $reactionable->setAttribute('user', $user);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Social\Http\Actions\Reactions;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
-use Social\Contracts\ReactionRepository;
+use Social\Commands\Reactions\ReactionCommand;
 use Social\Models\{
     Post, Reactionable
 };
@@ -16,40 +16,34 @@ use Social\Models\{
 class DownvotePostAction
 {
     /**
-     * @var ReactionRepository
+     * @var Dispatcher
      */
-    private $reactionRepository;
+    private $dispatcher;
 
     /**
      * UpvotePostAction constructor.
-     * @param ReactionRepository $reactionRepository
+     * @param Dispatcher $dispatcher
      */
-    public function __construct(ReactionRepository $reactionRepository)
+    public function __construct(Dispatcher $dispatcher)
     {
-        $this->reactionRepository = $reactionRepository;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
      * @param Post $post
      * @param Request $request
      * @return Reactionable
-     * @throws AuthorizationException
      */
     public function __invoke(Post $post, Request $request): Reactionable
     {
         $user = $request->user();
-        $userId = $request->user()->getAuthIdentifier();
+        $userId = $user->getAuthIdentifier();
 
-        $postId = $post->getId();
+        /** @var Reactionable $reactionable */
+        $reactionable = $this->dispatcher->dispatchNow(new ReactionCommand(
+            $post->getId(), 'posts', 'downvote', $userId
+        ));
 
-        $reactionId = $this->reactionRepository->getReactionId('downvote');
-
-        if ($this->reactionRepository->hasReacted($postId, 'posts', $reactionId, $userId)) {
-            throw new AuthorizationException('This action is unauthorized.');
-        }
-
-        return $this->reactionRepository
-            ->react($postId, 'posts', $reactionId, $userId)
-            ->setAttribute('user', $user);
+        return $reactionable->setAttribute('user', $user);
     }
 }

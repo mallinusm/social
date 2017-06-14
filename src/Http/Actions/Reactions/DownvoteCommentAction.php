@@ -6,14 +6,14 @@ use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 use Social\Commands\Reactions\ReactionCommand;
 use Social\Models\{
-    Post, Reactionable
+    Comment, Reactionable
 };
 
 /**
- * Class UpvotePostAction
+ * Class DownvoteCommentAction
  * @package Social\Http\Actions\Reactions
  */
-class UpvotePostAction
+class DownvoteCommentAction
 {
     /**
      * @var Dispatcher
@@ -30,18 +30,18 @@ class UpvotePostAction
     }
 
     /**
-     * @param Post $post
+     * @param Comment $comment
      * @param Request $request
      * @return Reactionable
      */
-    public function __invoke(Post $post, Request $request): Reactionable
+    public function __invoke(Comment $comment, Request $request): Reactionable
     {
         $user = $request->user();
         $userId = $user->getAuthIdentifier();
 
         /** @var Reactionable $reactionable */
         $reactionable = $this->dispatcher->dispatchNow(new ReactionCommand(
-            $post->getId(), 'posts', 'upvote', $userId
+            $comment->getId(), 'comments', 'downvote', $userId
         ));
 
         return $reactionable->setAttribute('user', $user);

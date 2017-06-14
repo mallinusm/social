@@ -25,6 +25,7 @@ class QueryBuilderReactionRepository extends QueryBuilderRepository implements R
     /**
      * @param string $name
      * @return int
+     * @throws ModelNotFoundException
      */
     public function getReactionId(string $name): int
     {

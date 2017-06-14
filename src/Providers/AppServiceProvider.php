@@ -2,12 +2,15 @@
 
 namespace Social\Providers;
 
+use Illuminate\Bus\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Social\Commands\Reactions\ReactionCommand;
 use Social\Contracts\{
     CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository,
     ReactionRepository, UserRepository
 };
+use Social\Handlers\Reactions\ReactionCommandHandler;
 use Social\Models\{
     Comment, Post
 };
@@ -23,6 +26,13 @@ use Social\Repositories\{
  */
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array
+     */
+    private $busCommands = [
+        ReactionCommand::class => ReactionCommandHandler::class
+    ];
+
     /**
      * @var array
      */
@@ -47,10 +57,12 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * @return void
+     * @param Dispatcher $dispatcher
      */
-    public function boot(): void
+    public function boot(Dispatcher $dispatcher): void
     {
+        $dispatcher->map($this->busCommands);
+
         Relation::morphMap([
             'comments' => Comment::class,
             'posts' => Post::class
