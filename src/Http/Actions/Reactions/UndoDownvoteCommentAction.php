@@ -2,17 +2,16 @@
 
 namespace Social\Http\Actions\Reactions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
 use Social\Commands\Reactions\UndoReactionCommand;
 use Social\Models\Comment;
 
 /**
- * Class UndoUpvoteCommentAction
+ * Class UndoDownvoteCommentAction
  * @package Social\Http\Actions\Reactions
  */
-class UndoUpvoteCommentAction
+class UndoDownvoteCommentAction
 {
     /**
      * @var Dispatcher
@@ -36,9 +35,9 @@ class UndoUpvoteCommentAction
     public function __invoke(Comment $comment, Request $request): array
     {
         $this->dispatcher->dispatchNow(new UndoReactionCommand(
-            $comment->getId(), 'comments', 'upvote', $request->user()->getAuthIdentifier()
+            $comment->getId(), 'comments', 'downvote', $request->user()->getAuthIdentifier()
         ));
 
-        return ['message' => 'Upvote undone.'];
+        return ['message' => 'Downvote undone.'];
     }
 }

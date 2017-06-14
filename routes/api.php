@@ -16,8 +16,8 @@ use Social\Http\Actions\Posts\{
     PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
 use Social\Http\Actions\Reactions\{
-    DownvoteCommentAction, DownvotePostAction, UndoDownvotePostAction, UndoUpvoteCommentAction, UndoUpvotePostAction,
-    UpvoteCommentAction, UpvotePostAction
+    DownvoteCommentAction, DownvotePostAction, UndoDownvoteCommentAction, UndoDownvotePostAction,
+    UndoUpvoteCommentAction, UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
 };
 use Social\Http\Actions\Users\{
     RegisterUserAction, VisitUserAction
@@ -85,5 +85,5 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->post('/posts/{post}/downvote', DownvotePostAction::class);
     $router->post('/comments/{comment}/downvote', DownvoteCommentAction::class);
     $router->delete('/posts/{post}/downvote', UndoDownvotePostAction::class);
-
+    $router->delete('/comments/{comment}/downvote', UndoDownvoteCommentAction::class);
 });
