@@ -32,6 +32,6 @@ class PaginatePostsAction
      */
     public function __invoke(User $user): Paginator
     {
-        return $this->postRepository->paginate($user->getAuthIdentifier());
+        return $this->postRepository->paginate([$user->getId()]);
     }
 }

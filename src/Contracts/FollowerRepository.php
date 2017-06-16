@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Illuminate\Support\Collection;
 use Social\Models\Follower;
 
 /**
@@ -29,4 +30,10 @@ interface FollowerRepository
      * @return bool
      */
     function isFollowing(int $authorId, int $userId): bool;
+
+    /**
+     * @param int $authorId
+     * @return Collection
+     */
+    function getFollowingsIds(int $authorId): Collection;
 }

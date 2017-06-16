@@ -13,7 +13,7 @@ use Social\Http\Actions\Messages\{
     PaginateMessagesAction, SendMessageAction
 };
 use Social\Http\Actions\Posts\{
-    PublishPostAction, PaginatePostsAction, UnpublishPostAction
+    PaginateFeedAction, PublishPostAction, PaginatePostsAction, UnpublishPostAction
 };
 use Social\Http\Actions\Reactions\{
     DownvoteCommentAction, DownvotePostAction, UndoDownvoteCommentAction, UndoDownvotePostAction,
@@ -47,6 +47,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->post('/users/{user}/posts', PublishPostAction::class);
     $router->get('/users/{user}/posts', PaginatePostsAction::class);
     $router->delete('/posts/{post}', UnpublishPostAction::class);
+    $router->get('/feed', PaginateFeedAction::class);
 
     /**
      * Comment

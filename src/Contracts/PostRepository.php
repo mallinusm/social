@@ -20,8 +20,8 @@ interface PostRepository
     function publish(int $authorId, string $content, int $userId): Post;
 
     /**
-     * @param int $userId
+     * @param array $userIds
      * @return Paginator
      */
-    function paginate(int $userId): Paginator;
+    function paginate(array $userIds): Paginator;
 }

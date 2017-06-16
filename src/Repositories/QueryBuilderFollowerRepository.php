@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Illuminate\Support\Collection;
 use Social\Contracts\FollowerRepository;
 use Social\Models\Follower;
 
@@ -52,5 +53,14 @@ class QueryBuilderFollowerRepository extends QueryBuilderRepository implements F
             ->where('author_id', $authorId)
             ->where('user_id', $userId)
             ->exists();
+    }
+
+    /**
+     * @param int $authorId
+     * @return Collection
+     */
+    public function getFollowingsIds(int $authorId): Collection
+    {
+        return $this->getBuilder()->where('author_id', $authorId)->pluck('user_id');
     }
 }

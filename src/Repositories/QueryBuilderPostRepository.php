@@ -2,7 +2,6 @@
 
 namespace Social\Repositories;
 
-use Closure;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,40 +38,25 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
     }
 
     /**
-     * @param string $name
-     * @return Closure
-     */
-    private function reactionClosure(string $name): Closure
-    {
-        return function(Builder $query) use($name): void {
-            $query->where('name', $name);
-        };
-    }
-
-    /**
-     * @param int $userId
+     * @param array $userIds
      * @return Paginator
      */
-    public function paginate(int $userId): Paginator
+    public function paginate(array $userIds): Paginator
     {
-        return (new Post)->newQuery()
-            ->with('author')
-            ->with('comments.user')
-            ->with(['comments' => function(HasMany $query) {
-                $query->getQuery()
-                    ->withCount(['hasReacted as has_upvoting' => $this->reactionClosure('upvote')])
-                    ->withCount(['hasReacted as has_downvoting' => $this->reactionClosure('downvote')])
-                    ->withCount(['reactions as upvoting' => $this->reactionClosure('upvote')])
-                    ->withCount(['reactions as downvoting' => $this->reactionClosure('downvote')])
-                    ->latest()
-                    ->take(10);
-            }])
-            ->withCount(['hasReacted as has_upvoting' => $this->reactionClosure('upvote')])
-            ->withCount(['hasReacted as has_downvoting' => $this->reactionClosure('downvote')])
-            ->withCount(['reactions as upvoting' => $this->reactionClosure('upvote')])
-            ->withCount(['reactions as downvoting' => $this->reactionClosure('downvote')])
-            ->where('user_id', $userId)
-            ->latest()
-            ->simplePaginate();
+        /** @var Builder $builder */
+        $builder = (new Post)->newQuery()
+            ->with(['author', 'comments' => function(HasMany $query) {
+                $query->getQuery()->withReactionCounts()->take(10);
+            }, 'comments.user'])
+            ->withReactionCounts()
+            ->latest();
+
+        if (count($userIds) === 1) {
+            $builder->where('user_id', current($userIds));
+        } else {
+            $builder->whereIn('user_id', $userIds);
+        }
+
+        return $builder->simplePaginate();
     }
 }
