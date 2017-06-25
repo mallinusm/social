@@ -33,4 +33,16 @@ class QueryBuilderUserRepository extends QueryBuilderRepository implements UserR
             'password' => $password
         ]));
     }
+
+    /**
+     * @param int $id
+     * @param string $avatar
+     * @return bool
+     */
+    public function updateAvatar(int $id, string $avatar): bool
+    {
+        return (bool) $this->getBuilder()
+            ->where('id', $id)
+            ->update(compact('avatar'));
+    }
 }

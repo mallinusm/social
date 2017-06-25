@@ -20,13 +20,12 @@ use Social\Http\Actions\Reactions\{
     UndoUpvoteCommentAction, UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
 };
 use Social\Http\Actions\Users\{
-    RegisterUserAction, VisitUserAction
+    RegisterUserAction, UploadAvatarAction, VisitUserAction
 };
+use Social\Http\Actions\WelcomeAction;
 
 /**@var $router Registrar */
-$router->get('/', function() {
-   return ['message' => 'Social API v1'];
-});
+$router->get('/', WelcomeAction::class);
 
 $router->post('/users', RegisterUserAction::class);
 
@@ -40,6 +39,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
         return $request->user();
     });
     $router->get('/users/{user}', VisitUserAction::class);
+    $router->patch('/avatar', UploadAvatarAction::class);
 
     /**
      * Post

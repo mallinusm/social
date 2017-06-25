@@ -45,7 +45,7 @@ class QueryBuilderPostRepository extends QueryBuilderRepository implements PostR
     {
         /** @var Builder $builder */
         $builder = (new Post)->newQuery()
-            ->with(['author', 'comments' => function(HasMany $query) {
+            ->with(['author', 'comments' => function(HasMany $query): void {
                 $query->getQuery()->withReactionCounts()->take(10);
             }, 'comments.user'])
             ->withReactionCounts()

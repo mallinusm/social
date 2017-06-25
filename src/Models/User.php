@@ -32,4 +32,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * @return string
+     */
+    public function getAvatar(): string
+    {
+        return $this->getAttribute('avatar');
+    }
 }
