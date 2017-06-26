@@ -45,6 +45,6 @@ class QueryBuilderMessageRepository extends QueryBuilderRepository implements Me
             ->where('conversation_id', $conversationId)
             ->with('user')
             ->latest()
-            ->paginate();
+            ->simplePaginate();
     }
 }

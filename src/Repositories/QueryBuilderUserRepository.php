@@ -41,8 +41,6 @@ class QueryBuilderUserRepository extends QueryBuilderRepository implements UserR
      */
     public function updateAvatar(int $id, string $avatar): bool
     {
-        return (bool) $this->getBuilder()
-            ->where('id', $id)
-            ->update(compact('avatar'));
+        return (bool) $this->getBuilder()->where('id', $id)->update(compact('avatar'));
     }
 }

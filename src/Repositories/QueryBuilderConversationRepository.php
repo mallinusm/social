@@ -65,6 +65,6 @@ class QueryBuilderConversationRepository extends QueryBuilderRepository implemen
             $query->where('user_id', $userId);
         })->has('messages')->with(['messages' => function(Builder $query): void {
             $query->latest()->take(1);
-        }])->with('messages.user', 'users')->latest()->paginate();
+        }])->with('messages.user', 'users')->latest()->simplePaginate();
     }
 }

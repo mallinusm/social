@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Illuminate\Contracts\Pagination\Paginator;
 use Social\Contracts\CommentRepository;
 use Social\Models\Comment;
 
@@ -32,5 +33,18 @@ class QueryBuilderCommentRepository extends QueryBuilderRepository implements Co
             'post_id' => $postId,
             'user_id' => $userId,
         ]));
+    }
+
+    /**
+     * @param int $postId
+     * @return Paginator
+     */
+    public function paginate(int $postId): Paginator
+    {
+        return (new Comment)->newQuery()
+            ->with('user')
+            ->withReactionCounts()
+            ->where('post_id', $postId)
+            ->simplePaginate();
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Users;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;

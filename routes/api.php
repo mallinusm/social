@@ -2,7 +2,9 @@
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Http\Request;
-use Social\Http\Actions\Comments\LeaveCommentAction;
+use Social\Http\Actions\Comments\{
+    LeaveCommentAction, PaginateCommentsAction
+};
 use Social\Http\Actions\Conversations\{
     PaginateConversationsAction, StartConversationAction
 };
@@ -53,6 +55,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
      * Comment
      */
     $router->post('/posts/{post}/comments', LeaveCommentAction::class);
+    $router->get('/posts/{post}/comments', PaginateCommentsAction::class);
 
     /**
      * Conversation
