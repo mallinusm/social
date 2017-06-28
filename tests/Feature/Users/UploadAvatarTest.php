@@ -16,7 +16,7 @@ class UploadAvatarTest extends FeatureTestCase
     function upload_avatar_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->patchJson('api/v1/avatar')
+            ->postJson('api/v1/avatar')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(['error' => 'Unauthenticated.']);
     }
@@ -26,7 +26,7 @@ class UploadAvatarTest extends FeatureTestCase
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->patchJson('api/v1/avatar')
+            ->postJson('api/v1/avatar')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertExactJson(['avatar' => ['The avatar field is required.']]);
     }
@@ -36,7 +36,7 @@ class UploadAvatarTest extends FeatureTestCase
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->patchJson('api/v1/avatar', ['avatar' => str_random()])
+            ->postJson('api/v1/avatar', ['avatar' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertExactJson(['avatar' => ['The avatar must be an image.']]);
     }
@@ -48,7 +48,7 @@ class UploadAvatarTest extends FeatureTestCase
 
         $response = $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
-            ->patchJson('api/v1/avatar', [
+            ->postJson('api/v1/avatar', [
                 'avatar' => UploadedFile::fake()->image('avatar.jpg')
             ])
             ->assertStatus(Response::HTTP_OK)

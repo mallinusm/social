@@ -41,7 +41,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
         return $request->user();
     });
     $router->get('/users/{user}', VisitUserAction::class);
-    $router->patch('/avatar', UploadAvatarAction::class);
+    $router->post('/avatar', UploadAvatarAction::class);
 
     /**
      * Post

@@ -18,7 +18,7 @@ final class UserTransformer
     {
         return [
             'name' => $user->getName(),
-            'avatar' => $user->hasAvatar() ? $user->getAvatar(): null,
+            'avatar' => $user->hasAvatar() ? $user->getAvatar(): '/static/avatar.png',
             'username' => $user->getUsername()
         ];
     }

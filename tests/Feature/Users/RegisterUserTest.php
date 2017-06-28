@@ -134,7 +134,7 @@ class RegisterUserTest extends FeatureTestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['name', 'avatar', 'username'])
-            ->assertExactJson(compact('name', 'username') + ['avatar' => null])
+            ->assertExactJson(compact('name', 'username') + ['avatar' => '/static/avatar.png'])
             ->assertJsonMissing(['id', 'email', 'password', 'created_at', 'updated_at']);
 
         $this->assertDatabaseHas('users', compact('name', 'username', 'email'));
