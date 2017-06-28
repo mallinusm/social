@@ -97,28 +97,51 @@ class RegisterUserTest extends FeatureTestCase
     }
 
     /** @test */
+    function register_user_without_username()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/users')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonFragment(['username' => ['The username field is required.']]);
+    }
+
+    /** @test */
+    function register_user_with_taken_username()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/users', ['username' => $this->createUser()->getUsername()])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonFragment(['username' => ['The username has already been taken.']]);
+    }
+
+    /** @test */
+    function register_user_with_too_long_username()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/users', ['username' => str_random(256)])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonFragment(['username' => ['The username may not be greater than 255 characters.']]);
+    }
+
+    /** @test */
     function register_user()
     {
-        $random = str_random();
-
-        $name = ['name' => $random];
-
-        $password = ['password' => $random];
-
-        $email = ['email' => $random . '@mail.com'];
+        [$name, $username, $password, $email] = [str_random(), str_random(), str_random(), str_random() . '@mail.com'];
 
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('api/v1/users', $email + $name + $password + ['password_confirmation' => $random])
+            ->postJson('api/v1/users', compact('name', 'username', 'email', 'password') + [
+                'password_confirmation' => $password
+            ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['name'])
-            ->assertJson($name)
+            ->assertJsonStructure(['name', 'avatar', 'username'])
+            ->assertExactJson(compact('name', 'username') + ['avatar' => null])
             ->assertJsonMissing(['id', 'email', 'password', 'created_at', 'updated_at']);
 
-        $this->assertDatabaseHas('users', $name + $email);
+        $this->assertDatabaseHas('users', compact('name', 'username', 'email'));
 
         /**
          * Make sure the password is encrypted.
          */
-        $this->assertDatabaseMissing('users', $password);
+        $this->assertDatabaseMissing('users', compact('password'));
     }
 }

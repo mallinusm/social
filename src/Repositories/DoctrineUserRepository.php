@@ -15,17 +15,17 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      * @param string $email
      * @param string $name
      * @param string $password
+     * @param string $username
      * @return User
      */
-    public function register(string $email, string $name, string $password): User
+    public function register(string $email, string $name, string $password, string $username): User
     {
-        $now = $this->freshTimestamp();
-
         return $this->persist(
             (new User)->setEmail($email)
                 ->setName($name)
                 ->setPassword($password)
-                ->setCreatedAt($now)
+                ->setUsername($username)
+                ->setCreatedAt($now = $this->freshTimestamp())
                 ->setUpdatedAt($now)
         );
     }
@@ -37,13 +37,14 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      */
     public function updateAvatar(int $userId, string $avatar): bool
     {
-        return (bool) $this->entityManager
-            ->createQueryBuilder()
+        return (bool) $this->getQueryBuilder()
             ->update(User::class, 'u')
             ->where('u.id = ?1')
             ->setParameter(1, $userId)
             ->set('u.avatar', '?2')
             ->setParameter(2, $avatar)
+            ->set('u.updatedAt', '?3')
+            ->setParameter(3, $this->freshTimestamp())
             ->getQuery()
             ->execute();
     }

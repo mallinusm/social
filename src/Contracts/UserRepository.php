@@ -14,9 +14,10 @@ interface UserRepository
      * @param string $email
      * @param string $name
      * @param string $password
+     * @param string $username
      * @return User
      */
-    function register(string $email, string $name, string $password): User;
+    function register(string $email, string $name, string $password, string $username): User;
 
     /**
      * @param int $id

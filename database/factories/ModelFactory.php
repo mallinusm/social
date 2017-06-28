@@ -13,6 +13,7 @@ $factory->define(User::class, function (Generator $faker) {
     return [
         'avatar' => $faker->imageUrl(),
         'name' => $faker->name,
+        'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?? bcrypt('secret'),
         'remember_token' => str_random(10)

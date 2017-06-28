@@ -4,6 +4,7 @@ namespace Social\Repositories;
 
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class DoctrineRepository
@@ -14,7 +15,7 @@ abstract class DoctrineRepository
     /**
      * @var EntityManagerInterface
      */
-    protected $entityManager;
+    private $entityManager;
 
     /**
      * DoctrineUserRepository constructor.
@@ -43,5 +44,13 @@ abstract class DoctrineRepository
             $this->entityManager->persist($object);
             $this->entityManager->flush();
         });
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder(): QueryBuilder
+    {
+        return $this->entityManager->createQueryBuilder();
     }
 }

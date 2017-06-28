@@ -24,6 +24,7 @@ trait UserMetadata
         $builder->addField('email', 'string');
         $builder->addField('password', 'string');
         $builder->addField('avatar', 'string');
+        $builder->addField('username', 'string');
         $builder->addField('createdAt', 'integer', [
             'columnName' => 'created_at'
         ]);

@@ -18,7 +18,7 @@ final class User
     /**
      * @var string
      */
-    private $email, $name, $password, $avatar;
+    private $email, $name, $password, $avatar, $username;
 
     /**
      * @return int
@@ -151,5 +151,32 @@ final class User
     public function getAvatar(): string
     {
         return $this->avatar;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAvatar(): bool
+    {
+        return $this->avatar !== null;
+    }
+
+    /**
+     * @param string $username
+     * @return User
+     */
+    public function setUsername(string $username): User
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->username;
     }
 }

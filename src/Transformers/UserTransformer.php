@@ -17,7 +17,9 @@ final class UserTransformer
     public function transform(User $user): array
     {
         return [
-            'name' => $user->getName()
+            'name' => $user->getName(),
+            'avatar' => $user->hasAvatar() ? $user->getAvatar(): null,
+            'username' => $user->getUsername()
         ];
     }
 }

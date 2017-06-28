@@ -40,4 +40,12 @@ class User extends Authenticatable
     {
         return $this->getAttribute('avatar');
     }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): string
+    {
+        return $this->getAttribute('username');
+    }
 }
