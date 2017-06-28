@@ -18,8 +18,8 @@ trait CreatesApplication
      */
     public function createApplication()
     {
-        return tap(require __DIR__ . '/../bootstrap/app.php', function(Application $app): void {
-            $app->make(Kernel::class)->bootstrap();
+        return tap(require __DIR__ . '/../bootstrap/app.php', function(Application $application) {
+            $application->make(Kernel::class)->bootstrap();
         });
     }
 }

@@ -2,16 +2,17 @@
 
 namespace Social\Http\Actions\Users;
 
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\UserRepository;
-use Social\Models\User;
+use Social\Transformers\UserTransformer;
 
 /**
  * Class RegisterUserAction
  * @package Social\Http\Actions\Users
  */
-class RegisterUserAction
+final class RegisterUserAction
 {
     use ValidatesRequests;
 
@@ -21,19 +22,33 @@ class RegisterUserAction
     private $userRepository;
 
     /**
+     * @var UserTransformer
+     */
+    private $userTransformer;
+
+    /**
+     * @var Hasher
+     */
+    private $hasher;
+
+    /**
      * RegisterUserAction constructor.
      * @param UserRepository $userRepository
+     * @param UserTransformer $userTransformer
+     * @param Hasher $hasher
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer, Hasher $hasher)
     {
         $this->userRepository = $userRepository;
+        $this->userTransformer = $userTransformer;
+        $this->hasher = $hasher;
     }
 
     /**
      * @param Request $request
-     * @return User
+     * @return array
      */
-    public function __invoke(Request $request): User
+    public function __invoke(Request $request): array
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
@@ -41,8 +56,10 @@ class RegisterUserAction
             'password' => 'required|string|min:6|max:255|confirmed'
         ]);
 
-        return $this->userRepository->register(
-            $request->input('email'), $request->input('name'), bcrypt($request->input('password'))
-        );
+        return $this->userTransformer->transform($this->userRepository->register(
+            $request->input('email'),
+            $request->input('name'),
+            $this->hasher->make($request->input('password'))
+        ));
     }
 }

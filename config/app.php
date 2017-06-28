@@ -178,7 +178,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         Social\Providers\EventServiceProvider::class,
         Social\Providers\RouteServiceProvider::class,
-
+        \Social\Providers\DatabaseServiceProvider::class,
     ],
 
     /*

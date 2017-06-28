@@ -2,7 +2,7 @@
 
 namespace Social\Contracts;
 
-use Social\Models\User;
+use Social\Entities\User;
 
 /**
  * Interface UserRepository

@@ -43,7 +43,7 @@ class UploadAvatarAction
 
         $avatar = Str::replaceFirst('avatars/', '', $path);
 
-        $this->userRepository->updateAvatar($request->user()->getAuthIdentifier(), $avatar);
+        $this->userRepository->updateAvatar($userId = $request->user()->getAuthIdentifier(), $avatar);
 
         return compact('avatar');
     }

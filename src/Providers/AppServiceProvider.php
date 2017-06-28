@@ -17,9 +17,9 @@ use Social\Models\{
     Comment, Post
 };
 use Social\Repositories\{
-    QueryBuilderCommentRepository, QueryBuilderConversationRepository, QueryBuilderFollowerRepository,
-    QueryBuilderMessageRepository, QueryBuilderPostRepository, QueryBuilderReactionRepository,
-    QueryBuilderUserRepository
+    DoctrineUserRepository, QueryBuilderCommentRepository, QueryBuilderConversationRepository,
+    QueryBuilderFollowerRepository, QueryBuilderMessageRepository, QueryBuilderPostRepository,
+    QueryBuilderReactionRepository
 };
 
 /**
@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
         MessageRepository::class => QueryBuilderMessageRepository::class,
         PostRepository::class => QueryBuilderPostRepository::class,
         ReactionRepository::class => QueryBuilderReactionRepository::class,
-        UserRepository::class => QueryBuilderUserRepository::class
+        UserRepository::class => DoctrineUserRepository::class
     ];
 
     /**
