@@ -39,7 +39,7 @@ class QueryBuilderFollowerRepository extends QueryBuilderRepository implements F
      */
     public function unfollow(int $id): bool
     {
-        return $this->getBuilder()->delete($id) === 1;
+        return (bool) $this->getBuilder()->delete($id);
     }
 
     /**
