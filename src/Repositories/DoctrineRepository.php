@@ -27,6 +27,14 @@ abstract class DoctrineRepository
     }
 
     /**
+     * @return EntityManagerInterface
+     */
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+
+    /**
      * @return int
      */
     protected function freshTimestamp(): int

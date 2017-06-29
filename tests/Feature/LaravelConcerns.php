@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\Paginator;
 
@@ -27,6 +28,17 @@ trait LaravelConcerns
     {
         return [
             'error' => (new ModelNotFoundException)->setModel($model)->getMessage()
+        ];
+    }
+
+    /**
+     * @param string $className
+     * @return array
+     */
+    public function entityNotFound(string $className): array
+    {
+        return [
+            'error' => EntityNotFoundException::fromClassNameAndIdentifier($className, [])->getMessage()
         ];
     }
 }

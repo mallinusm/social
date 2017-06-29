@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Social\Contracts\UserRepository;
 use Social\Entities\User;
 
@@ -47,5 +48,24 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->setParameter(3, $this->freshTimestamp())
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param string $username
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function findByUsername(string $username): User
+    {
+        $repository = $this->getEntityManager()->getRepository(User::class);
+
+        /** @var User $user */
+        $user = $repository->findOneBy(compact('username'));
+
+        if ($user === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), []);
+        }
+
+        return $user;
     }
 }

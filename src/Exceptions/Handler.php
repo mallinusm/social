@@ -2,6 +2,7 @@
 
 namespace Social\Exceptions;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -54,7 +55,9 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e): Response
     {
-        if ($e instanceof ModelNotFoundException || $e instanceof FileNotFoundException) {
+        if ($e instanceof ModelNotFoundException
+            || $e instanceof FileNotFoundException
+            || $e instanceof EntityNotFoundException) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
 

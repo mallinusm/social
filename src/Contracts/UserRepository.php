@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Social\Entities\User;
 
 /**
@@ -25,4 +26,11 @@ interface UserRepository
      * @return bool
      */
     function updateAvatar(int $id, string $avatar): bool;
+
+    /**
+     * @param string $username
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    function findByUsername(string $username): User;
 }

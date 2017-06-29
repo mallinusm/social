@@ -40,7 +40,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('/user', function (Request $request) {
         return $request->user();
     });
-    $router->get('/users/{user}', VisitUserAction::class);
+    $router->get('/users', VisitUserAction::class);
     $router->post('/avatar', UploadAvatarAction::class);
 
     /**

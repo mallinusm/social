@@ -2,9 +2,10 @@
 
 namespace Social\Http\Actions\Users;
 
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Models\User;
+use Social\Contracts\UserRepository;
+use Social\Transformers\UserTransformer;
 
 /**
  * Class VisitUserAction
@@ -12,29 +13,42 @@ use Social\Models\User;
  */
 class VisitUserAction
 {
+    use ValidatesRequests;
+
     /**
-     * @var FollowerRepository
+     * @var UserRepository
      */
-    private $followerRepository;
+    private $userRepository;
+
+    /**
+     * @var UserTransformer
+     */
+    private $userTransformer;
 
     /**
      * VisitUserAction constructor.
-     * @param FollowerRepository $followerRepository
+     * @param UserRepository $userRepository
+     * @param UserTransformer $userTransformer
+     * @internal param FollowerRepository $followerRepository
      */
-    public function __construct(FollowerRepository $followerRepository)
+    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer)
     {
-        $this->followerRepository = $followerRepository;
+        $this->userRepository = $userRepository;
+        $this->userTransformer = $userTransformer;
     }
 
     /**
-     * @param User $user
      * @param Request $request
-     * @return User
+     * @return array
      */
-    public function __invoke(User $user, Request $request): User
+    public function __invoke(Request $request): array
     {
-        return $user->setAttribute(
-            'following', $this->followerRepository->isFollowing($request->user()->getAuthIdentifier(), $user->getId())
+        $this->validate($request, [
+            'username' => 'required|string|max:255'
+        ]);
+
+        return $this->userTransformer->transform(
+            $this->userRepository->findByUsername($request->input('username'))
         );
     }
 }
