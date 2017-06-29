@@ -48,4 +48,13 @@ class User extends Authenticatable
     {
         return $this->getAttribute('username');
     }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public function getAvatarAttribute($value): string
+    {
+        return $value === null ? '/static/avatar.png' : $value;
+    }
 }

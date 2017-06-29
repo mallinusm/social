@@ -39,4 +39,12 @@ trait Avatar
     {
         return $this->avatar !== null;
     }
+
+    /**
+     * @return string
+     */
+    public function getAvatarLink(): string
+    {
+        return $this->hasAvatar() ? $this->getAvatar() : '/static/avatar.png';
+    }
 }

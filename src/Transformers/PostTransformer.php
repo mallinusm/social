@@ -11,20 +11,6 @@ use Social\Entities\Post;
 final class PostTransformer
 {
     /**
-     * @var UserTransformer
-     */
-    private $userTransformer;
-
-    /**
-     * PostTransformer constructor.
-     * @param UserTransformer $userTransformer
-     */
-    public function __construct(UserTransformer $userTransformer)
-    {
-        $this->userTransformer = $userTransformer;
-    }
-
-    /**
      * @param Post $post
      * @return array
      */

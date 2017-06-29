@@ -2,7 +2,8 @@
 
 namespace Social\Entities;
 
-use Social\Helpers\InteractsWithDoctrine;
+use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Class User
@@ -10,8 +11,7 @@ use Social\Helpers\InteractsWithDoctrine;
  */
 final class User
 {
-    use InteractsWithDoctrine,
-        Attributes\Id,
+    use Attributes\Id,
         Attributes\Email,
         Attributes\Name,
         Attributes\Password,
@@ -19,4 +19,25 @@ final class User
         Attributes\Username,
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
+
+    /**
+     * @param ClassMetadata $metadata
+     * @return void
+     */
+    public static function loadMetadata(ClassMetadata $metadata): void
+    {
+        (new ClassMetadataBuilder($metadata))->setTable('users')
+            ->createField('id', 'integer')->makePrimaryKey()->generatedValue()->build()
+            ->addField('email', 'string')
+            ->addField('name', 'string')
+            ->addField('password', 'string')
+            ->addField('avatar', 'string')
+            ->addField('username', 'string')
+            ->addField('createdAt', 'integer', [
+                'columnName' => 'created_at'
+            ])
+            ->addField('updatedAt', 'integer', [
+                'columnName' => 'updated_at'
+            ]);
+    }
 }
