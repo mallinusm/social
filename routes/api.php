@@ -22,7 +22,7 @@ use Social\Http\Actions\Reactions\{
     UndoUpvoteCommentAction, UndoUpvotePostAction, UpvoteCommentAction, UpvotePostAction
 };
 use Social\Http\Actions\Users\{
-    RegisterUserAction, UploadAvatarAction, VisitUserAction
+    FetchAvatarAction, RegisterUserAction, UploadAvatarAction, VisitUserAction
 };
 use Social\Http\Actions\WelcomeAction;
 

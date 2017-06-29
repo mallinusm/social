@@ -5,10 +5,12 @@ namespace Social\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\{
+    JsonResponse, Request
+};
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -52,7 +54,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e): Response
     {
-        if ($e instanceof ModelNotFoundException) {
+        if ($e instanceof ModelNotFoundException || $e instanceof FileNotFoundException) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
         }
 

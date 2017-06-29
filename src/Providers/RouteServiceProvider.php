@@ -12,7 +12,7 @@ use Social\Models\{
  * Class RouteServiceProvider
  * @package Social\Providers
  */
-class RouteServiceProvider extends ServiceProvider
+final class RouteServiceProvider extends ServiceProvider
 {
     /**
      * @var array
@@ -33,6 +33,8 @@ class RouteServiceProvider extends ServiceProvider
     public function map(): void
     {
         $this->mapApiRoutes();
+
+        $this->mapCdnRoutes();
     }
 
     /**
@@ -57,7 +59,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapApiRoutes(): void
+    private function mapApiRoutes(): void
     {
         /**
          * @var $this Router
@@ -66,5 +68,19 @@ class RouteServiceProvider extends ServiceProvider
             'prefix' => 'api/v1',
             'middleware' => 'api'
         ], base_path('routes/api.php'));
+    }
+
+    /**
+     * @return void
+     */
+    private function mapCdnRoutes(): void
+    {
+        /**
+         * @var $this Router
+         */
+        $this->group([
+            'prefix' => 'cdn',
+            'middleware' => 'cdn'
+        ], base_path('routes/cdn.php'));
     }
 }

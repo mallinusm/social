@@ -39,9 +39,9 @@ class UploadAvatarAction
             'avatar' => 'required|image'
         ]);
 
-        $path = $request->file('avatar')->store('avatars');
+        $path = $request->file('avatar')->store('public/avatars');
 
-        $avatar = Str::replaceFirst('avatars/', '', $path);
+        $avatar = Str::replaceFirst('public/avatars/', '', $path);
 
         $this->userRepository->updateAvatar($request->user()->getAuthIdentifier(), $avatar);
 
