@@ -4,6 +4,7 @@ namespace Social\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use Social\Entities\User as UserEntity;
 use Social\Models\Attributes\{
     HasEmail, HasId
 };
@@ -56,5 +57,20 @@ class User extends Authenticatable
     public function getAvatarAttribute($value): string
     {
         return $value === null ? '/static/avatar.png' : $value;
+    }
+
+    /**
+     * @return UserEntity
+     */
+    public function toUserEntity(): UserEntity
+    {
+        return (new UserEntity)->setId($this->getId())
+            ->setUsername($this->getUsername())
+            ->setAvatar($this->getAvatar())
+            ->setName($this->getAttribute('name'))
+            ->setEmail($this->getAttribute('email'))
+            ->setPassword($this->getAttribute('password'))
+            ->setCreatedAt($this->getAttribute('created_at')->getTimestamp())
+            ->setUpdatedAt($this->getAttribute('updated_at')->getTimestamp());
     }
 }

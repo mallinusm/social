@@ -11,6 +11,20 @@ use Social\Entities\Post;
 final class PostTransformer
 {
     /**
+     * @var UserTransformer
+     */
+    private $userTransformer;
+
+    /**
+     * PostTransformer constructor.
+     * @param UserTransformer $userTransformer
+     */
+    public function __construct(UserTransformer $userTransformer)
+    {
+        $this->userTransformer = $userTransformer;
+    }
+
+    /**
      * @param Post $post
      * @return array
      */
@@ -21,6 +35,9 @@ final class PostTransformer
             'content' => $post->getContent(),
             'created_at' => $post->getCreatedAt(),
             'updated_at' => $post->getUpdatedAt(),
+            'author' => $this->userTransformer->transform($post->getAuthor()),
+            'user' => $this->userTransformer->transform($post->getUser()),
+            'comments' => $post->hasComments() ? ['TODO transform comments'] : []
         ];
     }
 }

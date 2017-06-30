@@ -63,20 +63,29 @@ class PublishPostTest extends FeatureTestCase
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();
 
-        $data = ['content' => str_random()];
+        $ids = ['author_id' => $author->getAuthIdentifier(), 'user_id' => $userId];
 
-        $database = $data + ['author_id' => $author->getAuthIdentifier(), 'user_id' => $userId];
+        $data = ['content' => str_random()];
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$userId}/posts", $data)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['author_id', 'content', 'created_at', 'id', 'updated_at', 'user_id'])
-            ->assertJsonFragment(['user' => $user->toArray()])
-            ->assertJsonFragment(['author' => $author->toArray()])
+            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at'])
+            ->assertJsonFragment(['user' => [
+                'name' => $user->getAttribute('name'),
+                'username' => $user->getUsername(),
+                'avatar' => $user->getAvatar()
+            ]])
+            ->assertJsonFragment(['author' => [
+                'name' => $author->getAttribute('name'),
+                'username' => $author->getUsername(),
+                'avatar' => $author->getAvatar()
+            ]])
             ->assertJsonFragment(['comments' => []])
-            ->assertJsonFragment($database);
+            ->assertJsonFragment($data)
+            ->assertJsonMissing($ids);
 
-        $this->assertDatabaseHas('posts', $database);
+        $this->assertDatabaseHas('posts', $data + $ids);
     }
 }

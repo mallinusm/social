@@ -4,10 +4,9 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\PostRepository;
-use Social\Models\{
-    Post, User
-};
+use Social\Models\User;
+use Social\Repositories\DoctrinePostRepository;
+use Social\Transformers\PostTransformer;
 
 /**
  * Class PublishPostAction
@@ -18,34 +17,44 @@ class PublishPostAction
     use ValidatesRequests;
 
     /**
-     * @var PostRepository
+     * @var DoctrinePostRepository
      */
     private $postRepository;
 
     /**
-     * PublishPostAction constructor.
-     * @param PostRepository $postRepository
+     * @var PostTransformer
      */
-    public function __construct(PostRepository $postRepository)
+    private $postTransformer;
+
+    /**
+     * PublishPostAction constructor.
+     * @param DoctrinePostRepository $postRepository
+     * @param PostTransformer $postTransformer
+     */
+    public function __construct(DoctrinePostRepository $postRepository, PostTransformer $postTransformer)
     {
         $this->postRepository = $postRepository;
+        $this->postTransformer = $postTransformer;
     }
 
     /**
      * @param User $user
      * @param Request $request
-     * @return Post
+     * @return array
      */
-    public function __invoke(User $user, Request $request): Post
+    public function __invoke(User $user, Request $request): array
     {
         $this->validate($request, [
             'content' => 'required|string|max:255'
         ]);
 
+        /** @var User $author */
         $author = $request->user();
 
-        return $this->postRepository->publish(
-            $author->getAuthIdentifier(), $request->input('content'), $user->getAuthIdentifier()
-        )->setAttribute('user', $user)->setAttribute('author', $author)->setAttribute('comments', []);
+        return $this->postTransformer->transform(
+            $this->postRepository->publish(
+                $author->getAuthIdentifier(), $request->input('content'), $user->getAuthIdentifier()
+            )->setAuthor($author->toUserEntity())->setUser($user->toUserEntity())
+        );
     }
 }
