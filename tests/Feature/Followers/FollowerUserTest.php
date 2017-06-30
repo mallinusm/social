@@ -16,7 +16,7 @@ class FollowerUserTest extends FeatureTestCase
     function follow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('api/v1/users/1/followers')
+            ->postJson('api/v1/users/1/follow')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(['error' => 'Unauthenticated.']);
     }
@@ -26,7 +26,7 @@ class FollowerUserTest extends FeatureTestCase
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->postJson('api/v1/users/123456789/followers')
+            ->postJson('api/v1/users/123456789/follow')
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->modelNotFoundMessage(User::class));
     }
@@ -43,10 +43,12 @@ class FollowerUserTest extends FeatureTestCase
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/users/{$userId}/followers")
+            ->postJson("api/v1/users/{$userId}/follow")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['author_id', 'created_at', 'id', 'updated_at', 'user_id'])
-            ->assertJsonFragment($attributes);
+            ->assertJsonStructure(['message'])
+            ->assertExactJson([
+                'message' => 'You are now following the user.'
+            ]);
 
         $this->assertDatabaseHas('followers', $attributes);
     }

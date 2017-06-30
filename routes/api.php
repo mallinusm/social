@@ -72,8 +72,8 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     /**
      * Follower
      */
-    $router->post('/users/{user}/followers', FollowUserAction::class);
-    $router->delete('/followers/{follower}', UnfollowUserAction::class);
+    $router->post('/users/{user}/follow', FollowUserAction::class);
+    $router->delete('/users/{user}/unfollow', UnfollowUserAction::class);
 
     /**
      * Upvote

@@ -3,27 +3,25 @@
 namespace Social\Http\Actions\Followers;
 
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Models\{
-    Follower, User
-};
+use Social\Models\User;
+use Social\Repositories\DoctrineFollowerRepository;
 
 /**
  * Class FollowUserAction
  * @package Social\Http\Actions\Followers
  */
-class FollowUserAction
+final class FollowUserAction
 {
     /**
-     * @var FollowerRepository
+     * @var DoctrineFollowerRepository
      */
     private $followerRepository;
 
     /**
      * FollowUserAction constructor.
-     * @param FollowerRepository $followerRepository
+     * @param DoctrineFollowerRepository $followerRepository
      */
-    public function __construct(FollowerRepository $followerRepository)
+    public function __construct(DoctrineFollowerRepository $followerRepository)
     {
         $this->followerRepository = $followerRepository;
     }
@@ -31,10 +29,16 @@ class FollowUserAction
     /**
      * @param User $user
      * @param Request $request
-     * @return Follower
+     * @return array
      */
-    public function __invoke(User $user, Request $request): Follower
+    public function __invoke(User $user, Request $request): array
     {
-        return $this->followerRepository->follow($request->user()->getAuthIdentifier(), $user->getAuthIdentifier());
+        // TODO check if already following
+
+        $this->followerRepository->follow($request->user()->getAuthIdentifier(), $user->getAuthIdentifier());
+
+        return [
+            'message' => 'You are now following the user.'
+        ];
     }
 }

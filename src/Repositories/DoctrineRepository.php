@@ -55,6 +55,16 @@ abstract class DoctrineRepository
     }
 
     /**
+     * @param $object
+     * @return void
+     */
+    protected function remove($object): void
+    {
+        $this->entityManager->remove($object);
+        $this->entityManager->flush();
+    }
+
+    /**
      * @return QueryBuilder
      */
     protected function getQueryBuilder(): QueryBuilder

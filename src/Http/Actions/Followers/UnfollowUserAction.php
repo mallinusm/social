@@ -4,42 +4,40 @@ namespace Social\Http\Actions\Followers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Models\Follower;
+use Social\Models\User;
+use Social\Repositories\DoctrineFollowerRepository;
 
 /**
  * Class UnfollowUserAction
  * @package Social\Http\Actions\Followers
  */
-class UnfollowUserAction
+final class UnfollowUserAction
 {
     use AuthorizesRequests;
 
     /**
-     * @var FollowerRepository
+     * @var DoctrineFollowerRepository
      */
     private $followerRepository;
 
     /**
      * UnfollowUserAction constructor.
-     * @param FollowerRepository $followerRepository
+     * @param DoctrineFollowerRepository $followerRepository
      */
-    public function __construct(FollowerRepository $followerRepository)
+    public function __construct(DoctrineFollowerRepository $followerRepository)
     {
         $this->followerRepository = $followerRepository;
     }
 
     /**
-     * @param Follower $follower
+     * @param User $user
      * @param Request $request
      * @return array
      */
-    public function __invoke(Follower $follower, Request $request): array
+    public function __invoke(User $user, Request $request): array
     {
-        $this->authorizeForUser($request->user(), 'delete', $follower);
+        $this->followerRepository->unfollow($request->user()->getAuthIdentifier(), $user->getId());
 
-        $this->followerRepository->unfollow($follower->getId());
-
-        return ['message' => 'User unfollowed.'];
+        return ['message' => 'You are no longer following the user.'];
     }
 }
