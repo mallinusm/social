@@ -16,12 +16,19 @@ final class PostTransformer
     private $userTransformer;
 
     /**
+     * @var CommentTransformer
+     */
+    private $commentTransformer;
+
+    /**
      * PostTransformer constructor.
      * @param UserTransformer $userTransformer
+     * @param CommentTransformer $commentTransformer
      */
-    public function __construct(UserTransformer $userTransformer)
+    public function __construct(UserTransformer $userTransformer, CommentTransformer $commentTransformer)
     {
         $this->userTransformer = $userTransformer;
+        $this->commentTransformer = $commentTransformer;
     }
 
     /**
@@ -37,7 +44,7 @@ final class PostTransformer
             'updated_at' => $post->getUpdatedAt(),
             'author' => $this->userTransformer->transform($post->getAuthor()),
             'user' => $this->userTransformer->transform($post->getUser()),
-            'comments' => $post->hasComments() ? ['TODO transform comments'] : []
+            'comments' => $post->hasComments() ? $this->commentTransformer->transformMany($post->getComments()) : []
         ];
     }
 }

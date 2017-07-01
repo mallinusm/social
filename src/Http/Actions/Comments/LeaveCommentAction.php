@@ -4,48 +4,59 @@ namespace Social\Http\Actions\Comments;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\CommentRepository;
 use Social\Models\{
-    Comment, Post
+    Post, User
 };
+use Social\Repositories\DoctrineCommentRepository;
+use Social\Transformers\CommentTransformer;
 
 /**
  * Class LeaveCommentAction
  * @package Social\Http\Actions\Comments
  */
-class LeaveCommentAction
+final class LeaveCommentAction
 {
     use ValidatesRequests;
 
     /**
-     * @var CommentRepository
+     * @var DoctrineCommentRepository
      */
     private $commentRepository;
 
     /**
-     * LeaveCommentAction constructor.
-     * @param CommentRepository $commentRepository
+     * @var CommentTransformer
      */
-    public function __construct(CommentRepository $commentRepository)
+    private $commentTransformer;
+
+    /**
+     * LeaveCommentAction constructor.
+     * @param DoctrineCommentRepository $commentRepository
+     * @param CommentTransformer $commentTransformer
+     */
+    public function __construct(DoctrineCommentRepository $commentRepository, CommentTransformer $commentTransformer)
     {
         $this->commentRepository = $commentRepository;
+        $this->commentTransformer = $commentTransformer;
     }
 
     /**
      * @param Post $post
      * @param Request $request
-     * @return Comment
+     * @return array
      */
-    public function __invoke(Post $post, Request $request): Comment
+    public function __invoke(Post $post, Request $request): array
     {
         $this->validate($request, [
             'content' => 'required|string|max:255'
         ]);
 
+        /** @var User $author */
         $author =  $request->user();
 
-        return $this->commentRepository->leave(
-            $request->input('content'), $post->getId(), $author->getAuthIdentifier()
-        )->setAttribute('user', $author);
+        return $this->commentTransformer->transform(
+            $this->commentRepository->leave(
+                $request->input('content'), $post->getId(), $author->getAuthIdentifier()
+            )->setUser($author->toUserEntity())
+        );
     }
 }

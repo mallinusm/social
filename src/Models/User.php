@@ -73,4 +73,12 @@ class User extends Authenticatable
             ->setCreatedAt($this->getAttribute('created_at')->getTimestamp())
             ->setUpdatedAt($this->getAttribute('updated_at')->getTimestamp());
     }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->getAttribute('name');
+    }
 }

@@ -3,6 +3,7 @@
 namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Social\Entities\Follower;
 
 /**

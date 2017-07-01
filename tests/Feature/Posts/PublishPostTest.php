@@ -71,7 +71,7 @@ class PublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/users/{$userId}/posts", $data)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at'])
+            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at', 'user', 'author'])
             ->assertJsonFragment(['user' => [
                 'name' => $user->getAttribute('name'),
                 'username' => $user->getUsername(),
