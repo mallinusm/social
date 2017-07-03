@@ -12,6 +12,15 @@ use Tests\Feature\FeatureTestCase;
 class RegisterUserTest extends FeatureTestCase
 {
     /** @test */
+    function register_user_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/users')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function register_user_without_name()
     {
         $this->dontSeeIsAuthenticated('api')

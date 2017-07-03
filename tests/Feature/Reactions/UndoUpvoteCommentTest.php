@@ -15,6 +15,15 @@ use Tests\Feature\FeatureTestCase;
 class UndoUpvoteCommentTest extends FeatureTestCase
 {
     /** @test */
+    function undo_upvote_comment_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->delete('api/v1/comments/1/upvote')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function undo_upvote_comment_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class VisitUserTest extends FeatureTestCase
 {
     /** @test */
+    function visit_user_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->get('api/v1/users')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function visit_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

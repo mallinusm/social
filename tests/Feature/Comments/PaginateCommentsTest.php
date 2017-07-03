@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class PaginateCommentsTest extends FeatureTestCase
 {
     /** @test */
+    function paginate_comments_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->get('api/v1/posts/1/comments')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function paginate_comments_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

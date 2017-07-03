@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class SendMessageTest extends FeatureTestCase
 {
     /** @test */
+    function send_messages_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/conversations/1/messages')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function send_message_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

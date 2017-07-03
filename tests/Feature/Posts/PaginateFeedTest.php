@@ -12,6 +12,15 @@ use Tests\Feature\FeatureTestCase;
 class PaginateFeedTest extends FeatureTestCase
 {
     /** @test */
+    function paginate_feed_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->get('api/v1/feed')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function paginate_feed_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

@@ -4,8 +4,8 @@ namespace Social\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 /**
  * Class OnlyJsonAllowed
@@ -24,6 +24,6 @@ class OnlyJsonAllowed
             return $next($request);
         }
 
-        throw new RuntimeException('Only json format is supported.');
+        throw new NotAcceptableHttpException('Only json format is supported.');
     }
 }

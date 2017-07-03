@@ -14,6 +14,15 @@ use Tests\Feature\FeatureTestCase;
 class UndoDownvotePostTest extends FeatureTestCase
 {
     /** @test */
+    function undo_downvote_post_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->delete('api/v1/posts/1/downvote')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function undo_downvote_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

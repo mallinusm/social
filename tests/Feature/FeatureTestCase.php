@@ -102,4 +102,14 @@ abstract class FeatureTestCase extends TestCase
             'error' => EntityNotFoundException::fromClassNameAndIdentifier($className, [])->getMessage()
         ];
     }
+
+    /**
+     * @return array
+     */
+    protected function onlyJsonSupported(): array
+    {
+        return [
+            'error' => 'Only json format is supported.'
+        ];
+    }
 }

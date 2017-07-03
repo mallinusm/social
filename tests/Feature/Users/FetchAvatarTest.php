@@ -18,7 +18,7 @@ class FetchAvatarTest extends FeatureTestCase
         $random = str_random();
 
         $this->dontSeeIsAuthenticated('api')
-            ->get("cdn/avatars/{$random}")
+            ->getJson("cdn/avatars/{$random}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson(['error' => 'The avatar does not exist.']);
     }
@@ -29,7 +29,7 @@ class FetchAvatarTest extends FeatureTestCase
         UploadedFile::fake()->image($name = 'avatar.jpg')->move(storage_path('app/public/avatars'), $name);
 
         $this->dontSeeIsAuthenticated('api')
-            ->get("cdn/avatars/{$name}")
+            ->getJson("cdn/avatars/{$name}")
             ->assertStatus(Response::HTTP_OK);
     }
 }

@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class PaginatePostsTest extends FeatureTestCase
 {
     /** @test */
+    function paginate_posts_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->get('api/v1/users/1/posts')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function paginate_posts_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

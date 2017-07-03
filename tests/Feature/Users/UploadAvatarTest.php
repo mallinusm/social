@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class UploadAvatarTest extends FeatureTestCase
 {
     /** @test */
+    function upload_avatar_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/avatar')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function upload_avatar_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class PublishPostTest extends FeatureTestCase
 {
     /** @test */
+    function publish_post_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/users/1/posts')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function publish_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

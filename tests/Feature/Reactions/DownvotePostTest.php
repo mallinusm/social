@@ -15,6 +15,15 @@ use Tests\Feature\FeatureTestCase;
 class DownvotePostTest extends FeatureTestCase
 {
     /** @test */
+    function downvote_post_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/posts/1/downvote')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function downvote_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

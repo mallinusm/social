@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class UnpublishPostTest extends FeatureTestCase
 {
     /** @test */
+    function unpublish_post_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->delete('api/v1/posts/1')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function unpublish_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

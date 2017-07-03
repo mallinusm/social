@@ -13,6 +13,7 @@ use Illuminate\Http\{
     JsonResponse, Request
 };
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 /**
  * Class Handler
@@ -63,6 +64,10 @@ class Handler extends ExceptionHandler
 
         if ($e instanceof AuthorizationException) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_FORBIDDEN);
+        }
+
+        if ($e instanceof NotAcceptableHttpException) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         return parent::render($request, $e);

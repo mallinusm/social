@@ -15,6 +15,15 @@ use Tests\Feature\FeatureTestCase;
 class UpvotePostTest extends FeatureTestCase
 {
     /** @test */
+    function upvote_post_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/posts/1/upvote')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function upvote_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

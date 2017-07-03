@@ -14,6 +14,15 @@ use Tests\Feature\FeatureTestCase;
 class UnfollowUserTest extends FeatureTestCase
 {
     /** @test */
+    function unfollow_user_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->delete('api/v1/users/1/unfollow')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function unfollow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

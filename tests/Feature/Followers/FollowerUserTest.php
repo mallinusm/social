@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class FollowerUserTest extends FeatureTestCase
 {
     /** @test */
+    function follow_user_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/users/1/follow')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function follow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

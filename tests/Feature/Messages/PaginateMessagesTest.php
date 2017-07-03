@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class PaginateMessagesTest extends FeatureTestCase
 {
     /** @test */
+    function paginate_messages_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->get('api/v1/conversations/1/messages')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function paginate_messages_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

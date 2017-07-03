@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class StartConversationTest extends FeatureTestCase
 {
     /** @test */
+    function start_conversation_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/users/1/conversations')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function start_conversation_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')

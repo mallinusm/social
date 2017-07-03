@@ -13,6 +13,15 @@ use Tests\Feature\FeatureTestCase;
 class LeaveCommentTest extends FeatureTestCase
 {
     /** @test */
+    function leave_comment_without_json_format()
+    {
+        $this->dontSeeIsAuthenticated('api')
+            ->post('api/v1/posts/1/comments')
+            ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
+            ->assertExactJson($this->onlyJsonSupported());
+    }
+
+    /** @test */
     function leave_comment_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
