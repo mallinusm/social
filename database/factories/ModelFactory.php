@@ -11,7 +11,7 @@ $factory->define(User::class, function (Generator $faker) {
     static $password;
 
     return [
-        'avatar' => $faker->imageUrl(),
+        'avatar' => 'avatar.png',
         'name' => $faker->name,
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,

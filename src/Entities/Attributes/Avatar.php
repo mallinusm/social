@@ -2,6 +2,9 @@
 
 namespace Social\Entities\Attributes;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Routing\UrlGenerator;
+
 /**
  * Trait Avatar
  * @package Social\Entities\Attributes
@@ -45,6 +48,15 @@ trait Avatar
      */
     public function getAvatarLink(): string
     {
-        return $this->hasAvatar() ? $this->getAvatar() : '/static/avatar.png';
+        if ($this->hasAvatar()) {
+            $avatar = $this->getAvatar();
+
+            /** @var UrlGenerator $urlGenerator */
+            $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
+
+            return $urlGenerator->route('avatars.show', compact('avatar'));
+        }
+
+        return '/static/avatar.png';
     }
 }

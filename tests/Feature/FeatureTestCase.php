@@ -2,8 +2,12 @@
 
 namespace Tests\Feature;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Pagination\Paginator;
 use Tests\TestCase;
 
 /**
@@ -12,8 +16,11 @@ use Tests\TestCase;
  */
 abstract class FeatureTestCase extends TestCase
 {
-    use CreatesModels, DatabaseMigrations, LaravelConcerns;
+    use CreatesModels, DatabaseMigrations;
 
+    /**
+     * The storage path for saving avatars.
+     */
     private const AVATARS_DIR = 'public/avatars';
 
     /**
@@ -52,5 +59,47 @@ abstract class FeatureTestCase extends TestCase
         });
 
         parent::tearDown();
+    }
+
+    /**
+     * @param string $avatar
+     * @return string
+     */
+    protected function avatarUrl(string $avatar): string
+    {
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = $this->app->make(UrlGenerator::class);
+
+        return $urlGenerator->route('avatars.show', compact('avatar'));
+    }
+
+    /**
+     * @return array
+     */
+    protected function simplePaginationStructure(): array
+    {
+        return array_keys((new Paginator([], 15))->toArray());
+    }
+
+    /**
+     * @param string $model
+     * @return array
+     */
+    protected function modelNotFoundMessage(string $model): array
+    {
+        return [
+            'error' => (new ModelNotFoundException)->setModel($model)->getMessage()
+        ];
+    }
+
+    /**
+     * @param string $className
+     * @return array
+     */
+    protected function entityNotFound(string $className): array
+    {
+        return [
+            'error' => EntityNotFoundException::fromClassNameAndIdentifier($className, [])->getMessage()
+        ];
     }
 }

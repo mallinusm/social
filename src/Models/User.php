@@ -2,6 +2,8 @@
 
 namespace Social\Models;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Social\Entities\User as UserEntity;
@@ -51,12 +53,19 @@ class User extends Authenticatable
     }
 
     /**
-     * @param $value
+     * @param string $avatar
      * @return string
      */
-    public function getAvatarAttribute($value): string
+    public function getAvatarAttribute(string $avatar): string
     {
-        return $value === null ? '/static/avatar.png' : $value;
+        if ($avatar === null) {
+            return '/static/avatar.png';
+        }
+
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
+
+        return $urlGenerator->route('avatars.show', compact('avatar'));
     }
 
     /**
@@ -66,7 +75,7 @@ class User extends Authenticatable
     {
         return (new UserEntity)->setId($this->getId())
             ->setUsername($this->getUsername())
-            ->setAvatar($this->getAvatar())
+            ->setAvatar($this->getOriginal('avatar'))
             ->setName($this->getAttribute('name'))
             ->setEmail($this->getAttribute('email'))
             ->setPassword($this->getAttribute('password'))

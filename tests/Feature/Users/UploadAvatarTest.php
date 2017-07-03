@@ -56,7 +56,7 @@ class UploadAvatarTest extends FeatureTestCase
 
         $avatar = $response->json()['avatar'];
 
-        $this->assertEquals($avatar, $user->fresh()->getAvatar());
+        $this->assertEquals($this->avatarUrl($avatar), $user->fresh()->getAvatar());
 
         $this->assertFileExists(storage_path('app/public/avatars/' . $avatar));
     }
