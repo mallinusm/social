@@ -5,21 +5,29 @@ namespace Social\Providers;
 use Illuminate\Bus\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use Social\Commands\Reactions\ReactionCommand;
-use Social\Commands\Reactions\UndoReactionCommand;
+use Social\Commands\Reactionables\ReactCommand;
 use Social\Contracts\{
-    CommentRepository, ConversationRepository, FollowerRepository, MessageRepository, PostRepository,
-    ReactionRepository, UserRepository
+    CommentRepository,
+    ConversationRepository,
+    FollowerRepository,
+    MessageRepository,
+    PostRepository,
+    ReactionableRepository,
+    UserRepository
 };
-use Social\Handlers\Reactions\ReactionCommandHandler;
-use Social\Handlers\Reactions\UndoReactionCommandHandler;
+use Social\Handlers\Reactionables\ReactCommandHandler;
 use Social\Models\{
-    Comment, Post
+    Comment,
+    Post
 };
 use Social\Repositories\{
-    DoctrineUserRepository, QueryBuilderCommentRepository, QueryBuilderConversationRepository,
-    QueryBuilderFollowerRepository, QueryBuilderMessageRepository, QueryBuilderPostRepository,
-    QueryBuilderReactionRepository
+    DoctrineReactionableRepository,
+    DoctrineUserRepository,
+    QueryBuilderCommentRepository,
+    QueryBuilderConversationRepository,
+    QueryBuilderFollowerRepository,
+    QueryBuilderMessageRepository,
+    QueryBuilderPostRepository
 };
 
 /**
@@ -32,8 +40,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $busCommands = [
-        ReactionCommand::class => ReactionCommandHandler::class,
-        UndoReactionCommand::class => UndoReactionCommandHandler::class
+        ReactCommand::class => ReactCommandHandler::class,
     ];
 
     /**
@@ -45,8 +52,8 @@ class AppServiceProvider extends ServiceProvider
         FollowerRepository::class => QueryBuilderFollowerRepository::class,
         MessageRepository::class => QueryBuilderMessageRepository::class,
         PostRepository::class => QueryBuilderPostRepository::class,
-        ReactionRepository::class => QueryBuilderReactionRepository::class,
-        UserRepository::class => DoctrineUserRepository::class
+        UserRepository::class => DoctrineUserRepository::class,
+        ReactionableRepository::class => DoctrineReactionableRepository::class
     ];
 
     /**

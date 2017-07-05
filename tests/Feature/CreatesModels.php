@@ -3,7 +3,14 @@
 namespace Tests\Feature;
 
 use Social\Models\{
-    Comment, Conversation, Follower, Message, Post, Reactionable, Reaction, User
+    Comment,
+    Conversation,
+    Follower,
+    Message,
+    Post,
+    Reactionable,
+    Reaction,
+    User
 };
 
 /**
@@ -16,7 +23,7 @@ trait CreatesModels
      * @param array $attributes
      * @return User
      */
-    public function createUser(array $attributes = []): User
+    protected function createUser(array $attributes = []): User
     {
         return factory(User::class)->create($attributes);
     }
@@ -25,7 +32,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Post
      */
-    public function createPost(array $attributes = []): Post
+    protected function createPost(array $attributes = []): Post
     {
         return factory(Post::class)->create($attributes);
     }
@@ -34,7 +41,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Comment
      */
-    public function createComment(array $attributes = []): Comment
+    protected function createComment(array $attributes = []): Comment
     {
         return factory(Comment::class)->create($attributes);
     }
@@ -43,7 +50,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Conversation
      */
-    public function createConversation(array $attributes = []): Conversation
+    protected function createConversation(array $attributes = []): Conversation
     {
         return factory(Conversation::class)->create($attributes);
     }
@@ -52,7 +59,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Message
      */
-    public function createMessage(array $attributes = []): Message
+    protected function createMessage(array $attributes = []): Message
     {
         return factory(Message::class)->create($attributes);
     }
@@ -61,7 +68,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Follower
      */
-    public function createFollower(array $attributes = []): Follower
+    protected function createFollower(array $attributes = []): Follower
     {
         return factory(Follower::class)->create($attributes);
     }
@@ -70,7 +77,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Reaction
      */
-    public function createReaction(array $attributes = []): Reaction
+    protected function createReaction(array $attributes = []): Reaction
     {
         return factory(Reaction::class)->create($attributes);
     }
@@ -79,7 +86,7 @@ trait CreatesModels
      * @param array $attributes
      * @return Reactionable
      */
-    public function createReactionable(array $attributes = []): Reactionable
+    protected function createReactionable(array $attributes = []): Reactionable
     {
         return factory(Reactionable::class)->create($attributes);
     }

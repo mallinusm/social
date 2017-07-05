@@ -26,4 +26,9 @@ final class DoctrinePostRepository extends DoctrineRepository
                 ->setUpdatedAt($now)
         );
     }
+
+    public function paginate(array $ids)
+    {
+        //
+    }
 }
