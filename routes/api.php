@@ -24,7 +24,10 @@ use Social\Http\Actions\Posts\{
     PaginatePostsAction,
     UnpublishPostAction
 };
-use Social\Http\Actions\Reactionables\ReactAction;
+use Social\Http\Actions\Reactionables\{
+    ReactAction,
+    UndoReactAction
+};
 use Social\Http\Actions\Users\{
     RegisterUserAction,
     UploadAvatarAction,
@@ -47,6 +50,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->post('avatar', UploadAvatarAction::class);
 
     $router->post('reactionables', ReactAction::class);
+    $router->delete('reactionables/{reactionableId}', UndoReactAction::class);
 
     $router->post('users/{user}/posts', PublishPostAction::class);
     $router->get('users/{user}/posts', PaginatePostsAction::class);

@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Social\Entities\Reactionable;
 
 /**
@@ -27,4 +28,17 @@ interface ReactionableRepository
      * @return bool
      */
     function hasReacted(int $reactionId, int $userId, int $reactionableId, string $reactionableType): bool;
+
+    /**
+     * @param int $id
+     * @return Reactionable
+     * @throws EntityNotFoundException
+     */
+    function find(int $id): Reactionable;
+
+    /**
+     * @param Reactionable $reactionable
+     * @return void
+     */
+    function delete(Reactionable $reactionable): void;
 }

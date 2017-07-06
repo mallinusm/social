@@ -16,4 +16,12 @@ class Reactionable extends Model
     protected $fillable = [
         'created_at', 'id', 'reactionable_id', 'reactionable_type', 'reaction_id', 'updated_at', 'user_id'
     ];
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int) $this->getAttribute('id');
+    }
 }

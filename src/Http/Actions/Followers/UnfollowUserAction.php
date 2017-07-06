@@ -36,6 +36,8 @@ final class UnfollowUserAction
      */
     public function __invoke(User $user, Request $request): array
     {
+        // TODO check is following
+
         $this->followerRepository->unfollow($request->user()->getAuthIdentifier(), $user->getId());
 
         return ['message' => 'You are no longer following the user.'];

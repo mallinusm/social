@@ -4,10 +4,12 @@ namespace Social\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Social\Models\{
-    Follower, Message, Post
+    Message,
+    Post
 };
 use Social\Policies\{
-    FollowerPolicy, MessagePolicy, PostPolicy
+    MessagePolicy,
+    PostPolicy
 };
 
 /**
@@ -22,7 +24,6 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        Follower::class => FollowerPolicy::class,
         Message::class => MessagePolicy::class,
         Post::class => PostPolicy::class
     ];

@@ -11,7 +11,7 @@ use Social\Contracts\UserRepository;
  * Class UploadAvatarAction
  * @package Social\Http\Actions\Users
  */
-class UploadAvatarAction
+final class UploadAvatarAction
 {
     use ValidatesRequests;
 

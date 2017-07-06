@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Social\Contracts\ReactionableRepository;
 use Social\Entities\Reactionable;
 
@@ -42,5 +43,31 @@ final class DoctrineReactionableRepository extends DoctrineRepository implements
         return $this->getEntityManager()
             ->getRepository(Reactionable::class)
             ->findOneBy(compact('reactionId', 'userId', 'reactionableId', 'reactionableType')) !== null;
+    }
+
+    /**
+     * @param int $id
+     * @return Reactionable
+     * @throws EntityNotFoundException
+     */
+    public function find(int $id): Reactionable
+    {
+        /** @var Reactionable $reactionable */
+        $reactionable = $this->getEntityManager()->getRepository(Reactionable::class)->find($id);
+
+        if ($reactionable === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier(Reactionable::class, []);
+        }
+
+        return $reactionable;
+    }
+
+    /**
+     * @param Reactionable $reactionable
+     * @return void
+     */
+    public function delete(Reactionable $reactionable): void
+    {
+        $this->remove($reactionable);
     }
 }
