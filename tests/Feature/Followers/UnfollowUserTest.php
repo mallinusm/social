@@ -47,8 +47,8 @@ class UnfollowUserTest extends FeatureTestCase
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/users/{$this->createUser()->getId()}/unfollow")
-            ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertExactJson($this->entityNotFound(Follower::class));
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
     }
 
     /** @test */

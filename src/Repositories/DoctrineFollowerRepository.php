@@ -2,8 +2,6 @@
 
 namespace Social\Repositories;
 
-use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Social\Entities\Follower;
 
 /**
@@ -19,7 +17,6 @@ final class DoctrineFollowerRepository extends DoctrineRepository
      */
     public function isFollowing(int $authorId, int $userId): bool
     {
-        // TODO use EXISTS expr
         return $this->getEntityManager()
                 ->getRepository(Follower::class)
                 ->findOneBy(compact('authorId', 'userId')) !== null;
@@ -44,20 +41,16 @@ final class DoctrineFollowerRepository extends DoctrineRepository
      * @param int $authorId
      * @param int $userId
      * @return bool
-     * @throws EntityNotFoundException
      */
     public function unfollow(int $authorId, int $userId): bool
     {
-        $follower = $this->getEntityManager()
-            ->getRepository(Follower::class)
-            ->findOneBy(compact('authorId', 'userId'));
-        
-        if ($follower === null) {
-            throw EntityNotFoundException::fromClassNameAndIdentifier(Follower::class, []);
-        }
-
-        $this->remove($follower);
-
-        return true;
+        return (bool) $this->getQueryBuilder()
+            ->delete(Follower::class, 'f')
+            ->where('f.authorId = ?1')
+            ->setParameter(1, $authorId)
+            ->andWhere('f.userId = ?2')
+            ->setParameter(2, $userId)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -41,6 +41,22 @@ class FollowerUserTest extends FeatureTestCase
     }
 
     /** @test */
+    function follow_user_when_already_following()
+    {
+        $author = $this->createUser();
+
+        $userId = $this->createUser()->getId();
+
+        $this->createFollower(['author_id' => $author->getId(), 'user_id' => $userId]);
+
+        $this->actingAs($author, 'api')
+            ->seeIsAuthenticated('api')
+            ->postJson("api/v1/users/{$userId}/follow")
+            ->assertStatus(Response::HTTP_FORBIDDEN)
+            ->assertExactJson(['error' => 'This action is unauthorized.']);
+    }
+
+    /** @test */
     function follow_user()
     {
         $author = $this->createUser();

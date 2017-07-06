@@ -2,6 +2,7 @@
 
 namespace Social\Http\Actions\Followers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Social\Models\User;
 use Social\Repositories\DoctrineFollowerRepository;
@@ -30,12 +31,19 @@ final class FollowUserAction
      * @param User $user
      * @param Request $request
      * @return array
+     * @throws AuthorizationException
      */
     public function __invoke(User $user, Request $request): array
     {
-        // TODO check if already following
+        $authorId = $request->user()->getAuthIdentifier();
 
-        $this->followerRepository->follow($request->user()->getAuthIdentifier(), $user->getAuthIdentifier());
+        $userId = $user->getId();
+
+        if ($this->followerRepository->isFollowing($authorId, $userId)) {
+            throw new AuthorizationException('This action is unauthorized.');
+        }
+
+        $this->followerRepository->follow($authorId, $userId);
 
         return [
             'message' => 'You are now following the user.'
