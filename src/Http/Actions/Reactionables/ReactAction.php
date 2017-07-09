@@ -3,10 +3,10 @@
 namespace Social\Http\Actions\Reactionables;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Commands\Reactionables\ReactCommand;
+use Social\Contracts\ReactionableRepository;
+use Social\Transformers\ReactionableTransformer;
 
 /**
  * Class ReactAction
@@ -17,17 +17,25 @@ final class ReactAction
     use ValidatesRequests;
 
     /**
-     * @var Dispatcher
+     * @var ReactionableRepository
      */
-    private $dispatcher;
+    private $reactionableRepository;
+
+    /**
+     * @var ReactionableTransformer
+     */
+    private $reactionableTransformer;
 
     /**
      * ReactAction constructor.
-     * @param Dispatcher $dispatcher
+     * @param ReactionableRepository $reactionableRepository
+     * @param ReactionableTransformer $reactionableTransformer
      */
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(ReactionableRepository $reactionableRepository,
+                                ReactionableTransformer $reactionableTransformer)
     {
-        $this->dispatcher = $dispatcher;
+        $this->reactionableRepository = $reactionableRepository;
+        $this->reactionableTransformer = $reactionableTransformer;
     }
 
     /**
@@ -45,13 +53,16 @@ final class ReactAction
             'reactionable_id' => "required|integer|exists:{$reactionableType},id"
         ]);
 
-        $this->dispatcher->dispatchNow(new ReactCommand(
-            $request->user()->getId(),
-            $request->input('reaction_id'),
-            $request->input('reactionable_id'),
-            $reactionableType
-        ));
+        $userId = $request->user()->getId();
+        $reactionId = $request->input('reaction_id');
+        $reactionableId = $request->input('reactionable_id');
 
-        return ['message' => 'Reacted on the entity.'];
+        if ($this->reactionableRepository->hasReacted($reactionId, $userId, $reactionableId, $reactionableType)) {
+            throw new AuthorizationException('This action is unauthorized.');
+        }
+
+        return $this->reactionableTransformer->transform(
+            $this->reactionableRepository->react($reactionId, $userId, $reactionableId, $reactionableType)
+        );
     }
 }

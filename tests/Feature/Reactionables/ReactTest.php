@@ -193,7 +193,9 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonFragment(['message' => 'Reacted on the entity.']);
+            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type'])
+            ->assertJsonFragment($attributes)
+            ->assertJsonMissing(['user_id']);
 
         $this->assertDatabaseHas('reactionables', $attributes + ['user_id' => $user->getId()]);
     }
@@ -213,7 +215,9 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonFragment(['message' => 'Reacted on the entity.']);
+            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type'])
+            ->assertJsonFragment($attributes)
+            ->assertJsonMissing(['user_id']);
 
         $this->assertDatabaseHas('reactionables', $attributes + ['user_id' => $user->getId()]);
     }
