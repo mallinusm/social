@@ -58,7 +58,7 @@ class User extends Authenticatable
      */
     public function getAvatarAttribute(string $avatar): string
     {
-        if ($avatar === null) {
+        if (is_null($avatar)) {
             return '/static/avatar.png';
         }
 

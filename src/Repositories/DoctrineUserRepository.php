@@ -71,7 +71,7 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
 
     /**
      * @param string $payload
-     * @return array
+     * @return User[]
      */
     public function search(string $payload): array
     {
