@@ -53,10 +53,10 @@ class User extends Authenticatable
     }
 
     /**
-     * @param string $avatar
+     * @param null|string $avatar
      * @return string
      */
-    public function getAvatarAttribute(string $avatar): string
+    public function getAvatarAttribute(?string $avatar): string
     {
         if (is_null($avatar)) {
             return '/static/avatar.png';
