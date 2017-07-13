@@ -30,6 +30,7 @@ use Social\Http\Actions\Reactionables\{
 };
 use Social\Http\Actions\Users\{
     RegisterUserAction,
+    SearchUsersAction,
     UploadAvatarAction,
     VisitUserAction
 };
@@ -48,6 +49,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     });
     $router->get('users', VisitUserAction::class);
     $router->post('avatar', UploadAvatarAction::class);
+    $router->get('users/search', SearchUsersAction::class);
 
     $router->post('reactionables', ReactAction::class);
     $router->delete('reactionables/{reactionableId}', UndoReactAction::class);

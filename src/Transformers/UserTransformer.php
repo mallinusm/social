@@ -22,4 +22,15 @@ final class UserTransformer
             'username' => $user->getUsername()
         ];
     }
+
+    /**
+     * @param array $users
+     * @return User[]
+     */
+    public function transformMany(array $users): array
+    {
+        return array_map(function(User $user): array {
+            return $this->transform($user);
+        }, $users);
+    }
 }

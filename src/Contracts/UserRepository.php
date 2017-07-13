@@ -33,4 +33,10 @@ interface UserRepository
      * @throws EntityNotFoundException
      */
     function findByUsername(string $username): User;
+
+    /**
+     * @param string $payload
+     * @return User[]
+     */
+    function search(string $payload): array;
 }

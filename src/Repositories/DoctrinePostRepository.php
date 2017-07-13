@@ -27,8 +27,17 @@ final class DoctrinePostRepository extends DoctrineRepository
         );
     }
 
-    public function paginate(array $ids)
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function unpublish(int $id): bool
     {
-        //
+        return (bool) $this->getQueryBuilder()
+            ->delete(Post::class, 'p')
+            ->where('p.id = ?1')
+            ->setParameter(1, $id)
+            ->getQuery()
+            ->execute();
     }
 }

@@ -19,8 +19,25 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
  * Class Handler
  * @package Social\Exceptions
  */
-class Handler extends ExceptionHandler
+final class Handler extends ExceptionHandler
 {
+    /**
+     * @var array
+     */
+    private $map = [
+        Response::HTTP_NOT_FOUND => [
+            ModelNotFoundException::class,
+            FileNotFoundException::class,
+            EntityNotFoundException::class
+        ],
+        Response::HTTP_FORBIDDEN => [
+            AuthorizationException::class
+        ],
+        Response::HTTP_NOT_ACCEPTABLE => [
+            NotAcceptableHttpException::class
+        ]
+    ];
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -56,18 +73,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e): Response
     {
-        if ($e instanceof ModelNotFoundException
-            || $e instanceof FileNotFoundException
-            || $e instanceof EntityNotFoundException) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
-        }
-
-        if ($e instanceof AuthorizationException) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_FORBIDDEN);
-        }
-
-        if ($e instanceof NotAcceptableHttpException) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_NOT_ACCEPTABLE);
+        foreach ($this->map as $statusCode => $exceptionMap) {
+            foreach ($exceptionMap as $exception) {
+                if ($e instanceof $exception) {
+                    return new JsonResponse(['error' => $e->getMessage()], $statusCode);
+                }
+            }
         }
 
         return parent::render($request, $e);

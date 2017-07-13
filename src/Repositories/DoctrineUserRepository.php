@@ -68,4 +68,20 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
 
         return $user;
     }
+
+    /**
+     * @param string $payload
+     * @return array
+     */
+    public function search(string $payload): array
+    {
+        return $this->getQueryBuilder()
+            ->select('u')
+            ->from(User::class, 'u')
+            ->where('LOWER(u.name) LIKE ?1')
+            ->orWhere('LOWER(u.username) LIKE ?1')
+            ->setParameter(1, '%' . strtolower($payload) . '%')
+            ->getQuery()
+            ->execute();
+    }
 }
