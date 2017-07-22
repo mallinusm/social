@@ -4,9 +4,7 @@ namespace Tests\Feature;
 
 use Social\Models\{
     Comment,
-    Conversation,
     Follower,
-    Message,
     Post,
     Reactionable,
     Reaction,
@@ -44,24 +42,6 @@ trait CreatesModels
     protected function createComment(array $attributes = []): Comment
     {
         return factory(Comment::class)->create($attributes);
-    }
-
-    /**
-     * @param array $attributes
-     * @return Conversation
-     */
-    protected function createConversation(array $attributes = []): Conversation
-    {
-        return factory(Conversation::class)->create($attributes);
-    }
-
-    /**
-     * @param array $attributes
-     * @return Message
-     */
-    protected function createMessage(array $attributes = []): Message
-    {
-        return factory(Message::class)->create($attributes);
     }
 
     /**

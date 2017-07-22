@@ -3,8 +3,6 @@
 namespace Social\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Social\Models\Message;
-use Social\Policies\MessagePolicy;
 
 /**
  * Class AuthServiceProvider
@@ -18,7 +16,7 @@ final class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        Message::class => MessagePolicy::class,
+        //
     ];
 
     /**

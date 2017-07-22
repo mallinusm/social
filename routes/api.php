@@ -6,17 +6,9 @@ use Social\Http\Actions\Comments\{
     LeaveCommentAction,
     PaginateCommentsAction
 };
-use Social\Http\Actions\Conversations\{
-    PaginateConversationsAction,
-    StartConversationAction
-};
 use Social\Http\Actions\Followers\{
     FollowUserAction,
     UnfollowUserAction
-};
-use Social\Http\Actions\Messages\{
-    PaginateMessagesAction,
-    SendMessageAction
 };
 use Social\Http\Actions\Posts\{
     PaginateFeedAction,
@@ -61,12 +53,6 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
 
     $router->post('posts/{post}/comments', LeaveCommentAction::class);
     $router->get('posts/{post}/comments', PaginateCommentsAction::class);
-
-    $router->get('conversations', PaginateConversationsAction::class);
-    $router->post('users/{user}/conversations', StartConversationAction::class);
-
-    $router->post('conversations/{conversation}/messages', SendMessageAction::class);
-    $router->get('conversations/{conversation}/messages', PaginateMessagesAction::class);
 
     $router->post('users/{user}/follow', FollowUserAction::class);
     $router->delete('users/{user}/unfollow', UnfollowUserAction::class);

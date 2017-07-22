@@ -5,7 +5,7 @@ namespace Social\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Social\Models\{
-    Comment, Conversation, Follower, Post, User
+    Comment, Follower, Post, User
 };
 
 /**
@@ -19,7 +19,6 @@ final class RouteServiceProvider extends ServiceProvider
      */
     private $routeModelBindings = [
         'comment' => Comment::class,
-        'conversation' => Conversation::class,
         'follower' => Follower::class,
         'post' => Post::class,
         'user' => User::class,
