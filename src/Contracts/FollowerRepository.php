@@ -2,8 +2,7 @@
 
 namespace Social\Contracts;
 
-use Illuminate\Support\Collection;
-use Social\Models\Follower;
+use Social\Entities\Follower;
 
 /**
  * Interface FollowerRepository
@@ -14,26 +13,27 @@ interface FollowerRepository
     /**
      * @param int $authorId
      * @param int $userId
-     * @return Follower
-     */
-    function follow(int $authorId, int $userId): Follower;
-
-    /**
-     * @param int $id
-     * @return bool
-     */
-    function unfollow(int $id): bool;
-
-    /**
-     * @param int $authorId
-     * @param int $userId
      * @return bool
      */
     function isFollowing(int $authorId, int $userId): bool;
 
     /**
      * @param int $authorId
-     * @return Collection
+     * @param int $userId
+     * @return Follower
      */
-    function getFollowingsIds(int $authorId): Collection;
+    function follow(int $authorId, int $userId): Follower;
+
+    /**
+     * @param int $authorId
+     * @param int $userId
+     * @return bool
+     */
+    function unfollow(int $authorId, int $userId): bool;
+
+    /**
+     * @param int $authorId
+     * @return int[]
+     */
+    function getFollowingIds(int $authorId): array;
 }

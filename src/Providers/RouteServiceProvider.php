@@ -5,7 +5,10 @@ namespace Social\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Social\Models\{
-    Comment, Follower, Post, User
+    Comment,
+    Follower,
+    Post,
+    User
 };
 
 /**

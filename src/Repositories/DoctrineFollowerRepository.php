@@ -2,13 +2,14 @@
 
 namespace Social\Repositories;
 
+use Social\Contracts\FollowerRepository;
 use Social\Entities\Follower;
 
 /**
  * Class DoctrineFollowerRepository
  * @package Social\Repositories
  */
-final class DoctrineFollowerRepository extends DoctrineRepository
+final class DoctrineFollowerRepository extends DoctrineRepository implements FollowerRepository
 {
     /**
      * @param int $authorId
@@ -52,5 +53,22 @@ final class DoctrineFollowerRepository extends DoctrineRepository
             ->setParameter(2, $userId)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param int $authorId
+     * @return int[]
+     */
+    public function getFollowingIds(int $authorId): array
+    {
+        $userIds = $this->getDqlQueryBuilder()
+            ->select('f.userId')
+            ->from(Follower::class, 'f')
+            ->where('f.authorId = ?1')
+            ->setParameter(1, $authorId)
+            ->getQuery()
+            ->execute();
+
+        return array_column($userIds, 'userId');
     }
 }

@@ -2,14 +2,11 @@
 
 namespace Social\Providers;
 
-use Illuminate\Bus\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Social\Contracts\{
     CommentRepository,
-    ConversationRepository,
     FollowerRepository,
-    MessageRepository,
     PostRepository,
     ReactionableRepository,
     UserRepository
@@ -19,12 +16,10 @@ use Social\Models\{
     Post
 };
 use Social\Repositories\{
+    DoctrineFollowerRepository,
     DoctrineReactionableRepository,
     DoctrineUserRepository,
     QueryBuilderCommentRepository,
-    QueryBuilderConversationRepository,
-    QueryBuilderFollowerRepository,
-    QueryBuilderMessageRepository,
     QueryBuilderPostRepository
 };
 
@@ -39,9 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     private $singletons = [
         CommentRepository::class => QueryBuilderCommentRepository::class,
-        ConversationRepository::class => QueryBuilderConversationRepository::class,
-        FollowerRepository::class => QueryBuilderFollowerRepository::class,
-        MessageRepository::class => QueryBuilderMessageRepository::class,
+        FollowerRepository::class => DoctrineFollowerRepository::class,
         PostRepository::class => QueryBuilderPostRepository::class,
         UserRepository::class => DoctrineUserRepository::class,
         ReactionableRepository::class => DoctrineReactionableRepository::class

@@ -6,12 +6,13 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Social\Contracts\FollowerRepository;
 use Social\Contracts\PostRepository;
+use Social\Repositories\DoctrineFollowerRepository;
 
 /**
  * Class PaginateFeedAction
  * @package Social\Http\Actions\Posts
  */
-class PaginateFeedAction
+final class PaginateFeedAction
 {
     /**
      * @var FollowerRepository
@@ -42,8 +43,10 @@ class PaginateFeedAction
     {
         $userId = $request->user()->getAuthIdentifier();
 
-        $userIds = $this->followerRepository->getFollowingsIds($userId);
+        $userIds = $this->followerRepository->getFollowingIds($userId);
 
-        return $this->postRepository->paginate($userIds->push($userId)->toArray());
+        $userIds[] = $userId;
+
+        return $this->postRepository->paginate($userIds);
     }
 }

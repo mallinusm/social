@@ -4,8 +4,8 @@ namespace Social\Http\Actions\Followers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Social\Contracts\FollowerRepository;
 use Social\Models\User;
-use Social\Repositories\DoctrineFollowerRepository;
 
 /**
  * Class FollowUserAction
@@ -14,15 +14,15 @@ use Social\Repositories\DoctrineFollowerRepository;
 final class FollowUserAction
 {
     /**
-     * @var DoctrineFollowerRepository
+     * @var FollowerRepository
      */
     private $followerRepository;
 
     /**
      * FollowUserAction constructor.
-     * @param DoctrineFollowerRepository $followerRepository
+     * @param FollowerRepository $followerRepository
      */
-    public function __construct(DoctrineFollowerRepository $followerRepository)
+    public function __construct(FollowerRepository $followerRepository)
     {
         $this->followerRepository = $followerRepository;
     }

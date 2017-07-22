@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Contracts\Routing\Registrar;
-use Illuminate\Http\Request;
 use Social\Http\Actions\Comments\{
     LeaveCommentAction,
     PaginateCommentsAction
@@ -21,6 +20,7 @@ use Social\Http\Actions\Reactionables\{
     UndoReactAction
 };
 use Social\Http\Actions\Users\{
+    FetchCurrentUserAction,
     RegisterUserAction,
     SearchUsersAction,
     UploadAvatarAction,
@@ -36,9 +36,7 @@ $router->post('users', RegisterUserAction::class);
 $router->post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 
 $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
-    $router->get('/user', function (Request $request) {
-        return $request->user();
-    });
+    $router->get('user', FetchCurrentUserAction::class);
     $router->get('users', VisitUserAction::class);
     $router->post('avatar', UploadAvatarAction::class);
     $router->get('users/search', SearchUsersAction::class);

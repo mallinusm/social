@@ -6,7 +6,9 @@ use Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver;
 use Doctrine\DBAL\Driver\Connection as ConnectionContract;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\{
-    Configuration, EntityManager, EntityManagerInterface
+    Configuration,
+    EntityManager,
+    EntityManagerInterface
 };
 use Doctrine\ORM\Tools\Setup;
 use Illuminate\Database\Connection;

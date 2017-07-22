@@ -2,18 +2,14 @@
 
 namespace Social\Exceptions;
 
-use Doctrine\ORM\EntityNotFoundException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\{
     JsonResponse, Request
 };
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 
 /**
  * Class Handler
@@ -21,23 +17,6 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
  */
 final class Handler extends ExceptionHandler
 {
-    /**
-     * @var array
-     */
-    private $map = [
-        Response::HTTP_NOT_FOUND => [
-            ModelNotFoundException::class,
-            FileNotFoundException::class,
-            EntityNotFoundException::class
-        ],
-        Response::HTTP_FORBIDDEN => [
-            AuthorizationException::class
-        ],
-        Response::HTTP_NOT_ACCEPTABLE => [
-            NotAcceptableHttpException::class
-        ]
-    ];
-
     /**
      * A list of the exception types that should not be reported.
      *
@@ -73,12 +52,8 @@ final class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e): Response
     {
-        foreach ($this->map as $statusCode => $exceptionMap) {
-            foreach ($exceptionMap as $exception) {
-                if ($e instanceof $exception) {
-                    return new JsonResponse(['error' => $e->getMessage()], $statusCode);
-                }
-            }
+        if ($statusCode = (new ExceptionCatcher)->catch($e)) {
+            return new JsonResponse(['error' => $e->getMessage()], $statusCode);
         }
 
         return parent::render($request, $e);
