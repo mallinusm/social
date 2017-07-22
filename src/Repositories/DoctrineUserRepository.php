@@ -38,7 +38,7 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      */
     public function updateAvatar(int $userId, string $avatar): bool
     {
-        return (bool) $this->getQueryBuilder()
+        return (bool) $this->getDqlQueryBuilder()
             ->update(User::class, 'u')
             ->where('u.id = ?1')
             ->setParameter(1, $userId)
@@ -75,7 +75,7 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      */
     public function search(string $payload): array
     {
-        return $this->getQueryBuilder()
+        return $this->getDqlQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
             ->where('LOWER(u.name) LIKE ?1')

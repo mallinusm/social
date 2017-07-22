@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * Class Follower
  * @package Social\Entities
  */
-final class Follower
+class Follower
 {
     use Attributes\Id,
         Attributes\AuthorId,

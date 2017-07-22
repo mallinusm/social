@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * Class Comment
  * @package Social\Entities
  */
-final class Comment
+class Comment
 {
     use Attributes\Id,
         Attributes\Content,
@@ -18,7 +18,9 @@ final class Comment
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 
-    use Relationships\User;
+    use Relationships\User,
+        Relationships\Post,
+        Relationships\Reactionables;
 
     /**
      * @param ClassMetadata $metadata
@@ -40,6 +42,14 @@ final class Comment
             ])
             ->addField('updatedAt', 'integer', [
                 'columnName' => 'updated_at'
-            ]);
+            ])
+            ->createOneToOne('user', User::class)
+            ->build()
+            ->createManyToOne('post', Post::class)
+            ->inversedBy('comments')
+            ->build()
+            ->createOneToMany('reactionables', Reactionable::class)
+            ->mappedBy('comment')
+            ->build();
     }
 }

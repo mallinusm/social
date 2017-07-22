@@ -2,6 +2,7 @@
 
 namespace Social\Entities\Relationships;
 
+use Doctrine\ORM\PersistentCollection;
 use Social\Entities\Comment;
 
 /**
@@ -31,6 +32,10 @@ trait Comments
      */
     public function getComments(): array
     {
+        if ($this->comments instanceof PersistentCollection) {
+            return $this->comments->toArray();
+        }
+
         return $this->comments;
     }
 

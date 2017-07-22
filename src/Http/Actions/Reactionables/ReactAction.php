@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\ReactionableRepository;
+use Social\Models\User;
 use Social\Transformers\ReactionableTransformer;
 
 /**
@@ -53,7 +54,11 @@ final class ReactAction
             'reactionable_id' => "required|integer|exists:{$reactionableType},id"
         ]);
 
-        $userId = $request->user()->getId();
+        /**
+         * @var User $user
+         */
+        $user = $request->user();
+        $userId = $user->getId();
         $reactionId = $request->input('reaction_id');
         $reactionableId = $request->input('reactionable_id');
 
@@ -62,7 +67,9 @@ final class ReactAction
         }
 
         return $this->reactionableTransformer->transform(
-            $this->reactionableRepository->react($reactionId, $userId, $reactionableId, $reactionableType)
+            $this->reactionableRepository
+                ->react($reactionId, $userId, $reactionableId, $reactionableType)
+                ->setUser($user->toUserEntity())
         );
     }
 }

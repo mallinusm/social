@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * Class User
  * @package Social\Entities
  */
-final class User
+class User
 {
     use Attributes\Id,
         Attributes\Email,

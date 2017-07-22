@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
  * Class Post
  * @package Social\Entities
  */
-final class Post
+class Post
 {
     use Attributes\Id,
         Attributes\AuthorId,
@@ -20,7 +20,8 @@ final class Post
 
     use Relationships\Author,
         Relationships\User,
-        Relationships\Comments;
+        Relationships\Comments,
+        Relationships\Reactionables;
 
     /**
      * @param ClassMetadata $metadata
@@ -29,7 +30,10 @@ final class Post
     public static function loadMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))->setTable('posts')
-            ->createField('id', 'integer')->makePrimaryKey()->generatedValue()->build()
+            ->createField('id', 'integer')
+            ->makePrimaryKey()
+            ->generatedValue()
+            ->build()
             ->addField('content', 'string')
             ->addField('authorId', 'integer', [
                 'columnName' => 'author_id'
@@ -42,6 +46,16 @@ final class Post
             ])
             ->addField('updatedAt', 'integer', [
                 'columnName' => 'updated_at'
-            ]);
+            ])
+            ->createOneToOne('user', User::class)
+            ->build()
+            ->createOneToOne('author', User::class)
+            ->build()
+            ->createOneToMany('comments', Comment::class)
+            ->mappedBy('post')
+            ->build()
+            ->createOneToMany('reactionables', Reactionable::class)
+            ->mappedBy('post')
+            ->build();
     }
 }

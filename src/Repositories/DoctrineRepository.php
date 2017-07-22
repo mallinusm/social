@@ -3,8 +3,10 @@
 namespace Social\Repositories;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Query\QueryBuilder as SqlQueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\QueryBuilder as DqlQueryBuilder;
 
 /**
  * Class DoctrineRepository
@@ -65,10 +67,34 @@ abstract class DoctrineRepository
     }
 
     /**
-     * @return QueryBuilder
+     * @return DqlQueryBuilder
      */
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getDqlQueryBuilder(): DqlQueryBuilder
     {
         return $this->entityManager->createQueryBuilder();
+    }
+
+    /**
+     * @return SqlQueryBuilder
+     */
+    protected function getSqlQueryBuilder(): SqlQueryBuilder
+    {
+        return $this->entityManager->getConnection()->createQueryBuilder();
+    }
+
+    /**
+     * @return int
+     */
+    protected function lastInsertedId(): int
+    {
+        return (int) $this->entityManager->getConnection()->lastInsertId();
+    }
+
+    /**
+     * @return Expr
+     */
+    protected function getExpression(): Expr
+    {
+        return $this->getDqlQueryBuilder()->expr();
     }
 }

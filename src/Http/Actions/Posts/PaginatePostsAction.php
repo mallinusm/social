@@ -2,36 +2,43 @@
 
 namespace Social\Http\Actions\Posts;
 
-use Illuminate\Contracts\Pagination\Paginator;
-use Social\Contracts\PostRepository;
 use Social\Models\User;
+use Social\Repositories\DoctrinePostRepository;
+use Social\Transformers\PostTransformer;
 
 /**
  * Class PaginatePostsAction
  * @package Social\Http\Actions\Posts
  */
-class PaginatePostsAction
+final class PaginatePostsAction
 {
     /**
-     * @var PostRepository
+     * @var DoctrinePostRepository
      */
-    private $postRepository;
+    private $doctrinePostRepository;
+
+    /**
+     * @var PostTransformer
+     */
+    private $postTransformer;
 
     /**
      * PaginatePostsAction constructor.
-     * @param PostRepository $postRepository
+     * @param DoctrinePostRepository $doctrinePostRepository
+     * @param PostTransformer $postTransformer
      */
-    public function __construct(PostRepository $postRepository)
+    public function __construct(DoctrinePostRepository $doctrinePostRepository, PostTransformer $postTransformer)
     {
-        $this->postRepository = $postRepository;
+        $this->doctrinePostRepository = $doctrinePostRepository;
+        $this->postTransformer = $postTransformer;
     }
 
     /**
      * @param User $user
-     * @return Paginator
+     * @return array
      */
-    public function __invoke(User $user): Paginator
+    public function __invoke(User $user): array
     {
-        return $this->postRepository->paginate([$user->getId()]);
+        return $this->postTransformer->transformMany($this->doctrinePostRepository->paginate([$user->getId()]));
     }
 }

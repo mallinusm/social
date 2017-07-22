@@ -44,7 +44,7 @@ final class DoctrineFollowerRepository extends DoctrineRepository
      */
     public function unfollow(int $authorId, int $userId): bool
     {
-        return (bool) $this->getQueryBuilder()
+        return (bool) $this->getDqlQueryBuilder()
             ->delete(Follower::class, 'f')
             ->where('f.authorId = ?1')
             ->setParameter(1, $authorId)

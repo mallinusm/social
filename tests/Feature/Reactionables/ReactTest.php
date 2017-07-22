@@ -193,9 +193,14 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type'])
+            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type', 'user'])
             ->assertJsonFragment($attributes)
-            ->assertJsonMissing(['user_id']);
+            ->assertJsonMissing(['user_id'])
+            ->assertJsonFragment(['user' => [
+                'name' => $user->getName(),
+                'avatar' => $user->getAvatar(),
+                'username' => $user->getUsername()
+            ]]);
 
         $this->assertDatabaseHas('reactionables', $attributes + ['user_id' => $user->getId()]);
     }
@@ -215,9 +220,14 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type'])
+            ->assertJsonStructure(['id', 'reaction_id', 'reactionable_id', 'reactionable_type', 'user'])
             ->assertJsonFragment($attributes)
-            ->assertJsonMissing(['user_id']);
+            ->assertJsonMissing(['user_id'])
+            ->assertJsonFragment(['user' => [
+                'name' => $user->getName(),
+                'avatar' => $user->getAvatar(),
+                'username' => $user->getUsername()
+            ]]);
 
         $this->assertDatabaseHas('reactionables', $attributes + ['user_id' => $user->getId()]);
     }

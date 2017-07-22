@@ -2,8 +2,8 @@
 
 namespace Social\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Social\Models\Attributes\{
     HasAuthorId, HasId, HasUserId
 };
@@ -18,6 +18,11 @@ use Social\Models\Relations\{
 class Post extends Model
 {
     use BelongsToAuthor, HasAuthorId, HasManyComments, HasId, HasUserId, MorphToManyReactions;
+
+    /**
+     * @var string
+     */
+    protected $dateFormat = 'U';
 
     /**
      * @var array
@@ -37,4 +42,32 @@ class Post extends Model
         'upvoting_count' => 'int',
         'user_id' => 'int'
     ];
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->getAttribute('content');
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedAt(): int
+    {
+        $createdAt = $this->getAttribute('created_at');
+
+        return $createdAt instanceof Carbon ? $createdAt->getTimestamp() : (int) $createdAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUpdatedAt(): int
+    {
+        $updatedAt = $this->getAttribute('updated_at');
+
+        return $updatedAt instanceof Carbon ? $updatedAt->getTimestamp() : (int) $updatedAt;
+    }
 }
