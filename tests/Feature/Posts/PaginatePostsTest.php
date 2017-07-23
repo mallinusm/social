@@ -43,6 +43,28 @@ class PaginatePostsTest extends FeatureTestCase
     }
 
     /** @test */
+    function paginate_posts_without_username()
+    {
+        $this->actingAs($this->createUser(), 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson('api/v1/posts')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertExactJson(['username' => ['The username field is required.']]);
+    }
+
+    /** @test */
+    function paginate_posts_with_too_long_username()
+    {
+        $username = str_random(256);
+
+        $this->actingAs($this->createUser(), 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/posts?username={$username}")
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+    }
+
+    /** @test */
     function paginate_posts()
     {
         $user = $this->createUser();
