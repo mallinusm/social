@@ -45,7 +45,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->delete('reactionables/{reactionableId}', UndoReactAction::class);
 
     $router->post('users/{user}/posts', PublishPostAction::class);
-    $router->get('users/{user}/posts', PaginatePostsAction::class);
+    $router->get('posts', PaginatePostsAction::class);
     $router->delete('posts/{post}', UnpublishPostAction::class);
     $router->get('feed', PaginateFeedAction::class);
 

@@ -3,7 +3,7 @@
 namespace Tests\Feature\Posts;
 
 use Illuminate\Http\Response;
-use Social\Models\User;
+use Social\Entities\User;
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -16,7 +16,7 @@ class PaginatePostsTest extends FeatureTestCase
     function paginate_posts_without_json_format()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->get('api/v1/users/1/posts')
+            ->get('api/v1/posts')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
     }
@@ -25,7 +25,7 @@ class PaginatePostsTest extends FeatureTestCase
     function paginate_posts_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->getJson('api/v1/users/1/posts')
+            ->getJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(['error' => 'Unauthenticated.']);
     }
@@ -33,11 +33,13 @@ class PaginatePostsTest extends FeatureTestCase
     /** @test */
     function paginate_posts_for_unknown_user()
     {
+        $username = str_random();
+
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->getJson('api/v1/users/123456789/posts')
+            ->getJson("api/v1/posts?username={$username}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertExactJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->entityNotFound(User::class));
     }
 
     /** @test */
@@ -45,6 +47,7 @@ class PaginatePostsTest extends FeatureTestCase
     {
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();
+        $username = $username = $user->getUsername();
 
         $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
 
@@ -69,12 +72,12 @@ class PaginatePostsTest extends FeatureTestCase
         $userArray = [
             'avatar' => $user->getAvatar(),
             'name' => $user->getName(),
-            'username' => $user->getUsername()
+            'username' => $username
         ];
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
-            ->getJson("api/v1/users/{$userId}/posts")
+            ->getJson("api/v1/posts?username={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 [

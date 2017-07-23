@@ -93,7 +93,7 @@ abstract class DoctrineRepository
     /**
      * @return Expr
      */
-    protected function getExpression(): Expr
+    protected function getDqlExpression(): Expr
     {
         return $this->getDqlQueryBuilder()->expr();
     }

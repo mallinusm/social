@@ -69,7 +69,7 @@ final class DoctrinePostRepository extends DoctrineRepository
      */
     public function paginate(array $userIds): array
     {
-        $expression = $this->getExpression();
+        $expression = $this->getDqlExpression();
 
         return $this->getDqlQueryBuilder()
             ->select(['p', 'a', 'u', 'c', 'cu', 'pr', 'cr', 'pru', 'cru'])
