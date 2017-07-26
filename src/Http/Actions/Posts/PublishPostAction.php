@@ -4,9 +4,9 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\PostRepository;
 use Social\Contracts\UserRepository;
 use Social\Models\User;
-use Social\Repositories\DoctrinePostRepository;
 use Social\Transformers\PostTransformer;
 
 /**
@@ -23,7 +23,7 @@ class PublishPostAction
     private $userRepository;
 
     /**
-     * @var DoctrinePostRepository
+     * @var PostRepository
      */
     private $postRepository;
 
@@ -35,11 +35,11 @@ class PublishPostAction
     /**
      * PublishPostAction constructor.
      * @param UserRepository $userRepository
-     * @param DoctrinePostRepository $postRepository
+     * @param PostRepository $postRepository
      * @param PostTransformer $postTransformer
      */
     public function __construct(UserRepository $userRepository,
-                                DoctrinePostRepository $postRepository,
+                                PostRepository $postRepository,
                                 PostTransformer $postTransformer)
     {
         $this->userRepository = $userRepository;

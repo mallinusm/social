@@ -5,8 +5,8 @@ namespace Social\Http\Actions\Posts;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\PostRepository;
 use Social\Models\Post;
-use Social\Repositories\DoctrinePostRepository;
 
 /**
  * Class UnpublishPostAction
@@ -17,17 +17,17 @@ final class UnpublishPostAction
     use AuthorizesRequests;
 
     /**
-     * @var DoctrinePostRepository
+     * @var PostRepository
      */
-    private $doctrinePostRepository;
+    private $postRepository;
 
     /**
      * UnpublishPostAction constructor.
-     * @param DoctrinePostRepository $doctrinePostRepository
+     * @param PostRepository $postRepository
      */
-    public function __construct(DoctrinePostRepository $doctrinePostRepository)
+    public function __construct(PostRepository $postRepository)
     {
-        $this->doctrinePostRepository = $doctrinePostRepository;
+        $this->postRepository = $postRepository;
     }
 
     /**
@@ -42,7 +42,7 @@ final class UnpublishPostAction
             throw new AuthorizationException('This action is unauthorized.');
         }
         
-        $this->doctrinePostRepository->unpublish($post->getId());
+        $this->postRepository->unpublish($post->getId());
         
         return ['message' => 'The post was deleted.'];
     }

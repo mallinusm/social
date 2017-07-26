@@ -40,12 +40,11 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
     {
         return (bool) $this->getDqlQueryBuilder()
             ->update(User::class, 'u')
-            ->where('u.id = ?1')
-            ->setParameter(1, $userId)
-            ->set('u.avatar', '?2')
-            ->setParameter(2, $avatar)
-            ->set('u.updatedAt', '?3')
-            ->setParameter(3, $this->freshTimestamp())
+            ->where($this->getDqlExpression()->eq('u.id', $userId))
+            ->set('u.avatar', ':avatar')
+            ->setParameter('avatar', $avatar)
+            ->set('u.updatedAt', ':updatedAt')
+            ->setParameter('updatedAt', $this->freshTimestamp())
             ->getQuery()
             ->execute();
     }
@@ -78,9 +77,9 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
         return $this->getDqlQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
-            ->where('LOWER(u.name) LIKE ?1')
-            ->orWhere('LOWER(u.username) LIKE ?1')
-            ->setParameter(1, '%' . strtolower($payload) . '%')
+            ->where('LOWER(u.name) LIKE :payload')
+            ->orWhere('LOWER(u.username) LIKE :payload')
+            ->setParameter('payload', '%' . strtolower($payload) . '%')
             ->getQuery()
             ->execute();
     }

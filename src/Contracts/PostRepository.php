@@ -2,8 +2,7 @@
 
 namespace Social\Contracts;
 
-use Illuminate\Contracts\Pagination\Paginator;
-use Social\Models\Post;
+use Social\Entities\Post;
 
 /**
  * Interface PostRepository
@@ -20,8 +19,14 @@ interface PostRepository
     function publish(int $authorId, string $content, int $userId): Post;
 
     /**
-     * @param array $userIds
-     * @return Paginator
+     * @param int $id
+     * @return bool
      */
-    function paginate(array $userIds): Paginator;
+    function unpublish(int $id): bool;
+
+    /**
+     * @param array $userIds
+     * @return Post[]
+     */
+    function paginate(array $userIds): array;
 }

@@ -2,11 +2,10 @@
 
 namespace Social\Http\Actions\Posts;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Social\Contracts\FollowerRepository;
 use Social\Contracts\PostRepository;
-use Social\Repositories\DoctrineFollowerRepository;
+use Social\Transformers\PostTransformer;
 
 /**
  * Class PaginateFeedAction
@@ -25,21 +24,31 @@ final class PaginateFeedAction
     private $postRepository;
 
     /**
+     * @var PostTransformer
+     */
+    private $postTransformer;
+
+    /**
      * PaginateFeedAction constructor.
      * @param FollowerRepository $followerRepository
      * @param PostRepository $postRepository
+     * @param PostTransformer $postTransformer
      */
-    public function __construct(FollowerRepository $followerRepository, PostRepository $postRepository)
+    public function __construct(FollowerRepository $followerRepository,
+                                PostRepository $postRepository,
+                                PostTransformer $postTransformer)
     {
+
         $this->followerRepository = $followerRepository;
         $this->postRepository = $postRepository;
+        $this->postTransformer = $postTransformer;
     }
 
     /**
      * @param Request $request
-     * @return Paginator
+     * @return array
      */
-    public function __invoke(Request $request): Paginator
+    public function __invoke(Request $request): array
     {
         $userId = $request->user()->getAuthIdentifier();
 
@@ -47,6 +56,8 @@ final class PaginateFeedAction
 
         $userIds[] = $userId;
 
-        return $this->postRepository->paginate($userIds);
+        $posts = $this->postRepository->paginate($userIds);
+
+        return $this->postTransformer->transformMany($posts);
     }
 }

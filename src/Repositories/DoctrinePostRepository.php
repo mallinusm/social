@@ -4,13 +4,14 @@ namespace Social\Repositories;
 
 use Doctrine\ORM\Query\Expr;
 use Exception;
+use Social\Contracts\PostRepository;
 use Social\Entities\Post;
 
 /**
  * Class DoctrinePostRepository
  * @package Social\Repositories
  */
-final class DoctrinePostRepository extends DoctrineRepository
+final class DoctrinePostRepository extends DoctrineRepository implements PostRepository
 {
     /**
      * @param int $authorId

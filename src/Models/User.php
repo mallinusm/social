@@ -2,6 +2,7 @@
 
 namespace Social\Models;
 
+use Carbon\Carbon;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -89,5 +90,19 @@ class User extends Authenticatable
     public function getName(): string
     {
         return $this->getAttribute('name');
+    }
+
+    /**
+     * @return int
+     */
+    public function getUpdatedAt(): int
+    {
+        $updatedAt = $this->getAttribute('updated_at');
+
+        if ($updatedAt instanceof Carbon) {
+            return $updatedAt->getTimestamp();
+        }
+
+        return (int) $updatedAt;
     }
 }

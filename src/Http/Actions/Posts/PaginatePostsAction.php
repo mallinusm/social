@@ -4,8 +4,8 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\PostRepository;
 use Social\Contracts\UserRepository;
-use Social\Repositories\DoctrinePostRepository;
 use Social\Transformers\PostTransformer;
 
 /**
@@ -22,9 +22,9 @@ final class PaginatePostsAction
     private $userRepository;
 
     /**
-     * @var DoctrinePostRepository
+     * @var PostRepository
      */
-    private $doctrinePostRepository;
+    private $postRepository;
 
     /**
      * @var PostTransformer
@@ -34,15 +34,16 @@ final class PaginatePostsAction
     /**
      * PaginatePostsAction constructor.
      * @param UserRepository $userRepository
-     * @param DoctrinePostRepository $doctrinePostRepository
+     * @param PostRepository $postRepository
      * @param PostTransformer $postTransformer
      */
     public function __construct(UserRepository $userRepository,
-                                DoctrinePostRepository $doctrinePostRepository,
+                                PostRepository $postRepository,
                                 PostTransformer $postTransformer)
     {
+
         $this->userRepository = $userRepository;
-        $this->doctrinePostRepository = $doctrinePostRepository;
+        $this->postRepository = $postRepository;
         $this->postTransformer = $postTransformer;
     }
 
@@ -58,7 +59,7 @@ final class PaginatePostsAction
 
         $user = $this->userRepository->findByUsername($request->input('username'));
 
-        $posts = $this->doctrinePostRepository->paginate([$user->getId()]);
+        $posts = $this->postRepository->paginate([$user->getId()]);
 
         return $this->postTransformer->transformMany($posts);
     }

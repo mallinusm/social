@@ -17,10 +17,10 @@ use Social\Models\{
 };
 use Social\Repositories\{
     DoctrineFollowerRepository,
+    DoctrinePostRepository,
     DoctrineReactionableRepository,
     DoctrineUserRepository,
-    QueryBuilderCommentRepository,
-    QueryBuilderPostRepository
+    QueryBuilderCommentRepository
 };
 
 /**
@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
     private $singletons = [
         CommentRepository::class => QueryBuilderCommentRepository::class,
         FollowerRepository::class => DoctrineFollowerRepository::class,
-        PostRepository::class => QueryBuilderPostRepository::class,
+        PostRepository::class => DoctrinePostRepository::class,
         UserRepository::class => DoctrineUserRepository::class,
         ReactionableRepository::class => DoctrineReactionableRepository::class
     ];

@@ -44,6 +44,14 @@ trait Avatar
     }
 
     /**
+     * @return UrlGenerator
+     */
+    private function getUrlGenerator(): UrlGenerator
+    {
+        return Container::getInstance()->make(UrlGenerator::class);
+    }
+
+    /**
      * @return string
      */
     public function getAvatarLink(): string
@@ -58,9 +66,6 @@ trait Avatar
             return $avatar;
         }
 
-        /** @var UrlGenerator $urlGenerator */
-        $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
-
-        return $urlGenerator->route('avatars.show', compact('avatar'));
+        return $this->getUrlGenerator()->route('avatars.show', compact('avatar'));
     }
 }

@@ -53,7 +53,7 @@ class UploadAvatarTest extends FeatureTestCase
     /** @test */
     function upload_avatar()
     {
-        $user = $this->createUser();
+        $user = $this->createUser(['updated_at' => 0]);
 
         $response = $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
@@ -65,7 +65,13 @@ class UploadAvatarTest extends FeatureTestCase
 
         $avatar = $response->json()['avatar'];
 
-        $this->assertEquals($this->avatarUrl($avatar), $user->fresh()->getAvatar());
+        $fresh = $user->fresh();
+
+        $this->assertEquals($this->avatarUrl($avatar), $fresh->getAvatar());
+
+        $updatedAt = $fresh->getUpdatedAt();
+        $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
+        $this->assertEquals(time(), $updatedAt);
 
         $this->assertFileExists(storage_path('app/public/avatars/' . $avatar));
     }

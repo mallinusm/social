@@ -138,19 +138,33 @@ class RegisterUserTest extends FeatureTestCase
         [$name, $username, $password, $email] = [str_random(), str_random(), str_random(), str_random() . '@mail.com'];
 
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('api/v1/users', compact('name', 'username', 'email', 'password') + [
+            ->postJson('api/v1/users', [
+                'name' => $name,
+                'username' => $username,
+                'password' => $password,
+                'email' => $email,
                 'password_confirmation' => $password
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['name', 'avatar', 'username'])
-            ->assertExactJson(compact('name', 'username') + ['avatar' => '/static/avatar.png'])
+            ->assertExactJson([
+                'name' => $name,
+                'username' => $username,
+                'avatar' => '/static/avatar.png'
+            ])
             ->assertJsonMissing(['id', 'email', 'password', 'created_at', 'updated_at']);
 
-        $this->assertDatabaseHas('users', compact('name', 'username', 'email'));
+        $this->assertDatabaseHas('users', [
+            'name' => $name,
+            'username' => $username,
+            'email' => $email
+        ]);
 
         /**
          * Make sure the password is encrypted.
          */
-        $this->assertDatabaseMissing('users', compact('password'));
+        $this->assertDatabaseMissing('users', [
+            'password' => $password
+        ]);
     }
 }
