@@ -3,7 +3,7 @@
 namespace Tests\Feature\Posts;
 
 use Illuminate\Http\Response;
-use Social\Models\User;
+use Social\Entities\User;
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -16,7 +16,7 @@ class PublishPostTest extends FeatureTestCase
     function publish_post_without_json_format()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->post('api/v1/users/1/posts')
+            ->post('api/v1/posts')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
     }
@@ -25,9 +25,19 @@ class PublishPostTest extends FeatureTestCase
     function publish_post_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->postJson('api/v1/users/1/posts')
+            ->postJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(['error' => 'Unauthenticated.']);
+    }
+
+    /** @test */
+    function publish_post_without_username()
+    {
+        $this->actingAs($this->createUser(), 'api')
+            ->seeIsAuthenticated('api')
+            ->postJson('api/v1/posts')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonFragment(['username' => ['The username field is required.']]);
     }
 
     /** @test */
@@ -35,21 +45,19 @@ class PublishPostTest extends FeatureTestCase
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->postJson('api/v1/users/123456789/posts')
+            ->postJson('api/v1/posts', ['username' => str_random(), 'content' => str_random()])
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertExactJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->entityNotFound(User::class));
     }
 
     /** @test */
     function publish_post_without_content()
     {
-        $user = $this->createUser();
-
-        $this->actingAs($user, 'api')
+        $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts")
+            ->postJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['content' => ['The content field is required.']]);
+            ->assertJsonFragment(['content' => ['The content field is required.']]);
     }
 
     /** @test */
@@ -59,42 +67,62 @@ class PublishPostTest extends FeatureTestCase
 
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/users/{$user->getAuthIdentifier()}/posts", ['content' => str_random(256)])
+            ->postJson('api/v1/posts', ['content' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['content' => ['The content may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['content' => ['The content may not be greater than 255 characters.']]);
     }
 
     /** @test */
     function publish_post()
     {
         $author = $this->createUser();
+        $authorId = $author->getAuthIdentifier();
 
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();
+        $username = $user->getUsername();
 
-        $ids = ['author_id' => $author->getAuthIdentifier(), 'user_id' => $userId];
-
-        $data = ['content' => str_random()];
+        $content = str_random();
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/users/{$userId}/posts", $data)
+            ->postJson('api/v1/posts', [
+                'content' => $content,
+                'username' => $username
+            ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at', 'user', 'author'])
-            ->assertJsonFragment(['user' => [
-                'name' => $user->getAttribute('name'),
-                'username' => $user->getUsername(),
-                'avatar' => $user->getAvatar()
-            ]])
-            ->assertJsonFragment(['author' => [
-                'name' => $author->getAttribute('name'),
-                'username' => $author->getUsername(),
-                'avatar' => $author->getAvatar()
-            ]])
-            ->assertJsonFragment(['comments' => []])
-            ->assertJsonFragment($data)
-            ->assertJsonMissing($ids);
+            ->assertJsonStructure([
+                'content',
+                'created_at',
+                'id',
+                'updated_at',
+                'user',
+                'author',
+                'comments'
+            ])
+            ->assertJsonFragment([
+                'content' => $content,
+                'user' => [
+                    'name' => $user->getAttribute('name'),
+                    'username' => $username,
+                    'avatar' => $user->getAvatar()
+                ],
+                'author' => [
+                    'name' => $author->getAttribute('name'),
+                    'username' => $author->getUsername(),
+                    'avatar' => $author->getAvatar()
+                ],
+                'comments' => []
+            ])
+            ->assertJsonMissing([
+                'author_id' => $authorId,
+                'user_id' => $userId
+            ]);
 
-        $this->assertDatabaseHas('posts', $data + $ids);
+        $this->assertDatabaseHas('posts', [
+            'content' => $content,
+            'author_id' => $authorId,
+            'user_id' => $userId
+        ]);
     }
 }

@@ -15,6 +15,7 @@ final class CommentTransformer
      * @var UserTransformer
      */
     private $userTransformer;
+
     /**
      * @var ReactionableTransformer
      */

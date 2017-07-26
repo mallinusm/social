@@ -69,7 +69,7 @@ class PaginatePostsTest extends FeatureTestCase
     {
         $user = $this->createUser();
         $userId = $user->getAuthIdentifier();
-        $username = $username = $user->getUsername();
+        $username = $user->getUsername();
 
         $post = $this->createPost(['author_id' => $userId, 'user_id' => $userId]);
 
