@@ -54,9 +54,8 @@ final class PostTransformer
             'updated_at' => $post->getUpdatedAt(),
             'author' => $this->userTransformer->transform($post->getAuthor()),
             'user' => $this->userTransformer->transform($post->getUser()),
-            'comments' => $post->hasComments() ? $this->commentTransformer->transformMany($post->getComments()) : [],
-            'reactionables' => $post->hasReactionables() ?
-                $this->reactionableTransformer->transformMany($post->getReactionables()) : []
+            'comments' => $this->commentTransformer->transformMany($post->getComments()),
+            'reactionables' => $this->reactionableTransformer->transformMany($post->getReactionables())
         ];
     }
 

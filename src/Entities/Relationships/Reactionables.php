@@ -36,7 +36,7 @@ trait Reactionables
             return $this->reactionables->toArray();
         }
 
-        return $this->reactionables;
+        return $this->hasReactionables() ? $this->reactionables : [];
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Social\Transformers;
 
+use Illuminate\Support\Collection;
 use Social\Entities\User;
 
 /**
@@ -29,8 +30,8 @@ final class UserTransformer
      */
     public function transformMany(array $users): array
     {
-        return array_map(function(User $user): array {
+        return (new Collection($users))->transform(function(User $user): array {
             return $this->transform($user);
-        }, $users);
+        })->toArray();
     }
 }

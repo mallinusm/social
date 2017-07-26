@@ -75,7 +75,7 @@ class User extends Authenticatable
     {
         return (new UserEntity)->setId($this->getId())
             ->setUsername($this->getUsername())
-            ->setAvatar($this->getOriginal('avatar'))
+            ->setAvatar($this->getAttribute('avatar'))
             ->setName($this->getAttribute('name'))
             ->setEmail($this->getAttribute('email'))
             ->setPassword($this->getAttribute('password'))

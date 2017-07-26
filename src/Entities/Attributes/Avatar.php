@@ -48,15 +48,19 @@ trait Avatar
      */
     public function getAvatarLink(): string
     {
-        if ($this->hasAvatar()) {
-            $avatar = $this->getAvatar();
-
-            /** @var UrlGenerator $urlGenerator */
-            $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
-
-            return $urlGenerator->route('avatars.show', compact('avatar'));
+        if (! $this->hasAvatar()) {
+            return '/static/avatar.png';
         }
 
-        return '/static/avatar.png';
+        $avatar = $this->getAvatar();
+
+        if (filter_var($avatar, FILTER_VALIDATE_URL)) {
+            return $avatar;
+        }
+
+        /** @var UrlGenerator $urlGenerator */
+        $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
+
+        return $urlGenerator->route('avatars.show', compact('avatar'));
     }
 }

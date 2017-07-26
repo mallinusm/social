@@ -45,8 +45,7 @@ final class CommentTransformer
             'updated_at' => $comment->getUpdatedAt(),
             'post_id' => $comment->getPostId(),
             'user' => $this->userTransformer->transform($comment->getUser()),
-            'reactionables' => $comment->hasReactionables() ?
-                $this->reactionableTransformer->transformMany($comment->getReactionables()) : []
+            'reactionables' => $this->reactionableTransformer->transformMany($comment->getReactionables())
         ];
     }
 

@@ -36,7 +36,7 @@ trait Comments
             return $this->comments->toArray();
         }
 
-        return $this->comments;
+        return $this->hasComments() ? $this->comments : [];
     }
 
     /**
