@@ -148,4 +148,73 @@ class UpdateUserTest extends FeatureTestCase
             'email' => $email
         ]);
     }
+
+    /** @test */
+    function update_user_name()
+    {
+        $user = $this->createUser(['updated_at' => 1]);
+
+        $name = str_random();
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->patchJson('api/v1/user', ['name' => $name])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(['message' => 'User updated.']);
+
+        $updatedAt = $user->fresh()->getUpdatedAt();
+        $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
+        $this->assertEquals(time(), $updatedAt);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getId(),
+            'name' => $name
+        ]);
+    }
+
+    /** @test */
+    function update_user_username()
+    {
+        $user = $this->createUser(['updated_at' => 1]);
+
+        $username = str_random();
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->patchJson('api/v1/user', ['username' => $username])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(['message' => 'User updated.']);
+
+        $updatedAt = $user->fresh()->getUpdatedAt();
+        $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
+        $this->assertEquals(time(), $updatedAt);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getId(),
+            'username' => $username
+        ]);
+    }
+
+    /** @test */
+    function update_user_email()
+    {
+        $user = $this->createUser(['updated_at' => 1]);
+
+        $email = str_random() . '@mail.com';
+
+        $this->actingAs($user, 'api')
+            ->seeIsAuthenticated('api')
+            ->patchJson('api/v1/user', ['email' => $email])
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(['message' => 'User updated.']);
+
+        $updatedAt = $user->fresh()->getUpdatedAt();
+        $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
+        $this->assertEquals(time(), $updatedAt);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getId(),
+            'email' => $email
+        ]);
+    }
 }

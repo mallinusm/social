@@ -103,7 +103,7 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->setParameter('updatedAt', $this->freshTimestamp());
 
         (new Collection(compact('username', 'name', 'email')))
-            ->filter(function(string $value): bool {
+            ->filter(function(?string $value): bool {
                 return ! is_null($value);
             })
             ->each(function(string $value, string $attribute) use ($dqlQueryBuilder): void {
