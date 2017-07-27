@@ -3,6 +3,7 @@
 namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Illuminate\Support\Collection;
 use Social\Contracts\UserRepository;
 use Social\Entities\User;
 
@@ -93,18 +94,20 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      */
     public function update(int $userId, ?string $username, ?string $name, ?string $email): bool
     {
-        return (bool) $this->getDqlQueryBuilder()
+        $dqlQueryBuilder = $this->getDqlQueryBuilder()
             ->update(User::class, 'u')
             ->where($this->getDqlExpression()->eq('u.id', $userId))
-            ->set('u.username', ':username')
-            ->setParameter('username', $username)
-            ->set('u.name', ':name')
-            ->setParameter('name', $name)
-            ->set('u.email', ':email')
-            ->setParameter('email', $email)
             ->set('u.updatedAt', ':updatedAt')
-            ->setParameter('updatedAt', $this->freshTimestamp())
-            ->getQuery()
-            ->execute();
+            ->setParameter('updatedAt', $this->freshTimestamp());
+
+        (new Collection(compact('username', 'name', 'email')))
+            ->filter(function(string $value): bool {
+                return ! is_null($value);
+            })
+            ->each(function(string $value, string $attribute) use ($dqlQueryBuilder): void {
+                $dqlQueryBuilder->set('u.' . $attribute, ':' . $attribute)->setParameter($attribute, $value);
+            });
+
+        return (bool) $dqlQueryBuilder->getQuery()->execute();
     }
 }
