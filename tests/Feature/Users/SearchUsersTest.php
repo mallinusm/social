@@ -56,13 +56,17 @@ class SearchUsersTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $query = $user->getName();
-
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->getJson("api/v1/users/search?query={$query}")
+            ->getJson("api/v1/users/search?query={$user->getName()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([array_only($user->toArray(), ['avatar', 'name', 'username'])]);
+            ->assertExactJson([
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername()
+                ]
+            ]);
     }
 
     /** @test */
@@ -70,13 +74,17 @@ class SearchUsersTest extends FeatureTestCase
     {
         $user = $this->createUser();
 
-        $query = $user->getUsername();
-
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->getJson("api/v1/users/search?query={$query}")
+            ->getJson("api/v1/users/search?query={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson([array_only($user->toArray(), ['avatar', 'name', 'username'])]);
+            ->assertExactJson([
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername()
+                ]
+            ]);
     }
 
     /** @test */
@@ -92,8 +100,16 @@ class SearchUsersTest extends FeatureTestCase
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                array_only($user->toArray(), ['avatar', 'name', 'username']),
-                array_only($userTwo->toArray(), ['avatar', 'name', 'username']),
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername()
+                ],
+                [
+                    'avatar' => $userTwo->getAvatar(),
+                    'name' => $userTwo->getName(),
+                    'username' => $userTwo->getUsername()
+                ]
             ]);
     }
 
@@ -110,8 +126,16 @@ class SearchUsersTest extends FeatureTestCase
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                array_only($user->toArray(), ['avatar', 'name', 'username']),
-                array_only($userTwo->toArray(), ['avatar', 'name', 'username']),
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername()
+                ],
+                [
+                    'avatar' => $userTwo->getAvatar(),
+                    'name' => $userTwo->getName(),
+                    'username' => $userTwo->getUsername()
+                ]
             ]);
     }
 
@@ -128,8 +152,16 @@ class SearchUsersTest extends FeatureTestCase
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([
-                array_only($user->toArray(), ['avatar', 'name', 'username']),
-                array_only($userTwo->toArray(), ['avatar', 'name', 'username']),
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername()
+                ],
+                [
+                    'avatar' => $userTwo->getAvatar(),
+                    'name' => $userTwo->getName(),
+                    'username' => $userTwo->getUsername()
+                ]
             ]);
     }
 }

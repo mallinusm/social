@@ -56,11 +56,17 @@ trait Avatar
      */
     public function getAvatarLink(): string
     {
+        $default = '/static/avatar.png';
+
         if (! $this->hasAvatar()) {
-            return '/static/avatar.png';
+            return $default;
         }
 
         $avatar = $this->getAvatar();
+
+        if ($avatar === $default) {
+            return $avatar;
+        }
 
         if (filter_var($avatar, FILTER_VALIDATE_URL)) {
             return $avatar;

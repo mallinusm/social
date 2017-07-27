@@ -3,8 +3,10 @@
 namespace Social\Http\Actions\Posts;
 
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Contracts\PostRepository;
+use Social\Contracts\{
+    FollowerRepository,
+    PostRepository
+};
 use Social\Transformers\PostTransformer;
 
 /**

@@ -4,8 +4,10 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\PostRepository;
-use Social\Contracts\UserRepository;
+use Social\Contracts\{
+    PostRepository,
+    UserRepository
+};
 use Social\Transformers\PostTransformer;
 
 /**

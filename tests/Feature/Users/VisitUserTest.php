@@ -67,20 +67,52 @@ class VisitUserTest extends FeatureTestCase
     /** @test */
     function visit_user()
     {
+        $author = $this->createUser();
+
         $user = $this->createUser();
+        $username = $user->getUsername();
 
-        $friendship = [
-            'friendship' => false,
-            'followed' => false,
-            'following' => false,
-        ];
-
-        $this->actingAs($user, 'api')
+        $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
-            ->getJson("api/v1/users?username={$user->getUsername()}")
+            ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure($keys = ['name', 'username', 'avatar'])
-            ->assertExactJson(array_only($user->toArray(), $keys) + $friendship);
+            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertExactJson([
+                'avatar' => $user->getAvatar(),
+                'name' => $user->getName(),
+                'username' => $username,
+                'friendship' => false,
+                'followed' => false,
+                'following' => false,
+            ]);
+    }
+
+    /** @test */
+    function visit_user_when_following()
+    {
+        $author = $this->createUser();
+
+        $user = $this->createUser();
+        $username = $user->getUsername();
+
+        $this->createFollower([
+            'author_id' => $author->getId(),
+            'user_id' => $user->getId()
+        ]);
+
+        $this->actingAs($author, 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/users?username={$username}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertExactJson([
+                'avatar' => $user->getAvatar(),
+                'name' => $user->getName(),
+                'username' => $username,
+                'friendship' => false,
+                'followed' => false,
+                'following' => true,
+            ]);
     }
 
     /** @test */
@@ -89,6 +121,7 @@ class VisitUserTest extends FeatureTestCase
         $author = $this->createUser();
 
         $user = $this->createUser();
+        $username = $user->getUsername();
 
         $this->createFollower([
             'author_id' => $author->getId(),
@@ -100,17 +133,18 @@ class VisitUserTest extends FeatureTestCase
             'user_id' => $author->getId()
         ]);
 
-        $friendship = [
-            'friendship' => true,
-            'followed' => true,
-            'following' => true,
-        ];
-
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
-            ->getJson("api/v1/users?username={$user->getUsername()}")
+            ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure($keys = ['name', 'username', 'avatar'])
-            ->assertExactJson(array_only($user->toArray(), $keys) + $friendship);
+            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertExactJson([
+                'avatar' => $user->getAvatar(),
+                'name' => $user->getName(),
+                'username' => $username,
+                'friendship' => true,
+                'followed' => true,
+                'following' => true,
+            ]);
     }
 }
