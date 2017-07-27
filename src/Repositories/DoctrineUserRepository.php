@@ -75,11 +75,13 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      */
     public function search(string $payload): array
     {
+        $expression = $this->getDqlExpression();
+
         return $this->getDqlQueryBuilder()
             ->select('u')
             ->from(User::class, 'u')
-            ->where('LOWER(u.name) LIKE :payload')
-            ->orWhere('LOWER(u.username) LIKE :payload')
+            ->where($expression->like($expression->lower('u.name'), ':payload'))
+            ->orWhere($expression->like($expression->lower('u.username'), ':payload'))
             ->setParameter('payload', '%' . strtolower($payload) . '%')
             ->getQuery()
             ->execute();
