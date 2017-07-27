@@ -89,6 +89,7 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
             ->leftJoin('cr.user', 'cru')
             ->where($expression->in('p.userId', $userIds))
             ->orderBy($expression->desc('p.createdAt'))
+            ->orderBy($expression->asc('c.createdAt'))
             ->setParameter(1, 'posts')
             ->setParameter(2, 'comments')
             ->setMaxResults(10)
