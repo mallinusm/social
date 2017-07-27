@@ -39,4 +39,13 @@ interface UserRepository
      * @return User[]
      */
     function search(string $payload): array;
+
+    /**
+     * @param int $userId
+     * @param null|string $username
+     * @param null|string $name
+     * @param null|string $email
+     * @return bool
+     */
+    function update(int $userId, ?string $username, ?string $name, ?string $email): bool;
 }

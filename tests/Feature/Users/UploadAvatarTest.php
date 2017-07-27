@@ -53,7 +53,7 @@ class UploadAvatarTest extends FeatureTestCase
     /** @test */
     function upload_avatar()
     {
-        $user = $this->createUser(['updated_at' => 0]);
+        $user = $this->createUser(['updated_at' => 1]);
 
         $response = $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')

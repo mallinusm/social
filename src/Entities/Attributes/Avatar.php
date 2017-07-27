@@ -64,11 +64,7 @@ trait Avatar
 
         $avatar = $this->getAvatar();
 
-        if ($avatar === $default) {
-            return $avatar;
-        }
-
-        if (filter_var($avatar, FILTER_VALIDATE_URL)) {
+        if ($avatar === $default || filter_var($avatar, FILTER_VALIDATE_URL)) {
             return $avatar;
         }
 

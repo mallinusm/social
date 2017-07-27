@@ -23,6 +23,7 @@ use Social\Http\Actions\Users\{
     FetchCurrentUserAction,
     RegisterUserAction,
     SearchUsersAction,
+    UpdateUserAction,
     UploadAvatarAction,
     VisitUserAction
 };
@@ -40,6 +41,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('users', VisitUserAction::class);
     $router->post('avatar', UploadAvatarAction::class);
     $router->get('users/search', SearchUsersAction::class);
+    $router->patch('user', UpdateUserAction::class);
 
     $router->post('reactionables', ReactAction::class);
     $router->delete('reactionables/{reactionableId}', UndoReactAction::class);

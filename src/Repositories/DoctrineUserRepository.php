@@ -83,4 +83,28 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param int $userId
+     * @param null|string $username
+     * @param null|string $name
+     * @param null|string $email
+     * @return bool
+     */
+    public function update(int $userId, ?string $username, ?string $name, ?string $email): bool
+    {
+        return (bool) $this->getDqlQueryBuilder()
+            ->update(User::class, 'u')
+            ->where($this->getDqlExpression()->eq('u.id', $userId))
+            ->set('u.username', ':username')
+            ->setParameter('username', $username)
+            ->set('u.name', ':name')
+            ->setParameter('name', $name)
+            ->set('u.email', ':email')
+            ->setParameter('email', $email)
+            ->set('u.updatedAt', ':updatedAt')
+            ->setParameter('updatedAt', $this->freshTimestamp())
+            ->getQuery()
+            ->execute();
+    }
 }
