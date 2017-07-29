@@ -54,6 +54,6 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->post('posts/{post}/comments', LeaveCommentAction::class);
     $router->get('posts/{post}/comments', PaginateCommentsAction::class);
 
-    $router->post('users/{user}/follow', FollowUserAction::class);
+    $router->post('followers', FollowUserAction::class);
     $router->delete('users/{user}/unfollow', UnfollowUserAction::class);
 });

@@ -3,9 +3,10 @@
 namespace Social\Http\Actions\Followers;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\FollowerRepository;
-use Social\Models\User;
+use Social\Contracts\UserRepository;
 
 /**
  * Class FollowUserAction
@@ -13,6 +14,13 @@ use Social\Models\User;
  */
 final class FollowUserAction
 {
+    use ValidatesRequests;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
     /**
      * @var FollowerRepository
      */
@@ -20,24 +28,29 @@ final class FollowUserAction
 
     /**
      * FollowUserAction constructor.
+     * @param UserRepository $userRepository
      * @param FollowerRepository $followerRepository
      */
-    public function __construct(FollowerRepository $followerRepository)
+    public function __construct(UserRepository $userRepository, FollowerRepository $followerRepository)
     {
+        $this->userRepository = $userRepository;
         $this->followerRepository = $followerRepository;
     }
 
     /**
-     * @param User $user
      * @param Request $request
      * @return array
      * @throws AuthorizationException
      */
-    public function __invoke(User $user, Request $request): array
+    public function __invoke(Request $request): array
     {
-        $authorId = $request->user()->getAuthIdentifier();
+        $this->validate($request, [
+            'username' => 'required|string|max:255'
+        ]);
 
-        $userId = $user->getId();
+        $userId = $this->userRepository->findByUsername($request->input('username'))->getId();
+
+        $authorId = $request->user()->getAuthIdentifier();
 
         if ($this->followerRepository->isFollowing($authorId, $userId)) {
             throw new AuthorizationException('This action is unauthorized.');
