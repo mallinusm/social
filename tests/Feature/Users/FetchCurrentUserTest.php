@@ -41,7 +41,8 @@ class FetchCurrentUserTest extends FeatureTestCase
             ->assertExactJson([
                 'name' => $user->getName(),
                 'username' => $user->getUsername(),
-                'avatar' => $user->getAvatar()
+                'avatar' => $user->getAvatar(),
+                'email' => $user->getEmail()
             ]);
     }
 }

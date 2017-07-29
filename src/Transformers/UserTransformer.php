@@ -25,6 +25,17 @@ final class UserTransformer
     }
 
     /**
+     * @param User $user
+     * @return array
+     */
+    public function transformWithEmail(User $user): array
+    {
+        return array_merge($this->transform($user), [
+            'email' => $user->getEmail()
+        ]);
+    }
+
+    /**
      * @param array $users
      * @return User[]
      */

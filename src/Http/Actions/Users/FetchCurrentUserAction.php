@@ -37,6 +37,6 @@ final class FetchCurrentUserAction
          */
         $user = $request->user();
 
-        return $this->userTransformer->transform($user->toUserEntity());
+        return $this->userTransformer->transformWithEmail($user->toUserEntity());
     }
 }
