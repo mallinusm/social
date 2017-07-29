@@ -87,8 +87,6 @@ class FollowerUserTest extends FeatureTestCase
 
         $user = $this->createUser();
 
-        $attributes = ['author_id' => $author->getAuthIdentifier(), 'user_id' => $user->getId()];
-
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/followers?username={$user->getUsername()}")
@@ -98,6 +96,9 @@ class FollowerUserTest extends FeatureTestCase
                 'message' => 'You are now following the user.'
             ]);
 
-        $this->assertDatabaseHas('followers', $attributes);
+        $this->assertDatabaseHas('followers', [
+            'author_id' => $author->getAuthIdentifier(),
+            'user_id' => $user->getId()
+        ]);
     }
 }

@@ -2,8 +2,7 @@
 
 namespace Tests\Feature\Followers;
 
-use Social\Entities\Follower;
-use Social\Models\User;
+use Social\Entities\User;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\Feature\FeatureTestCase;
 
@@ -17,7 +16,7 @@ class UnfollowUserTest extends FeatureTestCase
     function unfollow_user_without_json_format()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->delete('api/v1/users/1/unfollow')
+            ->delete('api/v1/followers')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
     }
@@ -26,27 +25,53 @@ class UnfollowUserTest extends FeatureTestCase
     function unfollow_user_when_unauthenticated()
     {
         $this->dontSeeIsAuthenticated('api')
-            ->deleteJson('api/v1/users/1/unfollow')
+            ->deleteJson('api/v1/followers')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
             ->assertExactJson(['error' => 'Unauthenticated.']);
     }
 
     /** @test */
-    function unfollow_unknown_user()
+    function unfollow_user_without_username()
     {
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->deleteJson('api/v1/users/123456789/unfollow')
+            ->deleteJson('api/v1/followers')
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertExactJson(['username' => ['The username field is required.']]);
+    }
+
+    /** @test */
+    function unfollow_user_with_too_long_username()
+    {
+        $random = str_random(256);
+
+        $this->actingAs($this->createUser(), 'api')
+            ->seeIsAuthenticated('api')
+            ->deleteJson("api/v1/followers?username={$random}")
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+    }
+
+    /** @test */
+    function unfollow_unknown_user()
+    {
+        $random = str_random();
+
+        $this->actingAs($this->createUser(), 'api')
+            ->seeIsAuthenticated('api')
+            ->deleteJson("api/v1/followers?username={$random}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
-            ->assertExactJson($this->modelNotFoundMessage(User::class));
+            ->assertExactJson($this->entityNotFound(User::class));
     }
 
     /** @test */
     function unfollow_user_when_following()
     {
+        $username = $this->createUser()->getUsername();
+
         $this->actingAs($this->createUser(), 'api')
             ->seeIsAuthenticated('api')
-            ->deleteJson("api/v1/users/{$this->createUser()->getId()}/unfollow")
+            ->deleteJson("api/v1/followers?username={$username}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertExactJson(['error' => 'This action is unauthorized.']);
     }
@@ -55,15 +80,14 @@ class UnfollowUserTest extends FeatureTestCase
     function unfollow_user()
     {
         $user = $this->createUser();
-        $userId = $user->getId();
 
         $author = $this->createUser();
 
-        $follower = $this->createFollower(['author_id' => $author->getId(), 'user_id' => $userId]);
+        $follower = $this->createFollower(['author_id' => $author->getId(), 'user_id' => $user->getId()]);
 
         $this->actingAs($author, 'api')
             ->seeIsAuthenticated('api')
-            ->deleteJson("api/v1/users/{$userId}/unfollow")
+            ->deleteJson("api/v1/followers?username={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(['message' => 'You are no longer following the user.']);
 
