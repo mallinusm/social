@@ -5,8 +5,6 @@ namespace Social\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Social\Models\Attributes\HasId;
-use Social\Models\Relations\BelongsToUser;
-use Social\Models\Relations\MorphToManyReactions;
 
 /**
  * Class Comment
@@ -14,7 +12,7 @@ use Social\Models\Relations\MorphToManyReactions;
  */
 class Comment extends Model
 {
-    use BelongsToUser, HasId, MorphToManyReactions;
+    use HasId;
 
     /**
      * @var string

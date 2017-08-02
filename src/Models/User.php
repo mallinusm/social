@@ -11,9 +11,6 @@ use Social\Entities\User as UserEntity;
 use Social\Models\Attributes\{
     HasEmail, HasId
 };
-use Social\Models\Relations\{
-    BelongsToManyConversations, HasManyPosts
-};
 
 /**
  * Class User
@@ -21,7 +18,7 @@ use Social\Models\Relations\{
  */
 class User extends Authenticatable
 {
-    use BelongsToManyConversations, HasApiTokens, HasEmail, HasId, HasManyPosts;
+    use HasApiTokens, HasEmail, HasId;
 
     /**
      * @var array

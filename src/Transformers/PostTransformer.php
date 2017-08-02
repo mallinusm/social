@@ -22,11 +22,6 @@ final class PostTransformer
     private $commentTransformer;
 
     /**
-     * @var ReactionableTransformer
-     */
-    private $reactionableTransformer;
-
-    /**
      * @var VoteTransformer
      */
     private $voteTransformer;
@@ -35,17 +30,14 @@ final class PostTransformer
      * PostTransformer constructor.
      * @param UserTransformer $userTransformer
      * @param CommentTransformer $commentTransformer
-     * @param ReactionableTransformer $reactionableTransformer
      * @param VoteTransformer $voteTransformer
      */
     public function __construct(UserTransformer $userTransformer,
                                 CommentTransformer $commentTransformer,
-                                ReactionableTransformer $reactionableTransformer,
                                 VoteTransformer $voteTransformer)
     {
         $this->userTransformer = $userTransformer;
         $this->commentTransformer = $commentTransformer;
-        $this->reactionableTransformer = $reactionableTransformer;
         $this->voteTransformer = $voteTransformer;
     }
 

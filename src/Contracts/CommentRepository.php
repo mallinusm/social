@@ -2,8 +2,7 @@
 
 namespace Social\Contracts;
 
-use Illuminate\Contracts\Pagination\Paginator;
-use Social\Models\Comment;
+use Social\Entities\Comment;
 
 /**
  * Interface CommentRepository
@@ -18,10 +17,4 @@ interface CommentRepository
      * @return Comment
      */
     function leave(string $content, int $postId, int $userId): Comment;
-
-    /**
-     * @param int $postId
-     * @return Paginator
-     */
-    function paginate(int $postId): Paginator;
 }

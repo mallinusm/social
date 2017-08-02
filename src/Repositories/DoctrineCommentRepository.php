@@ -3,13 +3,14 @@
 namespace Social\Repositories;
 
 use Exception;
+use Social\Contracts\CommentRepository;
 use Social\Entities\Comment;
 
 /**
  * Class DoctrineCommentRepository
  * @package Social\Repositories
  */
-final class DoctrineCommentRepository extends DoctrineRepository
+final class DoctrineCommentRepository extends DoctrineRepository implements CommentRepository
 {
     /**
      * @param string $content

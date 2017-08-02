@@ -4,10 +4,10 @@ namespace Social\Http\Actions\Comments;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Social\Contracts\CommentRepository;
 use Social\Models\{
     Post, User
 };
-use Social\Repositories\DoctrineCommentRepository;
 use Social\Transformers\CommentTransformer;
 
 /**
@@ -19,7 +19,7 @@ final class LeaveCommentAction
     use ValidatesRequests;
 
     /**
-     * @var DoctrineCommentRepository
+     * @var CommentRepository
      */
     private $commentRepository;
 
@@ -30,10 +30,10 @@ final class LeaveCommentAction
 
     /**
      * LeaveCommentAction constructor.
-     * @param DoctrineCommentRepository $commentRepository
+     * @param CommentRepository $commentRepository
      * @param CommentTransformer $commentTransformer
      */
-    public function __construct(DoctrineCommentRepository $commentRepository, CommentTransformer $commentTransformer)
+    public function __construct(CommentRepository $commentRepository, CommentTransformer $commentTransformer)
     {
         $this->commentRepository = $commentRepository;
         $this->commentTransformer = $commentTransformer;

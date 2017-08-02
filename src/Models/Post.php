@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Social\Models\Attributes\{
     HasAuthorId, HasId, HasUserId
 };
-use Social\Models\Relations\{
-    BelongsToAuthor, HasManyComments, MorphToManyReactions
-};
 
 /**
  * Class Post
@@ -17,7 +14,7 @@ use Social\Models\Relations\{
  */
 class Post extends Model
 {
-    use BelongsToAuthor, HasAuthorId, HasManyComments, HasId, HasUserId, MorphToManyReactions;
+    use HasAuthorId, HasId, HasUserId;
 
     /**
      * @var string

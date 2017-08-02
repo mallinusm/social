@@ -1,10 +1,7 @@
 <?php
 
 use Illuminate\Contracts\Routing\Registrar;
-use Social\Http\Actions\Comments\{
-    LeaveCommentAction,
-    PaginateCommentsAction
-};
+use Social\Http\Actions\Comments\LeaveCommentAction;
 use Social\Http\Actions\Followers\{
     FollowUserAction,
     UnfollowUserAction
@@ -52,7 +49,6 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('feed', PaginateFeedAction::class);
 
     $router->post('posts/{post}/comments', LeaveCommentAction::class);
-    $router->get('posts/{post}/comments', PaginateCommentsAction::class);
 
     $router->post('followers', FollowUserAction::class);
     $router->delete('followers', UnfollowUserAction::class);

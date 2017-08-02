@@ -3,9 +3,7 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Social\Models\Attributes\{
-    HasAuthorId, HasId
-};
+use Social\Models\Attributes\HasId;
 
 /**
  * Class Follower
@@ -13,7 +11,7 @@ use Social\Models\Attributes\{
  */
 class Follower extends Model
 {
-    use HasAuthorId, HasId;
+    use HasId;
 
     /**
      * @var array

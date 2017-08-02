@@ -2,7 +2,6 @@
 
 namespace Social\Providers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Social\Contracts\{
     CommentRepository,
@@ -12,17 +11,13 @@ use Social\Contracts\{
     ReactionRepository,
     UserRepository
 };
-use Social\Models\{
-    Comment,
-    Post
-};
 use Social\Repositories\{
+    DoctrineCommentRepository,
     DoctrineFollowerRepository,
     DoctrinePostRepository,
     DoctrineReactionableRepository,
     DoctrineReactionRepository,
-    DoctrineUserRepository,
-    QueryBuilderCommentRepository
+    DoctrineUserRepository
 };
 
 /**
@@ -35,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     private $singletons = [
-        CommentRepository::class => QueryBuilderCommentRepository::class,
+        CommentRepository::class => DoctrineCommentRepository::class,
         FollowerRepository::class => DoctrineFollowerRepository::class,
         PostRepository::class => DoctrinePostRepository::class,
         UserRepository::class => DoctrineUserRepository::class,
@@ -58,9 +53,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Relation::morphMap([
-            'comments' => Comment::class,
-            'posts' => Post::class
-        ]);
+        //
     }
 }
