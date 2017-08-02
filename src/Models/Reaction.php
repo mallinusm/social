@@ -3,7 +3,6 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Social\Models\Attributes\HasId;
 
 /**
  * Class Reaction
@@ -11,5 +10,5 @@ use Social\Models\Attributes\HasId;
  */
 class Reaction extends Model
 {
-    use HasId;
+    use Attributes\Id;
 }

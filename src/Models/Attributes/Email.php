@@ -5,17 +5,17 @@ namespace Social\Models\Attributes;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Trait HasAuthorId
+ * Trait Email
  * @package Social\Models\Attributes
  */
-trait HasAuthorId
+trait Email
 {
     /**
-     * @return int
+     * @return string
      */
-    public function getAuthorId(): int
+    public function getEmail(): string
     {
         /** @var $this Model */
-        return (int) $this->getAttribute('author_id');
+        return (string) $this->getAttribute('email');
     }
 }

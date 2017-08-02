@@ -33,7 +33,8 @@ final class LeaveCommentAction
      * @param CommentRepository $commentRepository
      * @param CommentTransformer $commentTransformer
      */
-    public function __construct(CommentRepository $commentRepository, CommentTransformer $commentTransformer)
+    public function __construct(CommentRepository $commentRepository,
+                                CommentTransformer $commentTransformer)
     {
         $this->commentRepository = $commentRepository;
         $this->commentTransformer = $commentTransformer;

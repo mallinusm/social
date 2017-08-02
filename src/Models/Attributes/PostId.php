@@ -5,17 +5,19 @@ namespace Social\Models\Attributes;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Trait HasId
+ * Trait PostId
  * @package Social\Models\Attributes
  */
-trait HasId
+trait PostId
 {
     /**
      * @return int
      */
-    public function getId(): int
+    public function getPostId(): int
     {
-        /** @var $this Model */
-        return (int) $this->getAttribute('id');
+        /**
+         * @var Model $this
+         */
+        return (int) $this->getAttribute('post_id');
     }
 }

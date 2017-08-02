@@ -5,17 +5,19 @@ namespace Social\Models\Attributes;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Trait HasEmail
+ * Trait Password
  * @package Social\Models\Attributes
  */
-trait HasEmail
+trait Password
 {
     /**
      * @return string
      */
-    public function getEmail(): string
+    public function getPassword(): string
     {
-        /** @var $this Model */
-        return (string) $this->getAttribute('email');
+        /**
+         * @var Model $this
+         */
+        return $this->getAttribute('password');
     }
 }

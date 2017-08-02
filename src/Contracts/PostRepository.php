@@ -2,6 +2,7 @@
 
 namespace Social\Contracts;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Social\Entities\Post;
 
 /**
@@ -29,4 +30,11 @@ interface PostRepository
      * @return Post[]
      */
     function paginate(array $userIds): array;
+
+    /**
+     * @param int $id
+     * @return Post
+     * @throws EntityNotFoundException
+     */
+    function find(int $id): Post;
 }

@@ -2,15 +2,9 @@
 
 namespace Social\Models;
 
-use Carbon\Carbon;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 use Social\Entities\User as UserEntity;
-use Social\Models\Attributes\{
-    HasEmail, HasId
-};
 
 /**
  * Class User
@@ -18,53 +12,15 @@ use Social\Models\Attributes\{
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasEmail, HasId;
-
-    /**
-     * @var array
-     */
-    protected $fillable = [
-        'created_at', 'email', 'id', 'name', 'password', 'updated_at'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
-
-    /**
-     * @return string
-     */
-    public function getAvatar(): string
-    {
-        return $this->getAttribute('avatar');
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->getAttribute('username');
-    }
-
-    /**
-     * @param null|string $avatar
-     * @return string
-     */
-    public function getAvatarAttribute(?string $avatar): string
-    {
-        if (is_null($avatar)) {
-            return '/static/avatar.png';
-        }
-
-        /** @var UrlGenerator $urlGenerator */
-        $urlGenerator = Container::getInstance()->make(UrlGenerator::class);
-
-        return $urlGenerator->route('avatars.show', compact('avatar'));
-    }
+    use HasApiTokens,
+        Attributes\Id,
+        Attributes\Email,
+        Attributes\Name,
+        Attributes\Avatar,
+        Attributes\Username,
+        Attributes\Password,
+        Attributes\CreatedAt,
+        Attributes\UpdatedAt;
 
     /**
      * @return UserEntity
@@ -73,33 +29,11 @@ class User extends Authenticatable
     {
         return (new UserEntity)->setId($this->getId())
             ->setUsername($this->getUsername())
-            ->setAvatar($this->getAttribute('avatar'))
-            ->setName($this->getAttribute('name'))
-            ->setEmail($this->getAttribute('email'))
-            ->setPassword($this->getAttribute('password'))
-            ->setCreatedAt($this->getAttribute('created_at')->getTimestamp())
-            ->setUpdatedAt($this->getAttribute('updated_at')->getTimestamp());
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->getAttribute('name');
-    }
-
-    /**
-     * @return int
-     */
-    public function getUpdatedAt(): int
-    {
-        $updatedAt = $this->getAttribute('updated_at');
-
-        if ($updatedAt instanceof Carbon) {
-            return $updatedAt->getTimestamp();
-        }
-
-        return (int) $updatedAt;
+            ->setAvatar($this->getAvatar())
+            ->setName($this->getName())
+            ->setEmail($this->getEmail())
+            ->setPassword($this->getPassword())
+            ->setCreatedAt($this->getCreatedAt())
+            ->setUpdatedAt($this->getUpdatedAt());
     }
 }

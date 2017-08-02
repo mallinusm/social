@@ -3,7 +3,6 @@
 namespace Social\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Social\Models\Attributes\HasId;
 
 /**
  * Class Follower
@@ -11,12 +10,5 @@ use Social\Models\Attributes\HasId;
  */
 class Follower extends Model
 {
-    use HasId;
-
-    /**
-     * @var array
-     */
-    protected $fillable = [
-        'author_id', 'created_at', 'id', 'updated_at', 'user_id'
-    ];
+    use Attributes\Id;
 }

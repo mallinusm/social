@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Query\Expr;
 use Exception;
 use Social\Contracts\PostRepository;
@@ -95,5 +96,26 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
             ->setMaxResults(10)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param int $id
+     * @return Post
+     * @throws EntityNotFoundException
+     */
+    public function find(int $id): Post
+    {
+        $repository = $this->getEntityManager()->getRepository(Post::class);
+
+        $post = $repository->find($id);
+
+        if ($post === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), [$id]);
+        }
+
+        /**
+         * @var Post $post
+         */
+        return $post;
     }
 }
