@@ -13,7 +13,7 @@ class ReactionsTableSeeder extends Seeder
      * @var array
      */
     private $reactions = [
-        'downvote', 'upvote'
+        'upvote', 'downvote'
     ];
 
     /**

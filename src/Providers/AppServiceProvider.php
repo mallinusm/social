@@ -9,6 +9,7 @@ use Social\Contracts\{
     FollowerRepository,
     PostRepository,
     ReactionableRepository,
+    ReactionRepository,
     UserRepository
 };
 use Social\Models\{
@@ -19,6 +20,7 @@ use Social\Repositories\{
     DoctrineFollowerRepository,
     DoctrinePostRepository,
     DoctrineReactionableRepository,
+    DoctrineReactionRepository,
     DoctrineUserRepository,
     QueryBuilderCommentRepository
 };
@@ -37,7 +39,8 @@ class AppServiceProvider extends ServiceProvider
         FollowerRepository::class => DoctrineFollowerRepository::class,
         PostRepository::class => DoctrinePostRepository::class,
         UserRepository::class => DoctrineUserRepository::class,
-        ReactionableRepository::class => DoctrineReactionableRepository::class
+        ReactionableRepository::class => DoctrineReactionableRepository::class,
+        ReactionRepository::class => DoctrineReactionRepository::class
     ];
 
     /**

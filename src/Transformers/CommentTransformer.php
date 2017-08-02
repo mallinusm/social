@@ -17,19 +17,19 @@ final class CommentTransformer
     private $userTransformer;
 
     /**
-     * @var ReactionableTransformer
+     * @var VoteTransformer
      */
-    private $reactionableTransformer;
+    private $voteTransformer;
 
     /**
      * CommentTransformer constructor.
      * @param UserTransformer $userTransformer
-     * @param ReactionableTransformer $reactionableTransformer
+     * @param VoteTransformer $voteTransformer
      */
-    public function __construct(UserTransformer $userTransformer, ReactionableTransformer $reactionableTransformer)
+    public function __construct(UserTransformer $userTransformer, VoteTransformer $voteTransformer)
     {
         $this->userTransformer = $userTransformer;
-        $this->reactionableTransformer = $reactionableTransformer;
+        $this->voteTransformer = $voteTransformer;
     }
 
     /**
@@ -45,7 +45,7 @@ final class CommentTransformer
             'updated_at' => $comment->getUpdatedAt(),
             'post_id' => $comment->getPostId(),
             'user' => $this->userTransformer->transform($comment->getUser()),
-            'reactionables' => $this->reactionableTransformer->transformMany($comment->getReactionables())
+            'reactionables' => $this->voteTransformer->transformMany($comment->getReactionables())
         ];
     }
 

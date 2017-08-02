@@ -27,18 +27,26 @@ final class PostTransformer
     private $reactionableTransformer;
 
     /**
+     * @var VoteTransformer
+     */
+    private $voteTransformer;
+
+    /**
      * PostTransformer constructor.
      * @param UserTransformer $userTransformer
      * @param CommentTransformer $commentTransformer
      * @param ReactionableTransformer $reactionableTransformer
+     * @param VoteTransformer $voteTransformer
      */
     public function __construct(UserTransformer $userTransformer,
                                 CommentTransformer $commentTransformer,
-                                ReactionableTransformer $reactionableTransformer)
+                                ReactionableTransformer $reactionableTransformer,
+                                VoteTransformer $voteTransformer)
     {
         $this->userTransformer = $userTransformer;
         $this->commentTransformer = $commentTransformer;
         $this->reactionableTransformer = $reactionableTransformer;
+        $this->voteTransformer = $voteTransformer;
     }
 
     /**
@@ -55,7 +63,7 @@ final class PostTransformer
             'author' => $this->userTransformer->transform($post->getAuthor()),
             'user' => $this->userTransformer->transform($post->getUser()),
             'comments' => $this->commentTransformer->transformMany($post->getComments()),
-            'reactionables' => $this->reactionableTransformer->transformMany($post->getReactionables())
+            'reactionables' => $this->voteTransformer->transformMany($post->getReactionables())
         ];
     }
 

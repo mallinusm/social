@@ -8,6 +8,7 @@ use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Pagination\Paginator;
+use ReactionsTableSeeder;
 use Tests\TestCase;
 
 /**
@@ -41,6 +42,10 @@ abstract class FeatureTestCase extends TestCase
              * Before running the feature tests we make sure there's a folder for saving the avatars.
              */
             $this->getFilesystem()->makeDirectory(self::AVATARS_DIR);
+
+            $this->artisan('db:seed', [
+                '--class' => ReactionsTableSeeder::class
+            ]);
         });
 
         parent::setUp();
@@ -111,5 +116,21 @@ abstract class FeatureTestCase extends TestCase
         return [
             'error' => 'Only json format is supported.'
         ];
+    }
+
+    /**
+     * @return int
+     */
+    protected function getUpvoteId(): int
+    {
+        return 1;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getDownvoteId(): int
+    {
+        return 2;
     }
 }

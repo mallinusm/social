@@ -67,30 +67,41 @@ class LeaveCommentTest extends FeatureTestCase
     {
         $content = str_random();
 
-        $author = $this->createUser();
+        $user = $this->createUser();
+        $userId = $user->getId();
 
         $postId = $this->createPost()->getId();
 
-        $this->actingAs($author, 'api')
+        $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
-            ->postJson("api/v1/posts/{$postId}/comments", compact('content'))
+            ->postJson("api/v1/posts/{$postId}/comments", [
+                'content' => $content
+            ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at', 'post_id', 'user'])
             ->assertJsonFragment([
+                'content' => $content,
+                'post_id' => $postId,
                 'user' => [
-                    'name' => $author->getName(),
-                    'username' => $author->getUsername(),
-                    'avatar' => $author->getAvatar()
+                    'name' => $user->getName(),
+                    'username' => $user->getUsername(),
+                    'avatar' => $user->getAvatar()
+                ],
+                'reactionables' => [
+                    'upvotes' => [],
+                    'downvotes' => [],
+                    'has_upvoted' => false,
+                    'has_downvoted' => false,
                 ]
             ])
-            ->assertJsonFragment($has = [
-                'content' => $content,
-                'post_id' => $postId
-            ])
             ->assertJsonMissing($missing = [
-                'user_id' => $author->getId()
+                'user_id' => $userId
             ]);
 
-        $this->assertDatabaseHas('comments', compact('content') + $has + $missing);
+        $this->assertDatabaseHas('comments', [
+            'content' => $content,
+            'post_id' => $postId,
+            'user_id' => $userId
+        ]);
     }
 }

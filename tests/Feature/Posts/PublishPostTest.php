@@ -96,23 +96,43 @@ class PublishPostTest extends FeatureTestCase
                 'created_at',
                 'id',
                 'updated_at',
-                'user',
-                'author',
-                'comments'
+                'user' => [
+                    'name',
+                    'username',
+                    'avatar'
+                ],
+                'author' => [
+                    'name',
+                    'username',
+                    'avatar'
+                ],
+                'comments',
+                'reactionables' => [
+                    'upvotes',
+                    'downvotes',
+                    'has_upvoted',
+                    'has_downvoted'
+                ]
             ])
             ->assertJsonFragment([
                 'content' => $content,
                 'user' => [
-                    'name' => $user->getAttribute('name'),
+                    'name' => $user->getName(),
                     'username' => $username,
                     'avatar' => $user->getAvatar()
                 ],
                 'author' => [
-                    'name' => $author->getAttribute('name'),
+                    'name' => $author->getName(),
                     'username' => $author->getUsername(),
                     'avatar' => $author->getAvatar()
                 ],
-                'comments' => []
+                'comments' => [],
+                'reactionables' => [
+                    'upvotes' => [],
+                    'downvotes' => [],
+                    'has_upvoted' => false,
+                    'has_downvoted' => false
+                ]
             ])
             ->assertJsonMissing([
                 'author_id' => $authorId,

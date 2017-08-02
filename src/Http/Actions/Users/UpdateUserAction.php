@@ -5,6 +5,8 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\UserRepository;
+use Social\Models\User;
+use Social\Transformers\UserTransformer;
 
 /**
  * Class UpdateUserAction
@@ -20,12 +22,19 @@ final class UpdateUserAction
     private $userRepository;
 
     /**
+     * @var UserTransformer
+     */
+    private $userTransformer;
+
+    /**
      * UpdateUserSettingsAction constructor.
      * @param UserRepository $userRepository
+     * @param UserTransformer $userTransformer
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer)
     {
         $this->userRepository = $userRepository;
+        $this->userTransformer = $userTransformer;
     }
 
     /**
@@ -34,7 +43,11 @@ final class UpdateUserAction
      */
     public function __invoke(Request $request): array
     {
-        $userId = $request->user()->getId();
+        /**
+         * @var User $user
+         */
+        $user = $request->user();
+        $userId = $user->getId();
 
         $this->validate($request, [
             'name' => 'required_without_all:email,username|string|max:255',
@@ -42,10 +55,24 @@ final class UpdateUserAction
             'username' => 'required_without_all:name,email|string|max:255|unique:users,username,' . $userId,
         ]);
 
-        $this->userRepository->update(
-            $userId, $request->input('username'), $request->input('name'), $request->input('email')
-        );
+        [$username, $name, $email] = array_values($request->only(['username', 'name', 'email']));
 
-        return ['message' => 'User updated.'];
+        $this->userRepository->update($userId, $username, $name, $email);
+
+        $userEntity = $user->toUserEntity();
+
+        if ($username !== null) {
+            $userEntity->setUsername($username);
+        }
+
+        if ($name !== null) {
+            $userEntity->setName($name);
+        }
+
+        if ($email !== null) {
+            $userEntity->setEmail($email);
+        }
+
+        return $this->userTransformer->transformWithEmail($userEntity);
     }
 }

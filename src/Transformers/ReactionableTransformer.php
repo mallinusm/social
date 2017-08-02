@@ -42,7 +42,6 @@ final class ReactionableTransformer
         ];
     }
 
-
     /**
      * @param Reactionable[] $reactionables
      * @return array

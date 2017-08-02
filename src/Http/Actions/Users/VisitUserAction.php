@@ -12,7 +12,7 @@ use Social\Transformers\UserTransformer;
  * Class VisitUserAction
  * @package Social\Http\Actions\Users
  */
-class VisitUserAction
+final class VisitUserAction
 {
     use ValidatesRequests;
 

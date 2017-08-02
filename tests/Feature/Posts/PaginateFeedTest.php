@@ -44,19 +44,19 @@ class PaginateFeedTest extends FeatureTestCase
 
         $comment = $this->createComment(['user_id' => $followerUserId, 'post_id' => $post->getId()]);
 
-        $reactionId = $this->createReaction()->getId();
+        $upvoteId = $this->getUpvoteId();
 
         $postReactionable = $this->createReactionable([
             'reactionable_id' => $post->getId(),
             'reactionable_type' => 'posts',
-            'reaction_id' => $reactionId,
+            'reaction_id' => $upvoteId,
             'user_id' => $followerUserId
         ]);
 
         $commentReactionable = $this->createReactionable([
             'reactionable_id' => $comment->getId(),
             'reactionable_type' => 'comments',
-            'reaction_id' => $reactionId,
+            'reaction_id' => $upvoteId,
             'user_id' => $followerUserId
         ]);
 
@@ -91,36 +91,46 @@ class PaginateFeedTest extends FeatureTestCase
                                 'username'
                             ],
                             'reactionables' => [
-                                [
-                                    'id',
-                                    'reaction_id',
-                                    'reactionable_id',
-                                    'reactionable_type',
-                                    'created_at',
-                                    'updated_at',
-                                    'user' => [
-                                        'name',
-                                        'avatar',
-                                        'username'
+                                'upvotes' => [
+                                    [
+                                        'id',
+                                        'reaction_id',
+                                        'reactionable_id',
+                                        'reactionable_type',
+                                        'created_at',
+                                        'updated_at',
+                                        'user' => [
+                                            'name',
+                                            'avatar',
+                                            'username'
+                                        ]
                                     ]
-                                ]
+                                ],
+                                'downvotes',
+                                'has_upvoted',
+                                'has_downvoted'
                             ]
                         ]
                     ],
                     'reactionables' => [
-                        [
-                            'id',
-                            'reaction_id',
-                            'reactionable_id',
-                            'reactionable_type',
-                            'created_at',
-                            'updated_at',
-                            'user' => [
-                                'name',
-                                'avatar',
-                                'username'
+                        'upvotes' => [
+                            [
+                                'id',
+                                'reaction_id',
+                                'reactionable_id',
+                                'reactionable_type',
+                                'created_at',
+                                'updated_at',
+                                'user' => [
+                                    'name',
+                                    'avatar',
+                                    'username'
+                                ]
                             ]
-                        ]
+                        ],
+                        'downvotes',
+                        'has_upvoted',
+                        'has_downvoted'
                     ]
                 ]
             ])
@@ -141,28 +151,38 @@ class PaginateFeedTest extends FeatureTestCase
                             'updated_at' => $comment->getUpdatedAt(),
                             'user' => $userArray,
                             'reactionables' => [
-                                [
-                                    'id' => $commentReactionable->getId(),
-                                    'reaction_id' => $commentReactionable->getReactionId(),
-                                    'reactionable_id' => $commentReactionable->getReactionableId(),
-                                    'reactionable_type' => $commentReactionable->getReactionableType(),
-                                    'created_at' => $commentReactionable->getCreatedAt(),
-                                    'updated_at' => $commentReactionable->getUpdatedAt(),
-                                    'user' => $userArray
-                                ]
+                                'upvotes' => [
+                                    [
+                                        'id' => $commentReactionable->getId(),
+                                        'reaction_id' => $commentReactionable->getReactionId(),
+                                        'reactionable_id' => $commentReactionable->getReactionableId(),
+                                        'reactionable_type' => $commentReactionable->getReactionableType(),
+                                        'created_at' => $commentReactionable->getCreatedAt(),
+                                        'updated_at' => $commentReactionable->getUpdatedAt(),
+                                        'user' => $userArray
+                                    ]
+                                ],
+                                'downvotes' => [],
+                                'has_upvoted' => false,
+                                'has_downvoted' => false
                             ]
                         ]
                     ],
                     'reactionables' => [
-                        [
-                            'id' => $postReactionable->getId(),
-                            'reaction_id' => $postReactionable->getReactionId(),
-                            'reactionable_id' => $postReactionable->getReactionableId(),
-                            'reactionable_type' => $postReactionable->getReactionableType(),
-                            'created_at' => $postReactionable->getCreatedAt(),
-                            'updated_at' => $postReactionable->getUpdatedAt(),
-                            'user' => $userArray
-                        ]
+                        'upvotes' => [
+                            [
+                                'id' => $postReactionable->getId(),
+                                'reaction_id' => $postReactionable->getReactionId(),
+                                'reactionable_id' => $postReactionable->getReactionableId(),
+                                'reactionable_type' => $postReactionable->getReactionableType(),
+                                'created_at' => $postReactionable->getCreatedAt(),
+                                'updated_at' => $postReactionable->getUpdatedAt(),
+                                'user' => $userArray
+                            ]
+                        ],
+                        'downvotes' => [],
+                        'has_upvoted' => false,
+                        'has_downvoted' => false
                     ]
                 ]
             ]);

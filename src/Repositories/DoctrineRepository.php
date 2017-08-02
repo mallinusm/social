@@ -3,6 +3,7 @@
 namespace Social\Repositories;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\DBAL\Query\QueryBuilder as SqlQueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
@@ -96,5 +97,13 @@ abstract class DoctrineRepository
     protected function getDqlExpression(): Expr
     {
         return $this->getDqlQueryBuilder()->expr();
+    }
+
+    /**
+     * @return ExpressionBuilder
+     */
+    protected function getSqlExpression(): ExpressionBuilder
+    {
+        return $this->getSqlQueryBuilder()->expr();
     }
 }

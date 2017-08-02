@@ -135,7 +135,12 @@ class UpdateUserTest extends FeatureTestCase
                 'name' => $name
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(['message' => 'User updated.']);
+            ->assertExactJson([
+                'username' => $username,
+                'email' => $email,
+                'name' => $name,
+                'avatar' => $user->getAvatar()
+            ]);
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
@@ -160,7 +165,12 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['name' => $name])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(['message' => 'User updated.']);
+            ->assertExactJson([
+                'name' => $name,
+                'username' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'avatar' => $user->getAvatar()
+            ]);
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
@@ -183,7 +193,12 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['username' => $username])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(['message' => 'User updated.']);
+            ->assertExactJson([
+                'name' => $user->getName(),
+                'username' => $username,
+                'email' => $user->getEmail(),
+                'avatar' => $user->getAvatar()
+            ]);
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
@@ -206,7 +221,12 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['email' => $email])
             ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(['message' => 'User updated.']);
+            ->assertExactJson([
+                'name' => $user->getName(),
+                'username' => $user->getUsername(),
+                'email' => $email,
+                'avatar' => $user->getAvatar()
+            ]);
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
