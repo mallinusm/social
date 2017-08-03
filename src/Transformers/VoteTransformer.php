@@ -53,25 +53,6 @@ final class VoteTransformer
     }
 
     /**
-     * @param int $key
-     * @return array
-     */
-    private function getVoteMap(int $key): array
-    {
-        switch ($key) {
-            case $this->upvotedId: {
-                return ['upvotes', 'has_upvoted'];
-            }
-            case $this->downvoteId: {
-                return ['downvotes', 'has_downvoted'];
-            }
-            default: {
-                return [];
-            }
-        }
-    }
-
-    /**
      * @param array $reactionables
      * @return array
      */
