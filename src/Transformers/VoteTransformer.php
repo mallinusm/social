@@ -53,6 +53,25 @@ final class VoteTransformer
     }
 
     /**
+     * @param int $key
+     * @return array
+     */
+    private function getVoteMap(int $key): array
+    {
+        switch ($key) {
+            case $this->upvotedId: {
+                return ['upvotes', 'has_upvoted'];
+            }
+            case $this->downvoteId: {
+                return ['downvotes', 'has_downvoted'];
+            }
+            default: {
+                return [];
+            }
+        }
+    }
+
+    /**
      * @param array $reactionables
      * @return array
      */
@@ -65,29 +84,25 @@ final class VoteTransformer
             public $upvotes = [], $downvotes = [], $has_upvoted = false, $has_downvoted = false;
         };
 
-        $collection = (new Collection($reactionables))->groupBy(function(Reactionable $reactionable): int {
+        $callback = function(Collection $votes, string $name, string $ĥasVoted) use($voteable) {
+            $votes->each(function(Reactionable $reactionable) use($voteable, $name): void {
+                $voteable->{$name}[] = $this->reactionableTransformer->transform($reactionable);
+            })->reject(function(Reactionable $reactionable): bool {
+                return $reactionable->getUserId() !== $this->userId;
+            })->first(function() use($voteable, $ĥasVoted): void {
+                $voteable->{$ĥasVoted} = true;
+            });
+        };
+
+        (new Collection($reactionables))->groupBy(function(Reactionable $reactionable): int {
             return $reactionable->getReactionId();
+        })->each(function(Collection $collection, int $key) use($callback): void {
+            if ($key === $this->upvotedId) {
+                $callback($collection, 'upvotes', 'has_upvoted');
+            } else if ($key === $this->downvoteId) {
+                $callback($collection, 'downvotes', 'has_downvoted');
+            }
         });
-
-        if (($upvotes = $collection->get($this->upvotedId)) instanceof Collection) {
-            $upvotes->each(function(Reactionable $reactionable) use($voteable): void {
-                $voteable->upvotes[] = $this->reactionableTransformer->transform($reactionable);
-
-                if ($reactionable->getUserId() === $this->userId) {
-                    $voteable->has_upvoted = true;
-                }
-            });
-        }
-
-        if (($downvotes = $collection->get($this->downvoteId)) instanceof Collection) {
-            $upvotes->each(function(Reactionable $reactionable) use($voteable): void {
-                $voteable->downvotes[] = $this->reactionableTransformer->transform($reactionable);
-
-                if ($reactionable->getUserId() === $this->userId) {
-                    $voteable->has_downvoted = true;
-                }
-            });
-        }
 
         return (array) $voteable;
     }

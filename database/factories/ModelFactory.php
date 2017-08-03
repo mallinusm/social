@@ -3,7 +3,12 @@
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factory;
 use Social\Models\{
-    Comment, Conversation, Follower, Message, Post, Reactionable, Reaction, User
+    Comment,
+    Follower,
+    Post,
+    Reactionable,
+    Reaction,
+    User
 };
 
 /** @var Factory $factory */
@@ -11,7 +16,6 @@ $factory->define(User::class, function (Generator $faker) {
     static $password;
 
     return [
-        //'avatar' => 'avatar.png',
         'name' => $faker->name,
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
@@ -32,18 +36,6 @@ $factory->define(Comment::class, function (Generator $faker) {
     return [
         'content' => $faker->sentence(),
         'post_id' => $faker->numberBetween(1),
-        'user_id' => $faker->numberBetween(1)
-    ];
-});
-
-$factory->define(Conversation::class, function (Generator $faker) {
-    return [];
-});
-
-$factory->define(Message::class, function (Generator $faker) {
-    return [
-        'content' => $faker->sentence(),
-        'conversation_id' => $faker->numberBetween(1),
         'user_id' => $faker->numberBetween(1)
     ];
 });

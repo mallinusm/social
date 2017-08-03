@@ -66,10 +66,10 @@ final class ReactAction
             throw new AuthorizationException('This action is unauthorized.');
         }
 
-        return $this->reactionableTransformer->transform(
-            $this->reactionableRepository
-                ->react($reactionId, $userId, $reactionableId, $reactionableType)
-                ->setUser($user->toUserEntity())
-        );
+        $reactionable = $this->reactionableRepository
+            ->react($reactionId, $userId, $reactionableId, $reactionableType)
+            ->setUser($user->toUserEntity());
+
+        return $this->reactionableTransformer->transform($reactionable);
     }
 }
