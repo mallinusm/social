@@ -2,7 +2,9 @@
 
 namespace Social\Transformers;
 
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
+use Social\Contracts\FollowerRepository;
 use Social\Entities\User;
 
 /**
@@ -11,6 +13,27 @@ use Social\Entities\User;
  */
 final class UserTransformer
 {
+    /**
+     * @var FollowerRepository
+     */
+    private $followerRepository;
+
+    /**
+     * @var Guard
+     */
+    private $guard;
+
+    /**
+     * UserTransformer constructor.
+     * @param FollowerRepository $followerRepository
+     * @param Guard $guard
+     */
+    public function __construct(FollowerRepository $followerRepository, Guard $guard)
+    {
+        $this->followerRepository = $followerRepository;
+        $this->guard = $guard;
+    }
+
     /**
      * @param User $user
      * @return array
@@ -32,6 +55,23 @@ final class UserTransformer
     {
         return array_merge($this->transform($user), [
             'email' => $user->getEmail()
+        ]);
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function transformWithFollowerStates(User $user): array
+    {
+        $userId = $user->getId();
+
+        $authorId = (int) $this->guard->id();
+
+        return array_merge($this->transform($user), [
+            'following' => $following = $this->followerRepository->isFollowing($authorId, $userId),
+            'followed' => $followed = $this->followerRepository->isFollowing($userId, $authorId),
+            'friendship' => $following && $followed
         ]);
     }
 

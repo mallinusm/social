@@ -48,20 +48,6 @@ final class VisitUserAction
     }
 
     /**
-     * @param int $authorId
-     * @param int $userId
-     * @return array
-     */
-    private function getFriendshipBooleans(int $authorId, int $userId): array
-    {
-        return [
-            'following' => $following = $this->followerRepository->isFollowing($authorId, $userId),
-            'followed' => $followed = $this->followerRepository->isFollowing($userId, $authorId),
-            'friendship' => $following && $followed
-        ];
-    }
-
-    /**
      * @param Request $request
      * @return array
      */
@@ -71,10 +57,8 @@ final class VisitUserAction
             'username' => 'required|string|max:255'
         ]);
 
-        $authorId = $request->user()->getAuthIdentifier();
-
         $user = $this->userRepository->findByUsername($request->input('username'));
 
-        return $this->userTransformer->transform($user) + $this->getFriendshipBooleans($authorId, $user->getId());
+        return $this->userTransformer->transformWithFollowerStates($user);
     }
 }

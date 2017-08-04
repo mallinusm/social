@@ -14,24 +14,19 @@ use Social\Entities\Reactionable;
 final class VoteTransformer
 {
     /**
-     * @var int
-     */
-    private $upvotedId;
-
-    /**
-     * @var int
-     */
-    private $downvoteId;
-
-    /**
-     * @var int
-     */
-    private $userId;
-
-    /**
      * @var ReactionableTransformer
      */
     private $reactionableTransformer;
+
+    /**
+     * @var Guard
+     */
+    private $guard;
+
+    /**
+     * @var ReactionRepository
+     */
+    private $reactionRepository;
 
     /**
      * VoteTransformer constructor.
@@ -43,13 +38,9 @@ final class VoteTransformer
                                 ReactionRepository $reactionRepository,
                                 Guard $guard)
     {
-        $this->upvotedId = $reactionRepository->getUpvoteId();
-
-        $this->downvoteId = $reactionRepository->getDownvoteId();
-
-        $this->userId = (int) $guard->id();
-
         $this->reactionableTransformer = $reactionableTransformer;
+        $this->reactionRepository = $reactionRepository;
+        $this->guard = $guard;
     }
 
     /**
@@ -69,7 +60,7 @@ final class VoteTransformer
             $votes->each(function(Reactionable $reactionable) use($voteable, $name): void {
                 $voteable->{$name}[] = $this->reactionableTransformer->transform($reactionable);
             })->reject(function(Reactionable $reactionable): bool {
-                return $reactionable->getUserId() !== $this->userId;
+                return $reactionable->getUserId() !== (int) $this->guard->id();
             })->first(function() use($voteable, $ĥasVoted): void {
                 $voteable->{$ĥasVoted} = true;
             });
@@ -78,9 +69,9 @@ final class VoteTransformer
         (new Collection($reactionables))->groupBy(function(Reactionable $reactionable): int {
             return $reactionable->getReactionId();
         })->each(function(Collection $collection, int $key) use($callback): void {
-            if ($key === $this->upvotedId) {
+            if ($key === $this->reactionRepository->getUpvoteId()) {
                 $callback($collection, 'upvotes', 'has_upvoted');
-            } else if ($key === $this->downvoteId) {
+            } else if ($key === $this->reactionRepository->getDownvoteId()) {
                 $callback($collection, 'downvotes', 'has_downvoted');
             }
         });
