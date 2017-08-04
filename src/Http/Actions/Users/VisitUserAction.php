@@ -22,11 +22,6 @@ final class VisitUserAction
     private $userRepository;
 
     /**
-     * @var DoctrineFollowerRepository
-     */
-    private $followerRepository;
-
-    /**
      * @var UserTransformer
      */
     private $userTransformer;
@@ -34,16 +29,11 @@ final class VisitUserAction
     /**
      * VisitUserAction constructor.
      * @param UserRepository $userRepository
-     * @param DoctrineFollowerRepository $followerRepository
      * @param UserTransformer $userTransformer
-     * @internal param FollowerRepository $followerRepository
      */
-    public function __construct(UserRepository $userRepository,
-                                DoctrineFollowerRepository $followerRepository,
-                                UserTransformer $userTransformer)
+    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer)
     {
         $this->userRepository = $userRepository;
-        $this->followerRepository = $followerRepository;
         $this->userTransformer = $userTransformer;
     }
 
