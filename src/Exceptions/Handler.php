@@ -5,6 +5,7 @@ namespace Social\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\{
     JsonResponse, Request
@@ -54,6 +55,16 @@ final class Handler extends ExceptionHandler
     {
         if ($statusCode = (new ExceptionCatcher)->catch($e)) {
             return new JsonResponse(['error' => $e->getMessage()], $statusCode);
+        }
+
+        /* @var Application $application */
+        $application = $this->container->make(Application::class);
+
+        if ($application->environment() === 'testing' && (bool) env('APP_DEBUG')) {
+            /**
+             * Display the error message in the console when running PHPUnit tests.
+             */
+            var_dump($e->getMessage());
         }
 
         return parent::render($request, $e);

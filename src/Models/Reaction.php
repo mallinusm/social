@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Reaction
  * @package Social\Models
  */
-class Reaction extends Model
+final class Reaction extends Model
 {
     use Attributes\Id;
 }

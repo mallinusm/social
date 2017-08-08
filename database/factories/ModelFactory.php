@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Factory;
 use Social\Models\{
     Comment,
     Follower,
+    PasswordReset,
     Post,
     Reactionable,
     Reaction,
@@ -20,7 +21,6 @@ $factory->define(User::class, function (Generator $faker) {
         'username' => $faker->userName,
         'email' => $faker->unique()->safeEmail,
         'password' => $password ?? bcrypt('secret'),
-        'remember_token' => str_random(10)
     ];
 });
 
@@ -59,5 +59,13 @@ $factory->define(Reactionable::class, function (Generator $faker) {
         'reactionable_type' => $faker->numberBetween(1),
         'reaction_id' => $faker->numberBetween(1),
         'user_id' => $faker->numberBetween(1)
+    ];
+});
+
+$factory->define(PasswordReset::class, function (Generator $faker) {
+    return [
+        'token' => str_random(100),
+        'email' => $faker->email,
+        'created_at' => time()
     ];
 });

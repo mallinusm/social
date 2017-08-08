@@ -5,7 +5,6 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\UserRepository;
-use Social\Repositories\DoctrineFollowerRepository;
 use Social\Transformers\UserTransformer;
 
 /**
@@ -46,6 +45,8 @@ final class VisitUserAction
         $this->validate($request, [
             'username' => 'required|string|max:255'
         ]);
+
+        //$user = $this->userRepository->visit($request->input('username'), $request->user()->getAuthIdentifier());
 
         $user = $this->userRepository->findByUsername($request->input('username'));
 

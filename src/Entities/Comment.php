@@ -29,7 +29,10 @@ class Comment
     public static function loadMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))->setTable('comments')
-            ->createField('id', 'integer')->makePrimaryKey()->generatedValue()->build()
+            ->createField('id', 'integer')
+            ->makePrimaryKey()
+            ->generatedValue()
+            ->build()
             ->addField('content', 'string')
             ->addField('postId', 'integer', [
                 'columnName' => 'post_id'

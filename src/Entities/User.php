@@ -20,6 +20,8 @@ class User
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 
+    use Relationships\Posts;
+
     /**
      * @param ClassMetadata $metadata
      * @return void
@@ -38,6 +40,9 @@ class User
             ])
             ->addField('updatedAt', 'integer', [
                 'columnName' => 'updated_at'
-            ]);
+            ])
+            ->createOneToMany('posts', Post::class)
+            ->mappedBy('user')
+            ->build();
     }
 }

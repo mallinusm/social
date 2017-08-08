@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Post
  * @package Social\Models
  */
-class Post extends Model
+final class Post extends Model
 {
     use Attributes\Id,
         Attributes\Content,

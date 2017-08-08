@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Social\Models\{
     Comment,
     Follower,
+    PasswordReset,
     Post,
     Reactionable,
     Reaction,
@@ -69,5 +70,14 @@ trait CreatesModels
     protected function createReactionable(array $attributes = []): Reactionable
     {
         return factory(Reactionable::class)->create($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return PasswordReset
+     */
+    protected function createPasswordReset(array $attributes = []): PasswordReset
+    {
+        return factory(PasswordReset::class)->create($attributes);
     }
 }

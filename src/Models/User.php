@@ -10,7 +10,7 @@ use Social\Entities\User as UserEntity;
  * Class User
  * @package Social\Models
  */
-class User extends Authenticatable
+final class User extends Authenticatable
 {
     use HasApiTokens,
         Attributes\Id,

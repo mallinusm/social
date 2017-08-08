@@ -71,7 +71,6 @@ class UploadAvatarTest extends FeatureTestCase
 
         $updatedAt = $fresh->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
-        $this->assertEquals(time(), $updatedAt);
 
         $this->assertFileExists(storage_path('app/public/avatars/' . $avatar));
     }

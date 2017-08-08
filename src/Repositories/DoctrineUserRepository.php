@@ -3,8 +3,11 @@
 namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Social\Contracts\UserRepository;
+use Social\Entities\PasswordReset;
 use Social\Entities\User;
 
 /**
@@ -43,9 +46,11 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->update(User::class, 'u')
             ->where($this->getDqlExpression()->eq('u.id', $userId))
             ->set('u.avatar', ':avatar')
-            ->setParameter('avatar', $avatar)
             ->set('u.updatedAt', ':updatedAt')
-            ->setParameter('updatedAt', $this->freshTimestamp())
+            ->setParameters([
+                'avatar' => $avatar,
+                'updatedAt' => $this->freshTimestamp()
+            ])
             ->getQuery()
             ->execute();
     }
@@ -111,5 +116,88 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             });
 
         return (bool) $dqlQueryBuilder->getQuery()->execute();
+    }
+
+    /**
+     * @param string $email
+     * @return string
+     * @throws Exception
+     */
+    public function generatePasswordResetToken(string $email): string
+    {
+        $token = Str::random(100);
+
+        $result = (int) $this->getSqlQueryBuilder()
+            ->insert('password_resets')
+            ->values([
+                'email' => ':email',
+                'token' => ':token',
+                'created_at' => ':createdAt'
+            ])
+            ->setParameters([
+                'email' => $email,
+                'token' => $token,
+                'createdAt' => $this->freshTimestamp()
+            ])
+            ->execute();
+
+        if ($result !== 1) {
+            throw new Exception('Unable to insert record.');
+        }
+
+        return $token;
+    }
+
+    /**
+     * @param string $token
+     * @return PasswordReset
+     * @throws EntityNotFoundException
+     */
+    private function getPasswordResetByToken(string $token): PasswordReset
+    {
+        $repository = $this->getEntityManager()->getRepository(PasswordReset::class);
+
+        /* @var PasswordReset $passwordReset */
+        $passwordReset = $repository->findOneBy([
+            'token' => $token
+        ]);
+
+        if ($passwordReset === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), []);
+        }
+
+        return $passwordReset;
+    }
+
+    /**
+     * @param string $token
+     * @param string $password
+     * @return bool
+     */
+    public function resetPassword(string $token, string $password): bool
+    {
+        $passwordReset = $this->getPasswordResetByToken($token);
+
+        if (time() > ($passwordReset->getCreatedAt() + (60 * 60))) {
+            /**
+             * The token has expired.
+             */
+            return false;
+        }
+
+        $email = $passwordReset->getEmail();
+
+        $this->remove($passwordReset);
+
+        return (bool) $this->getDqlQueryBuilder()
+            ->update(User::class, 'u')
+            ->where($this->getDqlExpression()->eq('u.email', ':email'))
+            ->set('u.password', ':password')
+            ->setParameters([
+                'password' => $password,
+                'email' => $email
+            ])
+            ->getQuery()
+            ->execute();
     }
 }

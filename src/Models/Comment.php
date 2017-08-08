@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Comment
  * @package Social\Models
  */
-class Comment extends Model
+final class Comment extends Model
 {
     use Attributes\Id,
         Attributes\PostId,

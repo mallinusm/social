@@ -18,7 +18,9 @@ use Social\Http\Actions\Reactionables\{
 };
 use Social\Http\Actions\Users\{
     FetchCurrentUserAction,
+    GeneratePasswordResetTokenAction,
     RegisterUserAction,
+    ResetPasswordAction,
     SearchUsersAction,
     UpdateUserAction,
     UploadAvatarAction,
@@ -32,6 +34,9 @@ $router->get('/', WelcomeAction::class);
 $router->post('users', RegisterUserAction::class);
 
 $router->post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
+
+$router->post('password-reset-token', GeneratePasswordResetTokenAction::class);
+$router->post('reset-password', ResetPasswordAction::class);
 
 $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('user', FetchCurrentUserAction::class);

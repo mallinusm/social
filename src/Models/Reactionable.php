@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Reactionable
  * @package Social\Models
  */
-class Reactionable extends Model
+final class Reactionable extends Model
 {
     use Attributes\Id,
         Attributes\ReactionId,

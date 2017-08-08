@@ -48,4 +48,17 @@ interface UserRepository
      * @return bool
      */
     function update(int $userId, ?string $username, ?string $name, ?string $email): bool;
+
+    /**
+     * @param string $email
+     * @return string
+     */
+    function generatePasswordResetToken(string $email): string;
+
+    /**
+     * @param string $token
+     * @param string $password
+     * @return bool
+     */
+    function resetPassword(string $token, string $password): bool;
 }

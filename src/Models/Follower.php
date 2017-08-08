@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Follower
  * @package Social\Models
  */
-class Follower extends Model
+final class Follower extends Model
 {
     use Attributes\Id;
 }
