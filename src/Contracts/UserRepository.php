@@ -61,4 +61,11 @@ interface UserRepository
      * @return bool
      */
     function resetPassword(string $token, string $password): bool;
+
+    /**
+     * @param int $id
+     * @param string $password
+     * @return bool
+     */
+    function updatePassword(int $id, string $password): bool;
 }

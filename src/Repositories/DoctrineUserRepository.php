@@ -200,4 +200,23 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->getQuery()
             ->execute();
     }
+
+    /**
+     * @param int $id
+     * @param string $password
+     * @return bool
+     */
+    public function updatePassword(int $id, string $password): bool
+    {
+        return (bool) $this->getDqlQueryBuilder()
+            ->update(User::class, 'u')
+            ->where($this->getDqlExpression()->eq('u.id', ':id'))
+            ->set('u.password', ':password')
+            ->setParameters([
+                'id' => $id,
+                'password' => $password
+            ])
+            ->getQuery()
+            ->execute();
+    }
 }

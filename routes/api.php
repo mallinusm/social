@@ -22,6 +22,7 @@ use Social\Http\Actions\Users\{
     RegisterUserAction,
     ResetPasswordAction,
     SearchUsersAction,
+    UpdatePasswordAction,
     UpdateUserAction,
     UploadAvatarAction,
     VisitUserAction
@@ -44,6 +45,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->post('avatar', UploadAvatarAction::class);
     $router->get('users/search', SearchUsersAction::class);
     $router->patch('user', UpdateUserAction::class);
+    $router->patch('change-password', UpdatePasswordAction::class);
 
     $router->post('reactionables', ReactAction::class);
     $router->delete('reactionables/{reactionableId}', UndoReactAction::class);
