@@ -2,11 +2,12 @@
 
 namespace Social\Http\Actions\Users;
 
-use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\UserRepository;
-use Social\Mailables\PasswordResetTokenMailable;
+use Social\Entities\User;
+use Social\Notifications\Users\PasswordResetTokenNotification;
 
 /**
  * Class GeneratePasswordResetTokenAction
@@ -22,19 +23,19 @@ final class GeneratePasswordResetTokenAction
     private $userRepository;
 
     /**
-     * @var Mailer
+     * @var Dispatcher
      */
-    private $mailer;
+    private $dispatcher;
 
     /**
      * GeneratePasswordResetTokenAction constructor.
      * @param UserRepository $userRepository
-     * @param Mailer $mailer
+     * @param Dispatcher $dispatcher
      */
-    public function __construct(UserRepository $userRepository, Mailer $mailer)
+    public function __construct(UserRepository $userRepository, Dispatcher $dispatcher)
     {
         $this->userRepository = $userRepository;
-        $this->mailer = $mailer;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -51,9 +52,11 @@ final class GeneratePasswordResetTokenAction
 
         $token = $this->userRepository->generatePasswordResetToken($email);
 
-        $mailable = new PasswordResetTokenMailable($token);
+        $notification = new PasswordResetTokenNotification($token);
 
-        $this->mailer->to($email)->send($mailable);
+        $notifiable = (new User)->setEmail($email);
+
+        $this->dispatcher->send($notifiable, $notification);
 
         return ['message' => 'Email sent.'];
     }

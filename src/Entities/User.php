@@ -4,6 +4,7 @@ namespace Social\Entities;
 
 use Doctrine\ORM\Mapping\Builder\ClassMetadataBuilder;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Exception;
 
 /**
  * Class User
@@ -44,5 +45,27 @@ class User
             ->createOneToMany('posts', Post::class)
             ->mappedBy('user')
             ->build();
+    }
+
+    /**
+     * @param string $driver
+     * @return string
+     * @throws Exception
+     */
+    public function routeNotificationFor(string $driver): string
+    {
+        if ($driver === 'mail') {
+            return $this->getEmail();
+        }
+
+        throw new Exception('Invalid driver [' . $driver . '].');
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->getEmail();
     }
 }
