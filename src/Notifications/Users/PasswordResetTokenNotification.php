@@ -60,6 +60,7 @@ final class PasswordResetTokenNotification extends Notification
     public function toMail(): MailMessage
     {
         return (new MailMessage)
+            ->subject('Reset your password on Social!')
             ->greeting('Hello!')
             ->line('Click the button below to reset your password!')
             ->action('Reset Password', $this->getPasswordResetLink())
