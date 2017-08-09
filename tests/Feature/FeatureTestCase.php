@@ -133,4 +133,14 @@ abstract class FeatureTestCase extends TestCase
     {
         return 2;
     }
+
+    /**
+     * @param callable $callable
+     */
+    public function lastSentNotification(callable $callable): void
+    {
+        $notification = reset($this->dispatchedNotifications);
+
+        $callable($notification['instance'], $notification['notifiable']);
+    }
 }

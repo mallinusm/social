@@ -74,15 +74,26 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
 
         $this->assertDatabaseHas('password_resets', $data);
 
-        /* @var PasswordResetTokenNotification $notification */
-        $notification = reset($this->dispatchedNotifications)['instance'];
-        $this->assertEquals(['mail'], $notification->via());
-        $mail = $notification->toMail();
-        $this->assertEquals('Reset your password on Social!', $mail->subject);
-        $this->assertEquals('Hello!', $mail->greeting);
-        $this->assertArraySubset(['Click the button below to reset your password!'], $mail->introLines);
-        $this->assertEquals('Reset Password', $mail->actionText);
-        $this->assertStringStartsWith(env('FRONTEND_DOMAIN') . '/password-reset?token=', $mail->actionUrl);
-        $this->assertArraySubset(['Thank you for using our application!'], $mail->outroLines);
+        $this->lastSentNotification($this->seePasswordResetTokenNotification($email));
+    }
+
+    /**
+     * @param string $email
+     * @return callable
+     */
+    private function seePasswordResetTokenNotification(string $email): callable
+    {
+        return function(PasswordResetTokenNotification $notification, User $notifiable) use ($email): void {
+            $this->assertEquals($email, $notifiable->getEmail());
+            $this->assertEquals(['mail'], $notification->via());
+
+            $mail = $notification->toMail();
+            $this->assertEquals('Reset your password on Social!', $mail->subject);
+            $this->assertEquals('Hello!', $mail->greeting);
+            $this->assertArraySubset(['Click the button below to reset your password!'], $mail->introLines);
+            $this->assertEquals('Reset Password', $mail->actionText);
+            $this->assertStringStartsWith(env('FRONTEND_DOMAIN') . '/password-reset?token=', $mail->actionUrl);
+            $this->assertArraySubset(['Thank you for using our application!'], $mail->outroLines);
+        };
     }
 }
