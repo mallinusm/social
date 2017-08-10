@@ -52,7 +52,7 @@ final class ResetPasswordAction
         $password = $this->hasher->make($request->input('password'));
 
         if (! $this->userRepository->resetPassword($request->input('token'), $password)) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('The token has expired.');
         }
 
         return ['message' => 'Password was reset.'];

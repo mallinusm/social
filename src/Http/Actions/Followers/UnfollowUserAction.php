@@ -53,7 +53,7 @@ final class UnfollowUserAction
         $userId = $this->userRepository->findByUsername($request->input('username'))->getId();
 
         if ( ! $this->followerRepository->isFollowing($authorId, $userId)) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('You are not yet following this user.');
         }
 
         $this->followerRepository->unfollow($authorId, $userId);

@@ -57,11 +57,12 @@ final class RegisterUserAction
             'password' => 'required|string|min:6|max:255|confirmed'
         ]);
 
-        return $this->userTransformer->transform($this->userRepository->register(
-            $request->input('email'),
-            $request->input('name'),
-            $this->hasher->make($request->input('password')),
-            $request->input('username')
-        ));
+        $password = $this->hasher->make($request->input('password'));
+
+        $user = $this->userRepository->register(
+            $request->input('email'), $request->input('name'), $password, $request->input('username')
+        );
+
+        return $this->userTransformer->transform($user);
     }
 }

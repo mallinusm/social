@@ -46,6 +46,8 @@ final class SearchUsersAction
             'query' => 'required|string|max:255'
         ]);
 
-        return $this->userTransformer->transformMany($this->userRepository->search($request->input('query')));
+        $users = $this->userRepository->search($request->input('query'));
+
+        return $this->userTransformer->transformMany($users);
     }
 }

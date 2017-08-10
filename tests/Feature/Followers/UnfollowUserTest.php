@@ -73,7 +73,7 @@ class UnfollowUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/followers?username={$username}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertExactJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'You are not yet following this user.']);
     }
 
     /** @test */

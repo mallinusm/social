@@ -63,7 +63,7 @@ final class ReactAction
         $reactionableId = $request->input('reactionable_id');
 
         if ($this->reactionableRepository->hasReacted($reactionId, $userId, $reactionableId, $reactionableType)) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('Cannot react twice.');
         }
 
         $reactionable = $this->reactionableRepository

@@ -52,7 +52,7 @@ class UnpublishPostTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertExactJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This post does not belong to you.']);
 
         $this->assertDatabaseHas('posts', $postArray);
     }

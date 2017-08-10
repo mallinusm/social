@@ -155,7 +155,7 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJsonFragment(['error' => 'This action is unauthorized.']);
+            ->assertJsonFragment(['error' => 'Cannot react twice.']);
     }
 
     /** @test */
@@ -175,7 +175,7 @@ class ReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson('api/v1/reactionables', $attributes)
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJsonFragment(['error' => 'This action is unauthorized.']);
+            ->assertJsonFragment(['error' => 'Cannot react twice.']);
     }
 
     /** @test */

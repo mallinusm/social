@@ -47,7 +47,7 @@ class UndoReactTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->deleteJson("api/v1/reactionables/{$this->createReactionable()->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertExactJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'This reactionable does not belong to you.']);
     }
 
     /** @test */

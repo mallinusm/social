@@ -39,7 +39,7 @@ final class UnpublishPostAction
     public function __invoke(Post $post, Request $request): array
     {
         if ($request->user()->getId() !== $post->getAuthorId()) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('This post does not belong to you.');
         }
         
         $this->postRepository->unpublish($post->getId());

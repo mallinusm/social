@@ -53,7 +53,7 @@ final class FollowUserAction
         $authorId = $request->user()->getAuthIdentifier();
 
         if ($this->followerRepository->isFollowing($authorId, $userId)) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('You are already following this user.');
         }
 
         $this->followerRepository->follow($authorId, $userId);

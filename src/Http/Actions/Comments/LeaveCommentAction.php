@@ -6,7 +6,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\CommentRepository;
 use Social\Models\{
-    Post, User
+    Post,
+    User
 };
 use Social\Transformers\CommentTransformer;
 
@@ -51,13 +52,13 @@ final class LeaveCommentAction
             'content' => 'required|string|max:255'
         ]);
 
-        /** @var User $author */
-        $author =  $request->user();
+        /** @var User $user */
+        $user =  $request->user();
 
-        return $this->commentTransformer->transform(
-            $this->commentRepository->leave(
-                $request->input('content'), $post->getId(), $author->getAuthIdentifier()
-            )->setUser($author->toUserEntity())
-        );
+        $comment = $this->commentRepository->leave($request->input('content'), $post->getId(), $user->getId());
+
+        $comment->setUser($user->toUserEntity());
+
+        return $this->commentTransformer->transform($comment);
     }
 }

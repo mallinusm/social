@@ -77,7 +77,7 @@ class FollowerUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->postJson("api/v1/followers?username={$user->getUsername()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertExactJson(['error' => 'This action is unauthorized.']);
+            ->assertExactJson(['error' => 'You are already following this user.']);
     }
 
     /** @test */

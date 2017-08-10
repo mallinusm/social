@@ -110,14 +110,16 @@ class ResetPasswordTest extends FeatureTestCase
 
         $moreThanOneHourAgo = time() - (60 * 60) - 1;
 
+        $token = $this->createPasswordReset(['created_at' => $moreThanOneHourAgo])->getToken();
+
         $this->dontSeeIsAuthenticated('api')
             ->postJson('api/v1/reset-password', [
-                'token' => $this->createPasswordReset(['created_at' => $moreThanOneHourAgo])->getToken(),
+                'token' => $token,
                 'password' => $password,
                 'password_confirmation' => $password
             ])
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJsonFragment(['error' => 'This action is unauthorized.']);
+            ->assertJsonFragment(['error' => 'The token has expired.']);
     }
 
     /** @test */

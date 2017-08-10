@@ -65,11 +65,10 @@ class PublishPostAction
 
         $user = $this->userRepository->findByUsername($request->input('username'));
 
-        $post = $this->postRepository->publish(
-            $author->getAuthIdentifier(), $request->input('content'), $user->getId()
-        );
+        $post = $this->postRepository->publish($author->getId(), $request->input('content'), $user->getId());
 
         $post->setAuthor($author->toUserEntity());
+
         $post->setUser($user);
 
         return $this->postTransformer->transform($post);

@@ -37,7 +37,7 @@ final class UndoReactAction
         $reactionable = $this->reactionableRepository->find($reactionableId);
 
         if ($reactionable->getUserId() !== $request->user()->getId()) {
-            throw new AuthorizationException('This action is unauthorized.');
+            throw new AuthorizationException('This reactionable does not belong to you.');
         }
 
         $this->reactionableRepository->delete($reactionable);

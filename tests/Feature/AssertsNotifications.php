@@ -19,7 +19,7 @@ trait AssertsNotifications
      */
     public function assertNotificationHasMail(string $notificationClass, MailMessage $mailMessage): void
     {
-        /* @var TestCase $this*/
+        /* @var TestCase $this */
         $notification = (new Collection($this->dispatchedNotifications))->filter(
             function(array $notification) use ($notificationClass): bool {
                 return $notification['instance'] instanceof $notificationClass;
