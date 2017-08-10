@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users;
 
+use Illuminate\Notifications\Messages\MailMessage;
 use Social\Entities\User;
 use Social\Notifications\Users\PasswordResetTokenNotification;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,26 +75,13 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
 
         $this->assertDatabaseHas('password_resets', $data);
 
-        $this->lastSentNotification($this->seePasswordResetTokenNotification($email));
-    }
+        $expectedMail = (new MailMessage)
+            ->subject('Reset your password on Social!')
+            ->greeting('Hello!')
+            ->line('Click the button below to reset your password!')
+            ->action('Reset Password', env('FRONTEND_DOMAIN') . '/password-reset?token=')
+            ->line('Thank you for using our application!');
 
-    /**
-     * @param string $email
-     * @return callable
-     */
-    private function seePasswordResetTokenNotification(string $email): callable
-    {
-        return function(PasswordResetTokenNotification $notification, User $notifiable) use ($email): void {
-            $this->assertEquals($email, $notifiable->getEmail());
-            $this->assertEquals(['mail'], $notification->via());
-
-            $mail = $notification->toMail();
-            $this->assertEquals('Reset your password on Social!', $mail->subject);
-            $this->assertEquals('Hello!', $mail->greeting);
-            $this->assertArraySubset(['Click the button below to reset your password!'], $mail->introLines);
-            $this->assertEquals('Reset Password', $mail->actionText);
-            $this->assertStringStartsWith(env('FRONTEND_DOMAIN') . '/password-reset?token=', $mail->actionUrl);
-            $this->assertArraySubset(['Thank you for using our application!'], $mail->outroLines);
-        };
+        $this->assertNotificationHasMail(PasswordResetTokenNotification::class, $expectedMail);
     }
 }

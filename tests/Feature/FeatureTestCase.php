@@ -7,7 +7,6 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Pagination\Paginator;
 use ReactionsTableSeeder;
 use Tests\TestCase;
 
@@ -17,7 +16,7 @@ use Tests\TestCase;
  */
 abstract class FeatureTestCase extends TestCase
 {
-    use CreatesModels, DatabaseMigrations;
+    use CreatesModels, DatabaseMigrations, AssertsNotifications;
 
     /**
      * The storage path for saving avatars.
@@ -38,9 +37,6 @@ abstract class FeatureTestCase extends TestCase
     public function setUp()
     {
         $this->afterApplicationCreated(function(): void {
-            /**
-             * Before running the feature tests we make sure there's a folder for saving the avatars.
-             */
             $this->getFilesystem()->makeDirectory(self::AVATARS_DIR);
 
             $this->artisan('db:seed', [
@@ -57,9 +53,6 @@ abstract class FeatureTestCase extends TestCase
     public function tearDown(): void
     {
         $this->beforeApplicationDestroyed(function(): void {
-            /**
-             * After running the feature tests we make sure to clean up the avatars folder.
-             */
             $this->getFilesystem()->deleteDirectory(self::AVATARS_DIR);
         });
 
@@ -76,14 +69,6 @@ abstract class FeatureTestCase extends TestCase
         $urlGenerator = $this->app->make(UrlGenerator::class);
 
         return $urlGenerator->route('avatars.show', compact('avatar'));
-    }
-
-    /**
-     * @return array
-     */
-    protected function simplePaginationStructure(): array
-    {
-        return array_keys((new Paginator([], 15))->toArray());
     }
 
     /**
@@ -132,15 +117,5 @@ abstract class FeatureTestCase extends TestCase
     protected function getDownvoteId(): int
     {
         return 2;
-    }
-
-    /**
-     * @param callable $callable
-     */
-    public function lastSentNotification(callable $callable): void
-    {
-        $notification = reset($this->dispatchedNotifications);
-
-        $callable($notification['instance'], $notification['notifiable']);
     }
 }
