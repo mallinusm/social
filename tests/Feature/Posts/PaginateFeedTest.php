@@ -85,28 +85,14 @@ class PaginateFeedTest extends FeatureTestCase
                             'post_id',
                             'created_at',
                             'updated_at',
-                            'user' => [
-                                'name',
-                                'avatar',
-                                'username'
-                            ],
+                            'user' => $this->userJsonStructure(),
                             'reactionables' => [
                                 'upvotes' => [
-                                    [
-                                        'id',
-                                        'reaction_id',
-                                        'reactionable_id',
-                                        'reactionable_type',
-                                        'created_at',
-                                        'updated_at',
-                                        'user' => [
-                                            'name',
-                                            'avatar',
-                                            'username'
-                                        ]
-                                    ]
+                                    $this->reactionableJsonStructure()
                                 ],
                                 'downvotes',
+                                'upvote',
+                                'downvote',
                                 'has_upvoted',
                                 'has_downvoted'
                             ]
@@ -114,21 +100,11 @@ class PaginateFeedTest extends FeatureTestCase
                     ],
                     'reactionables' => [
                         'upvotes' => [
-                            [
-                                'id',
-                                'reaction_id',
-                                'reactionable_id',
-                                'reactionable_type',
-                                'created_at',
-                                'updated_at',
-                                'user' => [
-                                    'name',
-                                    'avatar',
-                                    'username'
-                                ]
-                            ]
+                            $this->reactionableJsonStructure()
                         ],
                         'downvotes',
+                        'upvote',
+                        'downvote',
                         'has_upvoted',
                         'has_downvoted'
                     ]
@@ -163,6 +139,8 @@ class PaginateFeedTest extends FeatureTestCase
                                     ]
                                 ],
                                 'downvotes' => [],
+                                'upvote' => null,
+                                'downvote' => null,
                                 'has_upvoted' => false,
                                 'has_downvoted' => false
                             ]
@@ -181,6 +159,8 @@ class PaginateFeedTest extends FeatureTestCase
                             ]
                         ],
                         'downvotes' => [],
+                        'upvote' => null,
+                        'downvote' => null,
                         'has_upvoted' => false,
                         'has_downvoted' => false
                     ]

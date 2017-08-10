@@ -60,6 +60,7 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getName()}")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([$this->userJsonStructure()])
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
@@ -78,6 +79,7 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([$this->userJsonStructure()])
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
@@ -99,6 +101,7 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([$this->userJsonStructure()])
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
@@ -125,6 +128,7 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([$this->userJsonStructure()])
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
@@ -151,6 +155,7 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([$this->userJsonStructure()])
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),

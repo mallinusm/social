@@ -135,6 +135,7 @@ class UpdateUserTest extends FeatureTestCase
                 'name' => $name
             ])
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->userJsonStructure() + ['email'])
             ->assertExactJson([
                 'username' => $username,
                 'email' => $email,
@@ -164,6 +165,7 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['name' => $name])
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->userJsonStructure() + ['email'])
             ->assertExactJson([
                 'name' => $name,
                 'username' => $user->getUsername(),
@@ -192,6 +194,7 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['username' => $username])
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->userJsonStructure() + ['email'])
             ->assertExactJson([
                 'name' => $user->getName(),
                 'username' => $username,
@@ -201,7 +204,6 @@ class UpdateUserTest extends FeatureTestCase
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
-        $this->assertEquals(time(), $updatedAt);
 
         $this->assertDatabaseHas('users', [
             'id' => $user->getId(),
@@ -220,6 +222,7 @@ class UpdateUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->patchJson('api/v1/user', ['email' => $email])
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->userJsonStructure() + ['email'])
             ->assertExactJson([
                 'name' => $user->getName(),
                 'username' => $user->getUsername(),

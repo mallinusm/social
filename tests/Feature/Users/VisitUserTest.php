@@ -104,7 +104,7 @@ class VisitUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertJsonStructure($this->userJsonStructure() + ['friendship', 'followed', 'following'])
             ->assertExactJson([
                 'avatar' => $user->getAvatar(),
                 'name' => $user->getName(),
@@ -137,7 +137,7 @@ class VisitUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertJsonStructure($this->userJsonStructure() + ['friendship', 'followed', 'following'])
             ->assertExactJson([
                 'avatar' => $user->getAvatar(),
                 'name' => $user->getName(),

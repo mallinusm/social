@@ -146,7 +146,7 @@ class RegisterUserTest extends FeatureTestCase
                 'password_confirmation' => $password
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['name', 'avatar', 'username'])
+            ->assertJsonStructure($this->userJsonStructure())
             ->assertExactJson([
                 'name' => $name,
                 'username' => $username,

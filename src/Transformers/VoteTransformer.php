@@ -2,9 +2,9 @@
 
 namespace Social\Transformers;
 
+use Exception;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
-use Social\Contracts\ReactionRepository;
 use Social\Entities\Reactionable;
 
 /**
@@ -14,33 +14,98 @@ use Social\Entities\Reactionable;
 final class VoteTransformer
 {
     /**
+     * @var array
+     */
+    private $upvotes = [];
+
+    /**
+     * @var array
+     */
+    private $downvotes = [];
+
+    /**
+     * @var array
+     */
+    private $upvote;
+
+    /**
+     * @var array
+     */
+    private $downvote;
+
+    /**
+     * @var bool
+     */
+    private $hasUpvoted = false;
+
+    /**
+     * @var bool
+     */
+    private $hasDownvoted = false;
+
+    /**
      * @var ReactionableTransformer
      */
     private $reactionableTransformer;
 
     /**
-     * @var Guard
+     * @var int
      */
-    private $guard;
-
-    /**
-     * @var ReactionRepository
-     */
-    private $reactionRepository;
+    private $userId;
 
     /**
      * VoteTransformer constructor.
      * @param ReactionableTransformer $reactionableTransformer
-     * @param ReactionRepository $reactionRepository
      * @param Guard $guard
+     * @throws Exception
      */
-    public function __construct(ReactionableTransformer $reactionableTransformer,
-                                ReactionRepository $reactionRepository,
-                                Guard $guard)
+    public function __construct(ReactionableTransformer $reactionableTransformer, Guard $guard)
     {
         $this->reactionableTransformer = $reactionableTransformer;
-        $this->reactionRepository = $reactionRepository;
-        $this->guard = $guard;
+
+        $this->userId = (int) $guard->id();
+    }
+
+
+    /**
+     * @param Reactionable $reactionable
+     */
+    private function transformUpvote(Reactionable $reactionable): void
+    {
+        $this->upvotes[] = $this->reactionableTransformer->transform($reactionable);
+
+        if ($reactionable->getUserId() === $this->userId) {
+            $this->hasUpvoted = true;
+            $this->upvote = end($this->upvotes);
+        }
+    }
+
+    /**
+     * @param Reactionable $reactionable
+     */
+    private function transformDownvote(Reactionable $reactionable): void
+    {
+        $this->downvotes[] = $this->reactionableTransformer->transform($reactionable);
+
+        if ($reactionable->getUserId() === $this->userId) {
+            $this->hasDownvoted = true;
+            $this->downvote = end($this->upvotes);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function toArray(): array
+    {
+        return [
+            'upvotes' => $this->upvotes,
+            'downvotes' => $this->downvotes,
+            'upvote' => $this->upvote,
+            'downvote' => $this->downvote,
+            'has_upvoted' => $this->hasUpvoted,
+            'has_downvoted' => $this->hasDownvoted
+        ];
     }
 
     /**
@@ -49,33 +114,18 @@ final class VoteTransformer
      */
     public function transformMany(array $reactionables): array
     {
-        /**
-         * I wish PHP had a struct datatype.
-         */
-        $voteable = new Class {
-            public $upvotes = [], $downvotes = [], $has_upvoted = false, $has_downvoted = false;
-        };
+        (new Collection($reactionables))->each(function(Reactionable $reactionable): void {
+            $reactionId = $reactionable->getReactionId();
 
-        $callback = function(Collection $votes, string $name, string $ĥasVoted) use($voteable) {
-            $votes->each(function(Reactionable $reactionable) use($voteable, $name): void {
-                $voteable->{$name}[] = $this->reactionableTransformer->transform($reactionable);
-            })->reject(function(Reactionable $reactionable): bool {
-                return $reactionable->getUserId() !== (int) $this->guard->id();
-            })->first(function() use($voteable, $ĥasVoted): void {
-                $voteable->{$ĥasVoted} = true;
-            });
-        };
-
-        (new Collection($reactionables))->groupBy(function(Reactionable $reactionable): int {
-            return $reactionable->getReactionId();
-        })->each(function(Collection $collection, int $key) use($callback): void {
-            if ($key === $this->reactionRepository->getUpvoteId()) {
-                $callback($collection, 'upvotes', 'has_upvoted');
-            } else if ($key === $this->reactionRepository->getDownvoteId()) {
-                $callback($collection, 'downvotes', 'has_downvoted');
+            if ($reactionId === 1) {
+                $this->transformUpvote($reactionable);
+            } else if ($reactionId === 2) {
+                $this->transformDownvote($reactionable);
+            } else {
+                throw new Exception('Unsupported reaction id.');
             }
         });
 
-        return (array) $voteable;
+        return $this->toArray();
     }
 }

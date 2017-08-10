@@ -38,6 +38,7 @@ class FetchCurrentUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson('api/v1/user')
             ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->userJsonStructure() + ['email'])
             ->assertExactJson([
                 'name' => $user->getName(),
                 'username' => $user->getUsername(),

@@ -91,29 +91,7 @@ class PublishPostTest extends FeatureTestCase
                 'username' => $username
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([
-                'content',
-                'created_at',
-                'id',
-                'updated_at',
-                'user' => [
-                    'name',
-                    'username',
-                    'avatar'
-                ],
-                'author' => [
-                    'name',
-                    'username',
-                    'avatar'
-                ],
-                'comments',
-                'reactionables' => [
-                    'upvotes',
-                    'downvotes',
-                    'has_upvoted',
-                    'has_downvoted'
-                ]
-            ])
+            ->assertJsonStructure($this->postJsonStructure())
             ->assertJsonFragment([
                 'content' => $content,
                 'user' => [
@@ -130,6 +108,8 @@ class PublishPostTest extends FeatureTestCase
                 'reactionables' => [
                     'upvotes' => [],
                     'downvotes' => [],
+                    'upvote' => null,
+                    'downvote' => null,
                     'has_upvoted' => false,
                     'has_downvoted' => false
                 ]

@@ -78,7 +78,7 @@ class LeaveCommentTest extends FeatureTestCase
                 'content' => $content
             ])
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['content', 'created_at', 'id', 'updated_at', 'post_id', 'user'])
+            ->assertJsonStructure($this->commentJsonStructure())
             ->assertJsonFragment([
                 'content' => $content,
                 'post_id' => $postId,
@@ -90,6 +90,8 @@ class LeaveCommentTest extends FeatureTestCase
                 'reactionables' => [
                     'upvotes' => [],
                     'downvotes' => [],
+                    'upvote' => null,
+                    'downvote' => null,
                     'has_upvoted' => false,
                     'has_downvoted' => false,
                 ]

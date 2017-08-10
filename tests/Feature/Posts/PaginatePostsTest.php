@@ -97,6 +97,26 @@ class PaginatePostsTest extends FeatureTestCase
             'username' => $username
         ];
 
+        $postUpvoteArray = [
+            'id' => $postReactionable->getId(),
+            'reaction_id' => $postReactionable->getReactionId(),
+            'reactionable_id' => $postReactionable->getReactionableId(),
+            'reactionable_type' => $postReactionable->getReactionableType(),
+            'created_at' => $postReactionable->getCreatedAt(),
+            'updated_at' => $postReactionable->getUpdatedAt(),
+            'user' => $userArray
+        ];
+
+        $commentUpvoteArray = [
+            'id' => $commentReactionable->getId(),
+            'reaction_id' => $commentReactionable->getReactionId(),
+            'reactionable_id' => $commentReactionable->getReactionableId(),
+            'reactionable_type' => $commentReactionable->getReactionableType(),
+            'created_at' => $commentReactionable->getCreatedAt(),
+            'updated_at' => $commentReactionable->getUpdatedAt(),
+            'user' => $userArray
+        ];
+
         $this->actingAs($user, 'api')
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/posts?username={$username}")
@@ -116,28 +136,14 @@ class PaginatePostsTest extends FeatureTestCase
                             'post_id',
                             'created_at',
                             'updated_at',
-                            'user' => [
-                                'name',
-                                'avatar',
-                                'username'
-                            ],
+                            'user' => $this->userJsonStructure(),
                             'reactionables' => [
                                 'upvotes' => [
-                                    [
-                                        'id',
-                                        'reaction_id',
-                                        'reactionable_id',
-                                        'reactionable_type',
-                                        'created_at',
-                                        'updated_at',
-                                        'user' => [
-                                            'name',
-                                            'avatar',
-                                            'username'
-                                        ]
-                                    ]
+                                    $this->reactionableJsonStructure()
                                 ],
                                 'downvotes',
+                                'upvote' => $this->reactionableJsonStructure(),
+                                'downvote',
                                 'has_upvoted',
                                 'has_downvoted'
                             ]
@@ -145,21 +151,11 @@ class PaginatePostsTest extends FeatureTestCase
                     ],
                     'reactionables' => [
                         'upvotes' => [
-                            [
-                                'id',
-                                'reaction_id',
-                                'reactionable_id',
-                                'reactionable_type',
-                                'created_at',
-                                'updated_at',
-                                'user' => [
-                                    'name',
-                                    'avatar',
-                                    'username'
-                                ]
-                            ]
+                            $this->reactionableJsonStructure()
                         ],
                         'downvotes',
+                        'upvote' => $this->reactionableJsonStructure(),
+                        'downvote',
                         'has_upvoted',
                         'has_downvoted'
                     ]
@@ -183,16 +179,10 @@ class PaginatePostsTest extends FeatureTestCase
                             'user' => $userArray,
                             'reactionables' => [
                                 'upvotes' => [
-                                    [
-                                        'id' => $commentReactionable->getId(),
-                                        'reaction_id' => $commentReactionable->getReactionId(),
-                                        'reactionable_id' => $commentReactionable->getReactionableId(),
-                                        'reactionable_type' => $commentReactionable->getReactionableType(),
-                                        'created_at' => $commentReactionable->getCreatedAt(),
-                                        'updated_at' => $commentReactionable->getUpdatedAt(),
-                                        'user' => $userArray
-                                    ]
+                                    $commentUpvoteArray
                                 ],
+                                'upvote' => $commentUpvoteArray,
+                                'downvote' => null,
                                 'downvotes' => [],
                                 'has_upvoted' => true,
                                 'has_downvoted' => false
@@ -201,16 +191,10 @@ class PaginatePostsTest extends FeatureTestCase
                     ],
                     'reactionables' => [
                         'upvotes' => [
-                            [
-                                'id' => $postReactionable->getId(),
-                                'reaction_id' => $postReactionable->getReactionId(),
-                                'reactionable_id' => $postReactionable->getReactionableId(),
-                                'reactionable_type' => $postReactionable->getReactionableType(),
-                                'created_at' => $postReactionable->getCreatedAt(),
-                                'updated_at' => $postReactionable->getUpdatedAt(),
-                                'user' => $userArray
-                            ]
+                            $postUpvoteArray
                         ],
+                        'upvote' => $postUpvoteArray,
+                        'downvote' => null,
                         'downvotes' => [],
                         'has_upvoted' => true,
                         'has_downvoted' => false

@@ -137,6 +137,6 @@ class LoginTest extends FeatureTestCase
                 'password' => $password
             ])
             ->assertStatus(200)
-            ->assertJsonStructure(['token_type', 'expires_in', 'access_token', 'refresh_token']);
+            ->assertJsonStructure($this->oauthJsonStructure());
     }
 }
