@@ -36,4 +36,10 @@ interface FollowerRepository
      * @return int[]
      */
     function getFollowingIds(int $authorId): array;
+
+    /**
+     * @param int $userId
+     * @return Follower[]
+     */
+    function getFollowers(int $userId): array;
 }

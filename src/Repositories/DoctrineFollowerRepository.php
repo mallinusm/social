@@ -2,6 +2,7 @@
 
 namespace Social\Repositories;
 
+use Exception;
 use Social\Contracts\FollowerRepository;
 use Social\Entities\Follower;
 
@@ -27,15 +28,34 @@ final class DoctrineFollowerRepository extends DoctrineRepository implements Fol
      * @param int $authorId
      * @param int $userId
      * @return Follower
+     * @throws Exception
      */
     public function follow(int $authorId, int $userId): Follower
     {
-        return $this->persist(
-            (new Follower)->setAuthorId($authorId)
-                ->setUserId($userId)
-                ->setCreatedAt($now = $this->freshTimestamp())
-                ->setUpdatedAt($now)
-        );
+        $result = $this->getSqlQueryBuilder()
+            ->insert('followers')
+            ->values([
+                'author_id' => ':authorId',
+                'user_id' => ':userId',
+                'created_at' => ':now',
+                'updated_at' => ':now',
+            ])
+            ->setParameters([
+                'authorId' => $authorId,
+                'userId' => $userId,
+                'now' => $now = $this->freshTimestamp()
+            ])
+            ->execute();
+
+        if ($result !== 1) {
+            throw new Exception('Could not insert the post.');
+        }
+
+        return (new Follower)->setId($this->lastInsertedId())
+            ->setAuthorId($authorId)
+            ->setUserId($userId)
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now);
     }
 
     /**
@@ -70,5 +90,21 @@ final class DoctrineFollowerRepository extends DoctrineRepository implements Fol
             ->execute();
 
         return array_column($userIds, 'userId');
+    }
+
+    /**
+     * @param int $userId
+     * @return Follower[]
+     */
+    public function getFollowers(int $userId): array
+    {
+        return $this->getDqlQueryBuilder()
+            ->select(['f', 'a'])
+            ->from(Follower::class, 'f')
+            ->where($this->getSqlExpression()->eq('f.userId', ':userId'))
+            ->setParameter('userId', $userId)
+            ->leftJoin('f.author', 'a')
+            ->getQuery()
+            ->execute();
     }
 }

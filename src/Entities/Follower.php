@@ -17,6 +17,8 @@ class Follower
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 
+    use Relationships\Author;
+
     /**
      * @param ClassMetadata $metadata
      * @return void
@@ -24,7 +26,10 @@ class Follower
     public static function loadMetadata(ClassMetadata $metadata): void
     {
         (new ClassMetadataBuilder($metadata))->setTable('followers')
-            ->createField('id', 'integer')->makePrimaryKey()->generatedValue()->build()
+            ->createField('id', 'integer')
+            ->makePrimaryKey()
+            ->generatedValue()
+            ->build()
             ->addField('authorId', 'integer', [
                 'columnName' => 'author_id'
             ])
@@ -36,6 +41,8 @@ class Follower
             ])
             ->addField('updatedAt', 'integer', [
                 'columnName' => 'updated_at'
-            ]);
+            ])
+            ->createOneToOne('author', User::class)
+            ->build();
     }
 }

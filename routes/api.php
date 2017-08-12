@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Routing\Registrar;
 use Social\Http\Actions\Comments\LeaveCommentAction;
 use Social\Http\Actions\Followers\{
+    FetchFollowersAction,
     FollowUserAction,
     UnfollowUserAction
 };
@@ -59,4 +60,5 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
 
     $router->post('followers', FollowUserAction::class);
     $router->delete('followers', UnfollowUserAction::class);
+    $router->get('followers', FetchFollowersAction::class);
 });
