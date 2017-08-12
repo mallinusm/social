@@ -9,12 +9,24 @@
     XML PHP Extension
     GD PHP Extension
 
-## Installation
-    Make sure storage is writable.
+## Installation (local/testing)
+    cp .env.example .env
+    composer install
+    php artisan key:generate
+    php artisan migrate --seed
+    php artisan passport:keys
+    php artisan passport:client --password
+
+## Deployment (prod)
+
+Make sure the storage folder is writable by www-data.
+
     cp .env.example .env
     composer install --no-dev --optimize-autoloader
     php artisan key:generate
-    php artisan migrate
-    php artisan db:seed
+    php artisan migrate --seed
     php artisan passport:keys
     php artisan passport:client --password
+    php artisan config:cache
+    php artisan route:cache
+    php artisan optimize

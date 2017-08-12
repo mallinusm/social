@@ -232,7 +232,6 @@ class UpdateUserTest extends FeatureTestCase
 
         $updatedAt = $user->fresh()->getUpdatedAt();
         $this->assertGreaterThan($user->getUpdatedAt(), $updatedAt);
-        $this->assertEquals(time(), $updatedAt);
 
         $this->assertDatabaseHas('users', [
             'id' => $user->getId(),

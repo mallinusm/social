@@ -7,7 +7,7 @@ namespace Social\Http\Actions;
  * Class WelcomeAction
  * @package Social\Http\Actions
  */
-class WelcomeAction
+final class WelcomeAction
 {
     /**
      * @return array

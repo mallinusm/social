@@ -26,17 +26,18 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
         $result = $this->getSqlQueryBuilder()
             ->insert('posts')
             ->values([
-                'author_id' => '?',
-                'content' => '?',
-                'user_id' => '?',
-                'created_at' => '?',
-                'updated_at' => '?',
+                'author_id' => ':authorId',
+                'content' => ':content',
+                'user_id' => ':userId',
+                'created_at' => ':now',
+                'updated_at' => ':now',
             ])
-            ->setParameter(0, $authorId)
-            ->setParameter(1, $content)
-            ->setParameter(2, $userId)
-            ->setParameter(3, $now = $this->freshTimestamp())
-            ->setParameter(4, $now)
+            ->setParameters([
+                'authorId' => $authorId,
+                'content' => $content,
+                'userId' => $userId,
+                'now' => $now = $this->freshTimestamp()
+            ])
             ->execute();
 
         if ($result !== 1) {
@@ -113,9 +114,7 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
             throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), [$id]);
         }
 
-        /**
-         * @var Post $post
-         */
+        /* @var Post $post */
         return $post;
     }
 }

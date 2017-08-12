@@ -2,14 +2,13 @@
 
 namespace Social\Http;
 
-use Barryvdh\Cors\HandleCors;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 /**
  * Class Kernel
  * @package Social\Http
  */
-class Kernel extends HttpKernel
+final class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
@@ -32,13 +31,13 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'api' => [
-            HandleCors::class,
+            \Barryvdh\Cors\HandleCors::class,
             \Social\Http\Middleware\OnlyJsonAllowed::class,
             'throttle:60,1',
             'bindings',
         ],
         'cdn' => [
-            HandleCors::class,
+            \Barryvdh\Cors\HandleCors::class,
         ]
     ];
 

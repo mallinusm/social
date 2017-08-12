@@ -113,7 +113,7 @@ class UpdatePasswordTest extends FeatureTestCase
                 'password_confirmation' => $password
             ])
             ->assertStatus(Response::HTTP_FORBIDDEN)
-            ->assertJsonFragment(['error' => 'Could not validate password.']);
+            ->assertJsonFragment(['error' => 'Invalid password.']);
     }
 
     /** @test */

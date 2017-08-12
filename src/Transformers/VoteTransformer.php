@@ -109,12 +109,11 @@ final class VoteTransformer
     }
 
     /**
-     * @param array $reactionables
-     * @return array
+     * @return callable
      */
-    public function transformMany(array $reactionables): array
+    private function transformVote(): callable
     {
-        (new Collection($reactionables))->each(function(Reactionable $reactionable): void {
+        return function(Reactionable $reactionable): void {
             $reactionId = $reactionable->getReactionId();
 
             if ($reactionId === 1) {
@@ -124,7 +123,16 @@ final class VoteTransformer
             } else {
                 throw new Exception('Unsupported reaction id.');
             }
-        });
+        };
+    }
+
+    /**
+     * @param array $reactionables
+     * @return array
+     */
+    public function transformMany(array $reactionables): array
+    {
+        (new Collection($reactionables))->each($this->transformVote());
 
         return $this->toArray();
     }

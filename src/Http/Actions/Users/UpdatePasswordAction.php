@@ -54,7 +54,7 @@ final class UpdatePasswordAction
         $user = $request->user();
 
         if (! $this->hasher->check($request->input('old_password'), $user->getPassword())) {
-            throw new AuthorizationException('Could not validate password.');
+            throw new AuthorizationException('Invalid password.');
         }
 
         $password = $this->hasher->make($request->input('password'));
