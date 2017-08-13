@@ -12,6 +12,16 @@ use Social\Entities\Reactionable;
 interface ReactionableRepository
 {
     /**
+     * @var string
+     */
+    const REACTIONABLE_TYPE_POSTS = 'posts';
+
+    /**
+     * @var string
+     */
+    const REACTIONABLE_TYPE_COMMENTS = 'comments';
+
+    /**
      * @param int $reactionId
      * @param int $userId
      * @param int $reactionableId

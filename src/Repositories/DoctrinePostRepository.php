@@ -3,9 +3,10 @@
 namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Social\Contracts\PostRepository;
+use Social\Contracts\ReactionableRepository;
 use Social\Entities\Post;
 
 /**
@@ -81,20 +82,17 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
             ->leftJoin('p.comments', 'c')
             ->leftJoin('p.user', 'u')
             ->leftJoin('c.user', 'cu')
-            ->leftJoin(
-                'p.reactionables', 'pr', Expr\Join::WITH, 'pr.reactionableType = ?1'
-            )
-            ->leftJoin(
-                'c.reactionables', 'cr', Expr\Join::WITH, 'cr.reactionableType = ?2'
-            )
+            ->leftJoin('p.reactionables', 'pr', Join::WITH, $expression->eq('pr.reactionableType', ':posts'))
+            ->leftJoin('c.reactionables', 'cr', Join::WITH, $expression->eq('cr.reactionableType', ':comments'))
             ->leftJoin('pr.user', 'pru')
             ->leftJoin('cr.user', 'cru')
             ->where($expression->in('p.userId', $userIds))
             ->orderBy($expression->desc('p.createdAt'))
             ->addOrderBy($expression->asc('c.createdAt'))
-            ->setParameter(1, 'posts')
-            ->setParameter(2, 'comments')
-            ->setMaxResults(10)
+            ->setParameters([
+                'posts' => ReactionableRepository::REACTIONABLE_TYPE_POSTS,
+                'comments' => ReactionableRepository::REACTIONABLE_TYPE_COMMENTS
+            ])
             ->getQuery()
             ->getResult();
     }
