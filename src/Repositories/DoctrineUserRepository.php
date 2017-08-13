@@ -4,11 +4,15 @@ namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Exception;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Illuminate\Support\{
+    Collection,
+    Str
+};
 use Social\Contracts\UserRepository;
-use Social\Entities\PasswordReset;
-use Social\Entities\User;
+use Social\Entities\{
+    PasswordReset,
+    User
+};
 
 /**
  * Class DoctrineUserRepository
@@ -64,13 +68,15 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
     {
         $repository = $this->getEntityManager()->getRepository(User::class);
 
-        /** @var User $user */
-        $user = $repository->findOneBy(compact('username'));
+        $user = $repository->findOneBy([
+            'username' => $username
+        ]);
 
         if ($user === null) {
             throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), []);
         }
 
+        /* @var User $user */
         return $user;
     }
 
@@ -107,13 +113,15 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->set('u.updatedAt', ':updatedAt')
             ->setParameter('updatedAt', $this->freshTimestamp());
 
-        (new Collection(compact('username', 'name', 'email')))
-            ->filter(function(?string $value): bool {
-                return ! is_null($value);
-            })
-            ->each(function(string $value, string $attribute) use ($dqlQueryBuilder): void {
-                $dqlQueryBuilder->set('u.' . $attribute, ':' . $attribute)->setParameter($attribute, $value);
-            });
+        (new Collection([
+            'username' => $username,
+            'name' => $name,
+            'email' => $email
+        ]))->filter(function(?string $value): bool {
+            return ! is_null($value);
+        })->each(function(string $value, string $attribute) use ($dqlQueryBuilder): void {
+            $dqlQueryBuilder->set('u.' . $attribute, ':' . $attribute)->setParameter($attribute, $value);
+        });
 
         return (bool) $dqlQueryBuilder->getQuery()->execute();
     }
@@ -157,7 +165,6 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
     {
         $repository = $this->getEntityManager()->getRepository(PasswordReset::class);
 
-        /* @var PasswordReset $passwordReset */
         $passwordReset = $repository->findOneBy([
             'token' => $token
         ]);
@@ -166,6 +173,7 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), []);
         }
 
+        /* @var PasswordReset $passwordReset */
         return $passwordReset;
     }
 

@@ -21,7 +21,9 @@ final class DoctrineReactionRepository extends DoctrineRepository implements Rea
     {
         $repository = $this->getEntityManager()->getRepository(Reaction::class);
 
-        $reaction = $repository->findOneBy(compact('name'));
+        $reaction = $repository->findOneBy([
+            'name' => $name
+        ]);
 
         if ($reaction === null) {
             throw EntityNotFoundException::fromClassNameAndIdentifier($repository->getClassName(), []);

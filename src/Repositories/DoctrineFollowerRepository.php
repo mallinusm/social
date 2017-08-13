@@ -19,9 +19,14 @@ final class DoctrineFollowerRepository extends DoctrineRepository implements Fol
      */
     public function isFollowing(int $authorId, int $userId): bool
     {
-        return $this->getEntityManager()
-                ->getRepository(Follower::class)
-                ->findOneBy(compact('authorId', 'userId')) !== null;
+        $result = $this->getEntityManager()
+            ->getRepository(Follower::class)
+            ->findOneBy([
+                'authorId' => $authorId,
+                'userId' => $userId
+            ]);
+
+        return $result !== null;
     }
 
     /**

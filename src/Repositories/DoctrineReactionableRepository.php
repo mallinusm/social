@@ -26,19 +26,20 @@ final class DoctrineReactionableRepository extends DoctrineRepository implements
         $result = $this->getSqlQueryBuilder()
             ->insert('reactionables')
             ->values([
-                'reaction_id' => '?',
-                'user_id' => '?',
-                'reactionable_id' => '?',
-                'reactionable_type' => '?',
-                'created_at' => '?',
-                'updated_at' => '?',
+                'reaction_id' => ':reactionId',
+                'user_id' => ':userId',
+                'reactionable_id' => ':reactionableId',
+                'reactionable_type' => ':reactionableType',
+                'created_at' => ':now',
+                'updated_at' => ':now',
             ])
-            ->setParameter(0, $reactionId)
-            ->setParameter(1, $userId)
-            ->setParameter(2, $reactionableId)
-            ->setParameter(3, $reactionableType)
-            ->setParameter(4, $now = $this->freshTimestamp())
-            ->setParameter(5, $now)
+            ->setParameters([
+                'reactionId' => $reactionId,
+                'userId' => $userId,
+                'reactionableId' => $reactionableId,
+                'reactionableType' => $reactionableType,
+                'now' => $now = $this->freshTimestamp()
+            ])
             ->execute();
 
         if ($result !== 1) {
@@ -50,7 +51,7 @@ final class DoctrineReactionableRepository extends DoctrineRepository implements
             ->setUserId($userId)
             ->setReactionableId($reactionableId)
             ->setReactionableType($reactionableType)
-            ->setCreatedAt($now = $this->freshTimestamp())
+            ->setCreatedAt($now)
             ->setUpdatedAt($now);
     }
 
@@ -63,9 +64,16 @@ final class DoctrineReactionableRepository extends DoctrineRepository implements
      */
     public function hasReacted(int $reactionId, int $userId, int $reactionableId, string $reactionableType): bool
     {
-        return $this->getEntityManager()
+        $result = $this->getEntityManager()
             ->getRepository(Reactionable::class)
-            ->findOneBy(compact('reactionId', 'userId', 'reactionableId', 'reactionableType')) !== null;
+            ->findOneBy([
+                'reactionId' => $reactionId,
+                'userId' => $userId,
+                'reactionableId' => $reactionableId,
+                'reactionableType' => $reactionableType
+            ]);
+
+        return $result !== null;
     }
 
     /**
@@ -75,13 +83,13 @@ final class DoctrineReactionableRepository extends DoctrineRepository implements
      */
     public function find(int $id): Reactionable
     {
-        /** @var Reactionable $reactionable */
         $reactionable = $this->getEntityManager()->getRepository(Reactionable::class)->find($id);
 
         if ($reactionable === null) {
             throw EntityNotFoundException::fromClassNameAndIdentifier(Reactionable::class, []);
         }
 
+        /* @var Reactionable $reactionable */
         return $reactionable;
     }
 
