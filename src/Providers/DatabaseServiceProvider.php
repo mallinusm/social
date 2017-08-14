@@ -35,11 +35,11 @@ final class DatabaseServiceProvider extends ServiceProvider
      */
     private function getConfiguration(): Configuration
     {
-        return tap(Setup::createConfiguration(), function(Configuration $configuration) {
-            $configuration->setMetadataDriverImpl(new StaticPHPDriver(base_path('src/Entities')));
-            $configuration->setAutoGenerateProxyClasses(true);
-            $configuration->setProxyDir(storage_path('doctrine'));
-        });
+        $configuration = Setup::createConfiguration(false, storage_path('doctrine'));
+
+        $configuration->setMetadataDriverImpl(new StaticPHPDriver(base_path('src/Entities')));
+
+        return $configuration;
     }
 
     /**

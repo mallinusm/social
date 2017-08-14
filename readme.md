@@ -33,3 +33,5 @@ Make sure the storage folder is writable by www-data.
     vendor/bin/doctrine orm:clear-cache:query --flush
     vendor/bin/doctrine orm:clear-cache:metadata --flush
     vendor/bin/doctrine orm:clear-cache:result --flush
+    vendor/bin/doctrine orm:generate-proxies
+    vendor/bin/doctrine orm:ensure-production-settings
