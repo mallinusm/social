@@ -47,7 +47,7 @@ final class DatabaseServiceProvider extends ServiceProvider
      */
     private function getConnection(): ConnectionContract
     {
-        /** @var Connection $connection */
+        /* @var Connection $connection */
         $connection = $this->app->make(Connection::class);
 
         /**

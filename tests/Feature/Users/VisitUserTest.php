@@ -76,14 +76,14 @@ class VisitUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure(['name', 'username', 'avatar', 'friendship', 'followed', 'following'])
+            ->assertJsonStructure($this->userWithFollowStateJsonStructure())
             ->assertExactJson([
                 'avatar' => $user->getAvatar(),
                 'name' => $user->getName(),
                 'username' => $username,
-                'friendship' => false,
-                'followed' => false,
-                'following' => false,
+                'is_following' => false,
+                'is_followed' => false,
+                'is_mutual' => false,
             ]);
     }
 
@@ -104,14 +104,14 @@ class VisitUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure($this->userJsonStructure() + ['friendship', 'followed', 'following'])
+            ->assertJsonStructure($this->userWithFollowStateJsonStructure())
             ->assertExactJson([
                 'avatar' => $user->getAvatar(),
                 'name' => $user->getName(),
                 'username' => $username,
-                'friendship' => false,
-                'followed' => false,
-                'following' => true,
+                'is_following' => true,
+                'is_followed' => false,
+                'is_mutual' => false,
             ]);
     }
 
@@ -137,14 +137,14 @@ class VisitUserTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure($this->userJsonStructure() + ['friendship', 'followed', 'following'])
+            ->assertJsonStructure($this->userWithFollowStateJsonStructure())
             ->assertExactJson([
                 'avatar' => $user->getAvatar(),
                 'name' => $user->getName(),
                 'username' => $username,
-                'friendship' => true,
-                'followed' => true,
-                'following' => true,
+                'is_following' => true,
+                'is_followed' => true,
+                'is_mutual' => true,
             ]);
     }
 }

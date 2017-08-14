@@ -3,6 +3,7 @@
 namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Illuminate\Support\{
     Collection,
@@ -82,18 +83,24 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
 
     /**
      * @param string $payload
+     * @param int $authorId
      * @return User[]
      */
-    public function search(string $payload): array
+    public function search(string $payload, int $authorId): array
     {
         $expression = $this->getDqlExpression();
 
         return $this->getDqlQueryBuilder()
-            ->select('u')
+            ->select(['u', 'f', 'f2'])
             ->from(User::class, 'u')
+            ->leftJoin('u.followers', 'f', Join::WITH, $expression->eq('f.authorId', ':authorId'))
+            ->leftJoin('u.followings', 'f2', Join::WITH, $expression->eq('f2.userId', ':authorId'))
             ->where($expression->like($expression->lower('u.name'), ':payload'))
             ->orWhere($expression->like($expression->lower('u.username'), ':payload'))
-            ->setParameter('payload', '%' . strtolower($payload) . '%')
+            ->setParameters([
+                'payload' => $this->like($payload),
+                'authorId' => $authorId
+            ])
             ->getQuery()
             ->execute();
     }
@@ -226,5 +233,36 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ])
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param string $username
+     * @param int $authorId
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function visitByUsername(string $username, int $authorId): User
+    {
+        $expression = $this->getDqlExpression();
+
+        $user = $this->getDqlQueryBuilder()
+            ->select(['u', 'f', 'f2'])
+            ->from(User::class, 'u')
+            ->leftJoin('u.followers', 'f', Join::WITH, $expression->eq('f.authorId', ':authorId'))
+            ->leftJoin('u.followings', 'f2', Join::WITH, $expression->eq('f2.userId', ':authorId'))
+            ->where($expression->eq('u.username', ':username'))
+            ->setParameters([
+                'username' => $username,
+                'authorId' => $authorId
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($user === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier(User::class, []);
+        }
+
+        return $user;
     }
 }

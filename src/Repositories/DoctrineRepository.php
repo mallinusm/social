@@ -106,4 +106,13 @@ abstract class DoctrineRepository
     {
         return $this->getSqlQueryBuilder()->expr();
     }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    protected function like(string $string): string
+    {
+        return '%' . strtolower($string) . '%';
+    }
 }

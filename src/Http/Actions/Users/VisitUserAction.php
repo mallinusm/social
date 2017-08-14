@@ -46,8 +46,8 @@ final class VisitUserAction
             'username' => 'required|string|max:255'
         ]);
 
-        $user = $this->userRepository->findByUsername($request->input('username'));
+        $user = $this->userRepository->visitByUsername($request->input('username'), $request->user()->getId());
 
-        return $this->userTransformer->transformWithFollowerStates($user);
+        return $this->userTransformer->transformWithFollowerState($user);
     }
 }

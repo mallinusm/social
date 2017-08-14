@@ -44,6 +44,6 @@ trait Posts
      */
     public function hasPosts(): bool
     {
-        return $this->posts !== null;
+        return $this->posts !== null && count($this->posts) > 0;
     }
 }

@@ -36,9 +36,10 @@ interface UserRepository
 
     /**
      * @param string $payload
+     * @param int $authorId
      * @return User[]
      */
-    function search(string $payload): array;
+    function search(string $payload, int $authorId): array;
 
     /**
      * @param int $userId
@@ -68,4 +69,12 @@ interface UserRepository
      * @return bool
      */
     function updatePassword(int $id, string $password): bool;
+
+    /**
+     * @param string $username
+     * @param int $authorId
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    function visitByUsername(string $username, int $authorId): User;
 }

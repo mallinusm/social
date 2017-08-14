@@ -2,9 +2,7 @@
 
 namespace Social\Transformers;
 
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
-use Social\Contracts\FollowerRepository;
 use Social\Entities\User;
 
 /**
@@ -13,27 +11,6 @@ use Social\Entities\User;
  */
 final class UserTransformer
 {
-    /**
-     * @var FollowerRepository
-     */
-    private $followerRepository;
-
-    /**
-     * @var Guard
-     */
-    private $guard;
-
-    /**
-     * UserTransformer constructor.
-     * @param FollowerRepository $followerRepository
-     * @param Guard $guard
-     */
-    public function __construct(FollowerRepository $followerRepository, Guard $guard)
-    {
-        $this->followerRepository = $followerRepository;
-        $this->guard = $guard;
-    }
-
     /**
      * @param User $user
      * @return array
@@ -59,23 +36,6 @@ final class UserTransformer
     }
 
     /**
-     * @param User $user
-     * @return array
-     */
-    public function transformWithFollowerStates(User $user): array
-    {
-        $userId = $user->getId();
-
-        $authorId = (int) $this->guard->id();
-
-        return array_merge($this->transform($user), [
-            'following' => $following = $this->followerRepository->isFollowing($authorId, $userId),
-            'followed' => $followed = $this->followerRepository->isFollowing($userId, $authorId),
-            'friendship' => $following && $followed
-        ]);
-    }
-
-    /**
      * @param array $users
      * @return User[]
      */
@@ -83,6 +43,30 @@ final class UserTransformer
     {
         return (new Collection($users))->transform(function(User $user): array {
             return $this->transform($user);
+        })->toArray();
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function transformWithFollowerState(User $user): array
+    {
+        return array_merge($this->transform($user), [
+            'is_following' => $isFollowing = $user->hasFollowers(),
+            'is_followed' => $isFollowed = $user->hasFollowings(),
+            'is_mutual' => $isFollowing && $isFollowed
+        ]);
+    }
+
+    /**
+     * @param array $users
+     * @return array
+     */
+    public function transformManyWithFollowerStates(array $users): array
+    {
+        return (new Collection($users))->transform(function(User $user): array {
+            return $this->transformWithFollowerState($user);
         })->toArray();
     }
 }

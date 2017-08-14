@@ -23,6 +23,26 @@ trait JsonStructures
     /**
      * @return array
      */
+    public function userWithFollowStateJsonStructure(): array
+    {
+        return array_merge($this->userJsonStructure(), [
+            'is_following',
+            'is_followed',
+            'is_mutual'
+        ]);
+    }
+
+    /**
+     * @return array
+     */
+    public function usersWithFollowStatesJsonStructure(): array
+    {
+        return [$this->userWithFollowStateJsonStructure()];
+    }
+
+    /**
+     * @return array
+     */
     public function reactionableJsonStructure(): array
     {
         return [

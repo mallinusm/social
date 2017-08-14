@@ -44,6 +44,6 @@ trait Comments
      */
     public function hasComments(): bool
     {
-        return $this->comments !== null;
+        return $this->comments !== null && count($this->comments) > 0;
     }
 }

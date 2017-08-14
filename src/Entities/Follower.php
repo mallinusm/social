@@ -17,7 +17,8 @@ class Follower
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 
-    use Relationships\Author;
+    use Relationships\Author,
+        Relationships\User;
 
     /**
      * @param ClassMetadata $metadata
@@ -43,6 +44,8 @@ class Follower
                 'columnName' => 'updated_at'
             ])
             ->createOneToOne('author', User::class)
+            ->build()
+            ->createOneToOne('user', User::class)
             ->build();
     }
 }

@@ -21,7 +21,9 @@ class User
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 
-    use Relationships\Posts;
+    use Relationships\Posts,
+        Relationships\Followers,
+        Relationships\Followings;
 
     /**
      * @param ClassMetadata $metadata
@@ -44,6 +46,12 @@ class User
             ])
             ->createOneToMany('posts', Post::class)
             ->mappedBy('user')
+            ->build()
+            ->createOneToMany('followers', Follower::class)
+            ->mappedBy('user')
+            ->build()
+            ->createOneToMany('followings', Follower::class)
+            ->mappedBy('author')
             ->build();
     }
 

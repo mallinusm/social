@@ -60,12 +60,15 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getName()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([$this->userJsonStructure()])
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
                     'name' => $user->getName(),
-                    'username' => $user->getUsername()
+                    'username' => $user->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ]
             ]);
     }
@@ -79,12 +82,15 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([$this->userJsonStructure()])
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
                     'name' => $user->getName(),
-                    'username' => $user->getUsername()
+                    'username' => $user->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ]
             ]);
     }
@@ -101,17 +107,23 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([$this->userJsonStructure()])
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
                     'name' => $user->getName(),
-                    'username' => $user->getUsername()
+                    'username' => $user->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ],
                 [
                     'avatar' => $userTwo->getAvatar(),
                     'name' => $userTwo->getName(),
-                    'username' => $userTwo->getUsername()
+                    'username' => $userTwo->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ]
             ]);
     }
@@ -128,17 +140,23 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([$this->userJsonStructure()])
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
                     'name' => $user->getName(),
-                    'username' => $user->getUsername()
+                    'username' => $user->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ],
                 [
                     'avatar' => $userTwo->getAvatar(),
                     'name' => $userTwo->getName(),
-                    'username' => $userTwo->getUsername()
+                    'username' => $userTwo->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ]
             ]);
     }
@@ -155,17 +173,90 @@ class SearchUsersTest extends FeatureTestCase
             ->seeIsAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
-            ->assertJsonStructure([$this->userJsonStructure()])
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
             ->assertExactJson([
                 [
                     'avatar' => $user->getAvatar(),
                     'name' => $user->getName(),
-                    'username' => $user->getUsername()
+                    'username' => $user->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
                 ],
                 [
                     'avatar' => $userTwo->getAvatar(),
                     'name' => $userTwo->getName(),
-                    'username' => $userTwo->getUsername()
+                    'username' => $userTwo->getUsername(),
+                    'is_following' => false,
+                    'is_followed' => false,
+                    'is_mutual' => false
+                ]
+            ]);
+    }
+
+    /** @test */
+    function search_users_when_following()
+    {
+        $author = $this->createUser();
+
+        $user = $this->createUser();
+        $username = $user->getUsername();
+
+        $this->createFollower([
+            'author_id' => $author->getId(),
+            'user_id' => $user->getId()
+        ]);
+
+        $this->actingAs($author, 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/users/search?query={$username}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
+            ->assertExactJson([
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $username,
+                    'is_following' => true,
+                    'is_followed' => false,
+                    'is_mutual' => false
+                ]
+            ]);
+    }
+
+    /** @test */
+    function search_users_when_friends()
+    {
+        $author = $this->createUser();
+        $authorId = $author->getId();
+
+        $user = $this->createUser();
+        $userId = $user->getId();
+        $username = $user->getUsername();
+
+        $this->createFollower([
+            'author_id' => $authorId,
+            'user_id' => $userId
+        ]);
+
+        $this->createFollower([
+            'author_id' => $userId,
+            'user_id' => $authorId
+        ]);
+
+        $this->actingAs($author, 'api')
+            ->seeIsAuthenticated('api')
+            ->getJson("api/v1/users/search?query={$username}")
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
+            ->assertExactJson([
+                [
+                    'avatar' => $user->getAvatar(),
+                    'name' => $user->getName(),
+                    'username' => $username,
+                    'is_following' => true,
+                    'is_followed' => true,
+                    'is_mutual' => true
                 ]
             ]);
     }

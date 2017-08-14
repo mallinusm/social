@@ -44,6 +44,6 @@ trait Reactionables
      */
     public function hasReactionables(): bool
     {
-        return $this->reactionables !== null;
+        return $this->reactionables !== null && count($this->reactionables) > 0;
     }
 }
