@@ -56,6 +56,7 @@ class Post
             ->build()
             ->createOneToMany('reactionables', Reactionable::class)
             ->mappedBy('post')
+            ->addJoinColumn('id', 'reactionable_id')
             ->build();
     }
 }
