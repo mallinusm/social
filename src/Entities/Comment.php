@@ -47,9 +47,11 @@ class Comment
                 'columnName' => 'updated_at'
             ])
             ->createOneToOne('user', User::class)
+            ->addJoinColumn('user_id', 'id')
             ->build()
             ->createManyToOne('post', Post::class)
             ->inversedBy('comments')
+            ->addJoinColumn('post_id', 'id')
             ->build()
             ->createOneToMany('reactionables', Reactionable::class)
             ->mappedBy('comment')

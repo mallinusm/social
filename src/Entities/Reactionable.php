@@ -50,6 +50,7 @@ class Reactionable
                 'columnName' => 'updated_at'
             ])
             ->createOneToOne('user', User::class)
+            ->addJoinColumn('user_id', 'id')
             ->build()
             ->createManyToOne('post', Post::class)
             ->inversedBy('reactionables')

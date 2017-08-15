@@ -46,12 +46,15 @@ class User
             ])
             ->createOneToMany('posts', Post::class)
             ->mappedBy('user')
+            ->addJoinColumn('id', 'user_id')
             ->build()
             ->createOneToMany('followers', Follower::class)
             ->mappedBy('user')
+            ->addJoinColumn('id', 'user_id')
             ->build()
             ->createOneToMany('followings', Follower::class)
             ->mappedBy('author')
+            ->addJoinColumn('id', 'author_id')
             ->build();
     }
 

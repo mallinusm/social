@@ -44,8 +44,10 @@ class Follower
                 'columnName' => 'updated_at'
             ])
             ->createOneToOne('author', User::class)
+            ->addJoinColumn('author_id', 'id')
             ->build()
             ->createOneToOne('user', User::class)
+            ->addJoinColumn('user_id', 'id')
             ->build();
     }
 }
