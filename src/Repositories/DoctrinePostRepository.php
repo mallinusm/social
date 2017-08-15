@@ -95,6 +95,7 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
                 'posts' => ReactionableRepository::REACTIONABLE_TYPE_POSTS,
                 'comments' => ReactionableRepository::REACTIONABLE_TYPE_COMMENTS
             ])
+            ->setMaxResults(10)
             ->getQuery()
             ->getResult();
     }
