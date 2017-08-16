@@ -24,17 +24,18 @@ final class DoctrineCommentRepository extends DoctrineRepository implements Comm
         $result = $this->getSqlQueryBuilder()
             ->insert('comments')
             ->values([
-                'post_id' => '?',
-                'content' => '?',
-                'user_id' => '?',
-                'created_at' => '?',
-                'updated_at' => '?',
+                'post_id' => ':postId',
+                'content' => ':content',
+                'user_id' => ':userId',
+                'created_at' => ':now',
+                'updated_at' => ':now',
             ])
-            ->setParameter(0, $postId)
-            ->setParameter(1, $content)
-            ->setParameter(2, $userId)
-            ->setParameter(3, $now = $this->freshTimestamp())
-            ->setParameter(4, $now)
+            ->setParameters([
+                'postId' => $postId,
+                'content' => $content,
+                'userId' => $userId,
+                'now' => $now = $this->freshTimestamp()
+            ])
             ->execute();
 
         if ($result !== 1) {
