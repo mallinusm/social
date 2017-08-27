@@ -5,6 +5,7 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
 use Social\Contracts\Repositories\UserRepository;
 
 /**
@@ -16,16 +17,23 @@ final class UploadAvatarAction
     use ValidatesRequests;
 
     /**
+     * @var ImageManager
+     */
+    private $imageManager;
+
+    /**
      * @var UserRepository
      */
     private $userRepository;
 
     /**
      * UploadAvatarAction constructor.
+     * @param ImageManager $imageManager
      * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(ImageManager $imageManager, UserRepository $userRepository)
     {
+        $this->imageManager = $imageManager;
         $this->userRepository = $userRepository;
     }
 
@@ -36,15 +44,24 @@ final class UploadAvatarAction
     public function __invoke(Request $request): array
     {
         $this->validate($request, [
-            'avatar' => 'required|image'
+            'avatar' => [
+                'required',
+                'image',
+                'dimensions:ratio=1/1,min_width=128,max_width=1024,min_height=128,max_height=1024'
+            ]
         ]);
 
-        $path = $request->file('avatar')->store('public/avatars');
+        $avatar = $request->file('avatar');
 
-        $avatar = Str::replaceFirst('public/avatars/', '', $path);
+        $hashName = $avatar->hashName();
 
-        $this->userRepository->updateAvatar($request->user()->getAuthIdentifier(), $avatar);
+        $this->imageManager
+            ->make($avatar->path())
+            ->resize(128, 128)
+            ->save(storage_path('app/public/avatars/' . $hashName));
 
-        return compact('avatar');
+        $this->userRepository->updateAvatar($request->user()->getAuthIdentifier(), $hashName);
+
+        return ['avatar' => $hashName];
     }
 }
