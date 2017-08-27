@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Broadcast;
  * Class BroadcastServiceProvider
  * @package Social\Providers
  */
-class BroadcastServiceProvider extends ServiceProvider
+final class BroadcastServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.

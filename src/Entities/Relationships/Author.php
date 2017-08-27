@@ -33,4 +33,12 @@ trait Author
     {
         return $this->author;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasAuthor(): bool
+    {
+        return $this->author !== null;
+    }
 }

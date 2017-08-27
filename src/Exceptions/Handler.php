@@ -5,12 +5,16 @@ namespace Social\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\{
-    JsonResponse, Request
+    JsonResponse,
+    Request
 };
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Class Handler
@@ -26,10 +30,10 @@ final class Handler extends ExceptionHandler
     protected $dontReport = [
         AuthenticationException::class,
         AuthorizationException::class,
-        \Symfony\Component\HttpKernel\Exception\HttpException::class,
-        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
-        \Illuminate\Session\TokenMismatchException::class,
-        \Illuminate\Validation\ValidationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        TokenMismatchException::class,
+        ValidationException::class,
     ];
 
     /**
@@ -55,16 +59,6 @@ final class Handler extends ExceptionHandler
     {
         if ($statusCode = (new ExceptionCatcher)->catch($e)) {
             return new JsonResponse(['error' => $e->getMessage()], $statusCode);
-        }
-
-        /* @var Application $application */
-        $application = $this->container->make(Application::class);
-
-        if ($application->environment() === 'testing' && (bool) env('APP_DEBUG')) {
-            /**
-             * Display the error message in the console when running PHPUnit tests.
-             */
-            var_dump($e->getMessage());
         }
 
         return parent::render($request, $e);

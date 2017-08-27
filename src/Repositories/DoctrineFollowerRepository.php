@@ -70,12 +70,16 @@ final class DoctrineFollowerRepository extends DoctrineRepository implements Fol
      */
     public function unfollow(int $authorId, int $userId): bool
     {
+        $expression = $this->getDqlExpression();
+
         return (bool) $this->getDqlQueryBuilder()
             ->delete(Follower::class, 'f')
-            ->where('f.authorId = ?1')
-            ->setParameter(1, $authorId)
-            ->andWhere('f.userId = ?2')
-            ->setParameter(2, $userId)
+            ->where($expression->eq('f.authorId', ':authorId'))
+            ->andWhere($expression->eq('f.userId', ':userId'))
+            ->setParameters([
+                'authorId' => $authorId,
+                'userId' => $userId
+            ])
             ->getQuery()
             ->execute();
     }
@@ -89,8 +93,8 @@ final class DoctrineFollowerRepository extends DoctrineRepository implements Fol
         $userIds = $this->getDqlQueryBuilder()
             ->select('f.userId')
             ->from(Follower::class, 'f')
-            ->where('f.authorId = ?1')
-            ->setParameter(1, $authorId)
+            ->where($this->getDqlExpression()->eq('f.authorId', ':authorId'))
+            ->setParameter('authorId', $authorId)
             ->getQuery()
             ->execute();
 

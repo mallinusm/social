@@ -33,4 +33,12 @@ trait User
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasUser(): bool
+    {
+        return $this->user !== null;
+    }
 }

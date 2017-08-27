@@ -27,17 +27,40 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
      * @param string $password
      * @param string $username
      * @return User
+     * @throws Exception
      */
     public function register(string $email, string $name, string $password, string $username): User
     {
-        return $this->persist(
-            (new User)->setEmail($email)
-                ->setName($name)
-                ->setPassword($password)
-                ->setUsername($username)
-                ->setCreatedAt($now = $this->freshTimestamp())
-                ->setUpdatedAt($now)
-        );
+        $result = $this->getSqlQueryBuilder()
+            ->insert('users')
+            ->values([
+                'email' => ':email',
+                'name' => ':name',
+                'username' => ':username',
+                'password' => ':password',
+                'created_at' => ':now',
+                'updated_at' => ':now',
+            ])
+            ->setParameters([
+                'email' => $email,
+                'name' => $name,
+                'username' => $username,
+                'password' => $password,
+                'now' => $now = $this->freshTimestamp()
+            ])
+            ->execute();
+
+        if ($result !== 1) {
+            throw new Exception('Could not insert the user.');
+        }
+
+        return (new User)->setId($this->lastInsertedId())
+            ->setEmail($email)
+            ->setName($name)
+            ->setPassword($password)
+            ->setUsername($username)
+            ->setCreatedAt($now)
+            ->setUpdatedAt($now);
     }
 
     /**
@@ -51,10 +74,10 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
             ->update(User::class, 'u')
             ->where($this->getDqlExpression()->eq('u.id', $userId))
             ->set('u.avatar', ':avatar')
-            ->set('u.updatedAt', ':updatedAt')
+            ->set('u.updatedAt', ':now')
             ->setParameters([
                 'avatar' => $avatar,
-                'updatedAt' => $this->freshTimestamp()
+                'now' => $this->freshTimestamp()
             ])
             ->getQuery()
             ->execute();
@@ -117,16 +140,18 @@ final class DoctrineUserRepository extends DoctrineRepository implements UserRep
         $dqlQueryBuilder = $this->getDqlQueryBuilder()
             ->update(User::class, 'u')
             ->where($this->getDqlExpression()->eq('u.id', $userId))
-            ->set('u.updatedAt', ':updatedAt')
-            ->setParameter('updatedAt', $this->freshTimestamp());
+            ->set('u.updatedAt', ':now')
+            ->setParameter('now', $this->freshTimestamp());
 
         (new Collection([
             'username' => $username,
             'name' => $name,
             'email' => $email
-        ]))->filter(function(?string $value): bool {
-            return ! is_null($value);
-        })->each(function(string $value, string $attribute) use ($dqlQueryBuilder): void {
+        ]))->each(function(?string $value, string $attribute) use ($dqlQueryBuilder): void {
+            if (is_null($value)) {
+                return;
+            }
+
             $dqlQueryBuilder->set('u.' . $attribute, ':' . $attribute)->setParameter($attribute, $value);
         });
 

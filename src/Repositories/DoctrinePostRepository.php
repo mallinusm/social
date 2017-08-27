@@ -63,8 +63,8 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
     {
         return (bool) $this->getDqlQueryBuilder()
             ->delete(Post::class, 'p')
-            ->where('p.id = ?1')
-            ->setParameter(1, $id)
+            ->where($this->getDqlExpression()->eq('p.id', ':id'))
+            ->setParameter('id', $id)
             ->getQuery()
             ->execute();
     }
