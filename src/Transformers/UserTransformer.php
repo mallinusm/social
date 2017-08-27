@@ -3,13 +3,14 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\UserTransformer as UserTransformerContract;
 use Social\Entities\User;
 
 /**
  * Class UserTransformer
  * @package Social\Transformers
  */
-final class UserTransformer
+final class UserTransformer implements UserTransformerContract
 {
     /**
      * @param User $user
@@ -61,7 +62,7 @@ final class UserTransformer
 
     /**
      * @param array $users
-     * @return array
+     * @return User[]
      */
     public function transformManyWithFollowerStates(array $users): array
     {

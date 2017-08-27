@@ -3,24 +3,28 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\{
+    FollowerTransformer as FollowerTransformerContract,
+    UserTransformer as UserTransformerContract
+};
 use Social\Entities\Follower;
 
 /**
  * Class FollowerTransformer
  * @package Social\Transformers
  */
-final class FollowerTransformer
+final class FollowerTransformer implements FollowerTransformerContract
 {
     /**
-     * @var UserTransformer
+     * @var UserTransformerContract
      */
     private $userTransformer;
 
     /**
      * FollowerTransformer constructor.
-     * @param UserTransformer $userTransformer
+     * @param UserTransformerContract $userTransformer
      */
-    public function __construct(UserTransformer $userTransformer)
+    public function __construct(UserTransformerContract $userTransformer)
     {
         $this->userTransformer = $userTransformer;
     }

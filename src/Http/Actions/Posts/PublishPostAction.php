@@ -8,8 +8,8 @@ use Social\Contracts\{
     PostRepository,
     UserRepository
 };
+use Social\Contracts\Transformers\PostTransformer;
 use Social\Models\User;
-use Social\Transformers\PostTransformer;
 
 /**
  * Class PublishPostAction

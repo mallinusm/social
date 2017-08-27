@@ -3,30 +3,35 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\{
+    CommentTransformer as CommentTransformerContract,
+    UserTransformer as UserTransformerContract,
+    VoteTransformer as VoteTransformerContract
+};
 use Social\Entities\Comment;
 
 /**
  * Class CommentTransformer
  * @package Social\Transformers
  */
-final class CommentTransformer
+final class CommentTransformer implements CommentTransformerContract
 {
     /**
-     * @var UserTransformer
+     * @var UserTransformerContract
      */
     private $userTransformer;
 
     /**
-     * @var VoteTransformer
+     * @var VoteTransformerContract
      */
     private $voteTransformer;
 
     /**
      * CommentTransformer constructor.
-     * @param UserTransformer $userTransformer
-     * @param VoteTransformer $voteTransformer
+     * @param UserTransformerContract $userTransformer
+     * @param VoteTransformerContract $voteTransformer
      */
-    public function __construct(UserTransformer $userTransformer, VoteTransformer $voteTransformer)
+    public function __construct(UserTransformerContract $userTransformer, VoteTransformerContract $voteTransformer)
     {
         $this->userTransformer = $userTransformer;
         $this->voteTransformer = $voteTransformer;

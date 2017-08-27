@@ -4,9 +4,11 @@ namespace Social\Http\Actions\Followers;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Contracts\UserRepository;
-use Social\Transformers\FollowerTransformer;
+use Social\Contracts\{
+    FollowerRepository,
+    UserRepository
+};
+use Social\Contracts\Transformers\FollowerTransformer;
 
 /**
  * Class FetchFollowersAction

@@ -8,7 +8,7 @@ use Social\Contracts\{
     PostRepository,
     UserRepository
 };
-use Social\Transformers\PostTransformer;
+use Social\Contracts\Transformers\PostTransformer;
 
 /**
  * Class PaginatePostsAction

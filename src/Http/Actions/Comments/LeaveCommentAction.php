@@ -5,11 +5,11 @@ namespace Social\Http\Actions\Comments;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\CommentRepository;
+use Social\Contracts\Transformers\CommentTransformer;
 use Social\Models\{
     Post,
     User
 };
-use Social\Transformers\CommentTransformer;
 
 /**
  * Class LeaveCommentAction

@@ -7,7 +7,7 @@ use Social\Contracts\{
     FollowerRepository,
     PostRepository
 };
-use Social\Transformers\PostTransformer;
+use Social\Contracts\Transformers\PostTransformer;
 
 /**
  * Class PaginateFeedAction

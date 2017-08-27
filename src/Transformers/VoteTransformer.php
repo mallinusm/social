@@ -5,13 +5,17 @@ namespace Social\Transformers;
 use Exception;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\{
+    ReactionableTransformer as ReactionableTransformerContract,
+    VoteTransformer as VoteTransformerContract
+};
 use Social\Entities\Reactionable;
 
 /**
  * Class VoteTransformer
  * @package Social\Transformers
  */
-final class VoteTransformer
+final class VoteTransformer implements VoteTransformerContract
 {
     /**
      * @var array
@@ -44,7 +48,7 @@ final class VoteTransformer
     private $hasDownvoted = false;
 
     /**
-     * @var ReactionableTransformer
+     * @var ReactionableTransformerContract
      */
     private $reactionableTransformer;
 
@@ -55,17 +59,16 @@ final class VoteTransformer
 
     /**
      * VoteTransformer constructor.
-     * @param ReactionableTransformer $reactionableTransformer
+     * @param ReactionableTransformerContract $reactionableTransformer
      * @param Guard $guard
      * @throws Exception
      */
-    public function __construct(ReactionableTransformer $reactionableTransformer, Guard $guard)
+    public function __construct(ReactionableTransformerContract $reactionableTransformer, Guard $guard)
     {
         $this->reactionableTransformer = $reactionableTransformer;
 
         $this->userId = (int) $guard->id();
     }
-
 
     /**
      * @param Reactionable $reactionable
@@ -91,6 +94,19 @@ final class VoteTransformer
             $this->hasDownvoted = true;
             $this->downvote = end($this->upvotes);
         }
+    }
+
+    /**
+     * @return void
+     */
+    private function reset(): void
+    {
+        $this->upvotes = [];
+        $this->downvotes = [];
+        $this->upvote = null;
+        $this->downvote = null;
+        $this->hasUpvoted = false;
+        $this->hasDownvoted = false;
     }
 
     /**
@@ -127,13 +143,15 @@ final class VoteTransformer
     }
 
     /**
-     * @param array $reactionables
+     * @param Reactionable[] $reactionables
      * @return array
      */
     public function transformMany(array $reactionables): array
     {
         (new Collection($reactionables))->each($this->transformVote());
 
-        return $this->toArray();
+        return tap($this->toArray(), function(): void {
+            $this->reset();
+        });
     }
 }

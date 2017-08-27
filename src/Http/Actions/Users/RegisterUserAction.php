@@ -6,7 +6,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\UserRepository;
-use Social\Transformers\UserTransformer;
+use Social\Contracts\Transformers\UserTransformer;
 
 /**
  * Class RegisterUserAction

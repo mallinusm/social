@@ -2,8 +2,10 @@
 
 namespace Social\Http\Actions\Users;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\{
+    FileNotFoundException,
+    Filesystem
+};
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**

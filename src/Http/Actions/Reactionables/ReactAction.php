@@ -6,8 +6,8 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\ReactionableRepository;
+use Social\Contracts\Transformers\ReactionableTransformer;
 use Social\Models\User;
-use Social\Transformers\ReactionableTransformer;
 
 /**
  * Class ReactAction

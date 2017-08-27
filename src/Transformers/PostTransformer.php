@@ -3,38 +3,44 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\{
+    CommentTransformer as CommentTransformerContract,
+    PostTransformer as PostTransformerContract,
+    UserTransformer as UserTransformerContract,
+    VoteTransformer as VoteTransformerContract
+};
 use Social\Entities\Post;
 
 /**
  * Class PostTransformer
  * @package Social\Transformers
  */
-final class PostTransformer
+final class PostTransformer implements PostTransformerContract
 {
     /**
-     * @var UserTransformer
+     * @var UserTransformerContract
      */
     private $userTransformer;
 
     /**
-     * @var CommentTransformer
+     * @var CommentTransformerContract
      */
     private $commentTransformer;
 
     /**
-     * @var VoteTransformer
+     * @var VoteTransformerContract
      */
     private $voteTransformer;
 
     /**
      * PostTransformer constructor.
-     * @param UserTransformer $userTransformer
-     * @param CommentTransformer $commentTransformer
-     * @param VoteTransformer $voteTransformer
+     * @param UserTransformerContract $userTransformer
+     * @param CommentTransformerContract $commentTransformer
+     * @param VoteTransformerContract $voteTransformer
      */
-    public function __construct(UserTransformer $userTransformer,
-                                CommentTransformer $commentTransformer,
-                                VoteTransformer $voteTransformer)
+    public function __construct(UserTransformerContract $userTransformer,
+                                CommentTransformerContract $commentTransformer,
+                                VoteTransformerContract $voteTransformer)
     {
         $this->userTransformer = $userTransformer;
         $this->commentTransformer = $commentTransformer;

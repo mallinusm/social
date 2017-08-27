@@ -5,8 +5,10 @@ namespace Social\Http\Actions\Followers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\FollowerRepository;
-use Social\Contracts\UserRepository;
+use Social\Contracts\{
+    FollowerRepository,
+    UserRepository
+};
 
 /**
  * Class FollowUserAction

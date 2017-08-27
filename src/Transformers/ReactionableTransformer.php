@@ -3,24 +3,28 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Transformers\{
+    ReactionableTransformer as ReactionableTransformerContract,
+    UserTransformer as UserTransformerContract
+};
 use Social\Entities\Reactionable;
 
 /**
  * Class ReactionableTransformer
  * @package Social\Transformers
  */
-final class ReactionableTransformer
+final class ReactionableTransformer implements ReactionableTransformerContract
 {
     /**
-     * @var UserTransformer
+     * @var UserTransformerContract
      */
     private $userTransformer;
 
     /**
      * ReactionableTransformer constructor.
-     * @param UserTransformer $userTransformer
+     * @param UserTransformerContract $userTransformer
      */
-    public function __construct(UserTransformer $userTransformer)
+    public function __construct(UserTransformerContract $userTransformer)
     {
         $this->userTransformer = $userTransformer;
     }
