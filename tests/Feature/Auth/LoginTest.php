@@ -122,7 +122,7 @@ class LoginTest extends FeatureTestCase
     }
 
     /** @test */
-    function login_with_valid_credentials()
+    function login_with_email()
     {
         $password = str_random();
 
@@ -134,6 +134,25 @@ class LoginTest extends FeatureTestCase
                 'client_id' => $this->client->getAttribute('id'),
                 'client_secret' => $this->client->getAttribute('secret'),
                 'username' => $user->getEmail(),
+                'password' => $password
+            ])
+            ->assertStatus(200)
+            ->assertJsonStructure($this->oauthJsonStructure());
+    }
+
+    /** @test */
+    function login_with_username()
+    {
+        $password = str_random();
+
+        $user = $this->createUser(['password' => bcrypt($password)]);
+
+        $this->dontSeeIsAuthenticated('api')
+            ->postJson('api/v1/oauth/token', [
+                'grant_type' => 'password',
+                'client_id' => $this->client->getAttribute('id'),
+                'client_secret' => $this->client->getAttribute('secret'),
+                'username' => $user->getUsername(),
                 'password' => $password
             ])
             ->assertStatus(200)

@@ -36,4 +36,13 @@ final class User extends Authenticatable
             ->setCreatedAt($this->getCreatedAt())
             ->setUpdatedAt($this->getUpdatedAt());
     }
+
+    /**
+     * @param string $username
+     * @return User
+     */
+    public function findForPassport(string $username): ?User
+    {
+        return $this->where('email', $username)->orWhere('username', $username)->first();
+    }
 }
