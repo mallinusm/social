@@ -3,7 +3,7 @@
 namespace Social\Http\Actions\Posts;
 
 use Illuminate\Http\Request;
-use Social\Contracts\{
+use Social\Contracts\Repositories\{
     FollowerRepository,
     PostRepository
 };

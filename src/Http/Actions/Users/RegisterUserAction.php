@@ -5,7 +5,7 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\UserRepository;
+use Social\Contracts\Repositories\UserRepository;
 use Social\Contracts\Transformers\UserTransformer;
 
 /**

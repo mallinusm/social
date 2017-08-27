@@ -9,7 +9,7 @@ use Illuminate\Support\{
     Collection,
     Str
 };
-use Social\Contracts\UserRepository;
+use Social\Contracts\Repositories\UserRepository;
 use Social\Entities\{
     PasswordReset,
     User

@@ -6,7 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\UserRepository;
+use Social\Contracts\Repositories\UserRepository;
 use Social\Models\User;
 
 /**

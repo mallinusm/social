@@ -3,7 +3,7 @@
 namespace Social\Repositories;
 
 use Exception;
-use Social\Contracts\CommentRepository;
+use Social\Contracts\Repositories\CommentRepository;
 use Social\Entities\Comment;
 
 /**

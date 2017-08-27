@@ -1,6 +1,6 @@
 <?php
 
-namespace Social\Contracts;
+namespace Social\Contracts\Repositories;
 
 use Social\Entities\Comment;
 
@@ -16,5 +16,5 @@ interface CommentRepository
      * @param int $userId
      * @return Comment
      */
-    function leave(string $content, int $postId, int $userId): Comment;
+    public function leave(string $content, int $postId, int $userId): Comment;
 }

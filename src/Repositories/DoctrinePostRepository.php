@@ -5,7 +5,7 @@ namespace Social\Repositories;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Query\Expr\Join;
 use Exception;
-use Social\Contracts\{
+use Social\Contracts\Repositories\{
     PostRepository,
     ReactionableRepository
 };

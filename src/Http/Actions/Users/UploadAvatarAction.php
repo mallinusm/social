@@ -5,7 +5,7 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Social\Contracts\UserRepository;
+use Social\Contracts\Repositories\UserRepository;
 
 /**
  * Class UploadAvatarAction

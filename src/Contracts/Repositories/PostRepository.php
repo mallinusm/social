@@ -1,6 +1,6 @@
 <?php
 
-namespace Social\Contracts;
+namespace Social\Contracts\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Social\Entities\Post;
@@ -17,24 +17,24 @@ interface PostRepository
      * @param int $userId
      * @return Post
      */
-    function publish(int $authorId, string $content, int $userId): Post;
+    public function publish(int $authorId, string $content, int $userId): Post;
 
     /**
      * @param int $id
      * @return bool
      */
-    function unpublish(int $id): bool;
+    public function unpublish(int $id): bool;
 
     /**
      * @param array $userIds
      * @return Post[]
      */
-    function paginate(array $userIds): array;
+    public function paginate(array $userIds): array;
 
     /**
      * @param int $id
      * @return Post
      * @throws EntityNotFoundException
      */
-    function find(int $id): Post;
+    public function find(int $id): Post;
 }

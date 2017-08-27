@@ -5,7 +5,7 @@ namespace Social\Http\Actions\Reactionables;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\ReactionableRepository;
+use Social\Contracts\Repositories\ReactionableRepository;
 use Social\Contracts\Transformers\ReactionableTransformer;
 use Social\Models\User;
 

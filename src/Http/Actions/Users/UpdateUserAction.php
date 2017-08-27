@@ -4,7 +4,7 @@ namespace Social\Http\Actions\Users;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\UserRepository;
+use Social\Contracts\Repositories\UserRepository;
 use Social\Contracts\Transformers\UserTransformer;
 use Social\Models\User;
 

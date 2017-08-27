@@ -5,7 +5,7 @@ namespace Social\Http\Actions\Posts;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\PostRepository;
+use Social\Contracts\Repositories\PostRepository;
 use Social\Models\Post;
 
 /**

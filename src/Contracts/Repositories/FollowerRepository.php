@@ -1,6 +1,6 @@
 <?php
 
-namespace Social\Contracts;
+namespace Social\Contracts\Repositories;
 
 use Social\Entities\Follower;
 
@@ -15,31 +15,31 @@ interface FollowerRepository
      * @param int $userId
      * @return bool
      */
-    function isFollowing(int $authorId, int $userId): bool;
+    public function isFollowing(int $authorId, int $userId): bool;
 
     /**
      * @param int $authorId
      * @param int $userId
      * @return Follower
      */
-    function follow(int $authorId, int $userId): Follower;
+    public function follow(int $authorId, int $userId): Follower;
 
     /**
      * @param int $authorId
      * @param int $userId
      * @return bool
      */
-    function unfollow(int $authorId, int $userId): bool;
+    public function unfollow(int $authorId, int $userId): bool;
 
     /**
      * @param int $authorId
      * @return int[]
      */
-    function getFollowingIds(int $authorId): array;
+    public function getFollowingIds(int $authorId): array;
 
     /**
      * @param int $userId
      * @return Follower[]
      */
-    function getFollowers(int $userId): array;
+    public function getFollowers(int $userId): array;
 }

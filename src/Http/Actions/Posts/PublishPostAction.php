@@ -4,7 +4,7 @@ namespace Social\Http\Actions\Posts;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Social\Contracts\{
+use Social\Contracts\Repositories\{
     PostRepository,
     UserRepository
 };

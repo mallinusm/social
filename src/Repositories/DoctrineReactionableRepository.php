@@ -4,7 +4,7 @@ namespace Social\Repositories;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Exception;
-use Social\Contracts\ReactionableRepository;
+use Social\Contracts\Repositories\ReactionableRepository;
 use Social\Entities\Reactionable;
 
 /**

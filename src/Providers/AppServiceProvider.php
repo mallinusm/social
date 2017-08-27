@@ -4,7 +4,7 @@ namespace Social\Providers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Social\Contracts\{
+use Social\Contracts\Repositories\{
     CommentRepository,
     FollowerRepository,
     PostRepository,

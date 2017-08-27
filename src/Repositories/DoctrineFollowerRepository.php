@@ -3,7 +3,7 @@
 namespace Social\Repositories;
 
 use Exception;
-use Social\Contracts\FollowerRepository;
+use Social\Contracts\Repositories\FollowerRepository;
 use Social\Entities\Follower;
 
 /**

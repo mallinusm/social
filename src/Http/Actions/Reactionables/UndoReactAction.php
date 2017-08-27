@@ -4,7 +4,7 @@ namespace Social\Http\Actions\Reactionables;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Social\Contracts\ReactionableRepository;
+use Social\Contracts\Repositories\ReactionableRepository;
 
 /**
  * Class UndoReactAction
