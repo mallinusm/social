@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users;
 
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Social\Entities\User;
 use Social\Notifications\Users\PasswordResetTokenNotification;
@@ -56,7 +57,9 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
         $user = $this->createUser();
         $email = $user->getEmail();
 
-        $this->expectsNotification((new User)->setEmail($email), PasswordResetTokenNotification::class);
+        $this->expectsNotification(
+            (new AnonymousNotifiable)->route('mail', $email), PasswordResetTokenNotification::class
+        );
 
         $data = compact('email');
 

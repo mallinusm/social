@@ -59,9 +59,13 @@ final class RegisterUserAction
 
         $password = $this->hasher->make($request->input('password'));
 
-        $user = $this->userRepository->register(
-            $request->input('email'), $request->input('name'), $password, $request->input('username')
-        );
+        $email = $request->input('email');
+
+        $name = $request->input('name');
+
+        $username = $request->input('username');
+
+        $user = $this->userRepository->register($email, $name, $password, $username);
 
         return $this->userTransformer->transform($user);
     }

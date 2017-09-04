@@ -5,8 +5,8 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Contracts\Notifications\Dispatcher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Social\Contracts\Repositories\UserRepository;
-use Social\Entities\User;
 use Social\Notifications\Users\PasswordResetTokenNotification;
 
 /**
@@ -52,11 +52,10 @@ final class GeneratePasswordResetTokenAction
 
         $token = $this->userRepository->generatePasswordResetToken($email);
 
-        $notification = new PasswordResetTokenNotification($token);
-
-        $notifiable = (new User)->setEmail($email);
-
-        $this->dispatcher->send($notifiable, $notification);
+        $this->dispatcher->send(
+            (new AnonymousNotifiable)->route('mail', $email),
+            new PasswordResetTokenNotification($token)
+        );
 
         return ['message' => 'Email sent.'];
     }
