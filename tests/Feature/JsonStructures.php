@@ -11,7 +11,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function userJsonStructure(): array
+    protected function userJsonStructure(): array
     {
         return [
             'name',
@@ -23,7 +23,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function userWithFollowStateJsonStructure(): array
+    protected function userWithFollowStateJsonStructure(): array
     {
         return array_merge($this->userJsonStructure(), [
             'is_following',
@@ -35,7 +35,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function usersWithFollowStatesJsonStructure(): array
+    protected function usersWithFollowStatesJsonStructure(): array
     {
         return [$this->userWithFollowStateJsonStructure()];
     }
@@ -43,7 +43,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function reactionableJsonStructure(): array
+    protected function reactionableJsonStructure(): array
     {
         return [
             'id',
@@ -59,7 +59,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function oauthJsonStructure(): array
+    protected function oauthJsonStructure(): array
     {
         return [
             'token_type',
@@ -72,7 +72,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function reactionablesJsonStructure(): array
+    protected function reactionablesJsonStructure(): array
     {
         return [
             'upvotes',
@@ -87,7 +87,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function commentJsonStructure(): array
+    protected function commentJsonStructure(): array
     {
         return [
             'content',
@@ -103,7 +103,7 @@ trait JsonStructures
     /**
      * @return array
      */
-    public function postJsonStructure(): array
+    protected function postJsonStructure(): array
     {
         return [
             'content',

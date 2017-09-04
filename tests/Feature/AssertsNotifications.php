@@ -17,7 +17,7 @@ trait AssertsNotifications
      * @param string $notificationClass
      * @param MailMessage $mailMessage
      */
-    public function assertNotificationHasMail(string $notificationClass, MailMessage $mailMessage): void
+    protected function assertNotificationHasMail(string $notificationClass, MailMessage $mailMessage): void
     {
         /* @var TestCase $this */
         $notification = (new Collection($this->dispatchedNotifications))->filter(

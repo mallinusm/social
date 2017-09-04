@@ -11,6 +11,7 @@ use Social\Contracts\Repositories\{
 };
 use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\PostTransformer;
+use Social\Events\Posts\PostWasPublishedEvent;
 
 /**
  * Class PublishPostAction
@@ -81,11 +82,12 @@ final class PublishPostAction
 
         $user = $this->userRepository->findByUsername($request->input('username'));
 
-        $post = $this->postRepository->publish($author->getId(), $request->input('content'), $user->getId());
+        $post = $this->postRepository
+            ->publish($author->getId(), $request->input('content'), $user->getId())
+            ->setAuthor($author)
+            ->setUser($user);
 
-        $post->setAuthor($author);
-
-        $post->setUser($user);
+        $this->dispatcher->dispatch(new PostWasPublishedEvent($post, $this->postTransformer));
 
         return $this->postTransformer->transform($post);
     }

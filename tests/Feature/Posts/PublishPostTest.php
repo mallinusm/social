@@ -4,6 +4,7 @@ namespace Tests\Feature\Posts;
 
 use Illuminate\Http\Response;
 use Social\Entities\User;
+use Social\Events\Posts\PostWasPublishedEvent;
 use Tests\Feature\FeatureTestCase;
 
 /**
@@ -75,6 +76,8 @@ class PublishPostTest extends FeatureTestCase
     /** @test */
     function publish_post()
     {
+        $this->expectsEvents(PostWasPublishedEvent::class);
+
         $author = $this->createUser();
         $authorId = $author->getAuthIdentifier();
 
@@ -84,6 +87,29 @@ class PublishPostTest extends FeatureTestCase
 
         $content = str_random();
 
+        $json = $json = [
+            'content' => $content,
+            'user' => [
+                'name' => $user->getName(),
+                'username' => $username,
+                'avatar' => $user->getAvatar()
+            ],
+            'author' => [
+                'name' => $author->getName(),
+                'username' => $author->getUsername(),
+                'avatar' => $author->getAvatar()
+            ],
+            'comments' => [],
+            'reactionables' => [
+                'upvotes' => [],
+                'downvotes' => [],
+                'upvote' => null,
+                'downvote' => null,
+                'has_upvoted' => false,
+                'has_downvoted' => false
+            ]
+        ];
+
         $this->actingAs($author, 'api')
             ->assertAuthenticated('api')
             ->postJson('api/v1/posts', [
@@ -92,28 +118,7 @@ class PublishPostTest extends FeatureTestCase
             ])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->postJsonStructure())
-            ->assertJsonFragment([
-                'content' => $content,
-                'user' => [
-                    'name' => $user->getName(),
-                    'username' => $username,
-                    'avatar' => $user->getAvatar()
-                ],
-                'author' => [
-                    'name' => $author->getName(),
-                    'username' => $author->getUsername(),
-                    'avatar' => $author->getAvatar()
-                ],
-                'comments' => [],
-                'reactionables' => [
-                    'upvotes' => [],
-                    'downvotes' => [],
-                    'upvote' => null,
-                    'downvote' => null,
-                    'has_upvoted' => false,
-                    'has_downvoted' => false
-                ]
-            ])
+            ->assertJsonFragment($json)
             ->assertJsonMissing([
                 'author_id' => $authorId,
                 'user_id' => $userId
@@ -124,5 +129,22 @@ class PublishPostTest extends FeatureTestCase
             'author_id' => $authorId,
             'user_id' => $userId
         ]);
+
+        $this->assertEventWasFired(
+            PostWasPublishedEvent::class,
+            function(PostWasPublishedEvent $event) use ($content, $authorId, $userId, $json): void {
+                $post = $event->getPost();
+
+                $this->assertEquals($content, $post->getContent());
+                $this->assertEquals($authorId, $post->getAuthorId());
+                $this->assertEquals($userId, $post->getUserId());
+
+                $this->assertEquals('post.created', $event->broadcastAs());
+
+                $this->assertArraySubset($json, $event->broadcastWith());
+
+                $this->assertEquals('private-user.' . $userId, $event->broadcastOn()->name);
+            }
+        );
     }
 }

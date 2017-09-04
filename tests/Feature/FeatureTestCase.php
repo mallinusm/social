@@ -16,7 +16,11 @@ use Tests\TestCase;
  */
 abstract class FeatureTestCase extends TestCase
 {
-    use CreatesModels, DatabaseMigrations, AssertsNotifications, JsonStructures;
+    use CreatesModels,
+        DatabaseMigrations,
+        AssertsNotifications,
+        AssertsEvents,
+        JsonStructures;
 
     /**
      * The storage path for saving avatars.
