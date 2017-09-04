@@ -5,6 +5,7 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\UserRepository;
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\UserTransformer;
 
 /**
@@ -14,6 +15,11 @@ use Social\Contracts\Transformers\UserTransformer;
 final class VisitUserAction
 {
     use ValidatesRequests;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
      * @var UserRepository
@@ -27,11 +33,15 @@ final class VisitUserAction
 
     /**
      * VisitUserAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
      * @param UserTransformer $userTransformer
      */
-    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer)
+    public function __construct(AuthenticationService $authenticationService,
+                                UserRepository $userRepository,
+                                UserTransformer $userTransformer)
     {
+        $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
         $this->userTransformer = $userTransformer;
     }
@@ -46,7 +56,9 @@ final class VisitUserAction
             'username' => 'required|string|max:255'
         ]);
 
-        $user = $this->userRepository->visitByUsername($request->input('username'), $request->user()->getId());
+        $userId = $this->authenticationService->getAuthenticatedUser()->getId();
+
+        $user = $this->userRepository->visitByUsername($request->input('username'), $userId);
 
         return $this->userTransformer->transformWithFollowerState($user);
     }

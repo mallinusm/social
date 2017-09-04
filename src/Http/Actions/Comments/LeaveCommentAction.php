@@ -5,11 +5,9 @@ namespace Social\Http\Actions\Comments;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\CommentRepository;
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\CommentTransformer;
-use Social\Models\{
-    Post,
-    User
-};
+use Social\Models\Post;
 
 /**
  * Class LeaveCommentAction
@@ -18,6 +16,11 @@ use Social\Models\{
 final class LeaveCommentAction
 {
     use ValidatesRequests;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
      * @var CommentRepository
@@ -31,12 +34,15 @@ final class LeaveCommentAction
 
     /**
      * LeaveCommentAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param CommentRepository $commentRepository
      * @param CommentTransformer $commentTransformer
      */
-    public function __construct(CommentRepository $commentRepository,
+    public function __construct(AuthenticationService $authenticationService,
+                                CommentRepository $commentRepository,
                                 CommentTransformer $commentTransformer)
     {
+        $this->authenticationService = $authenticationService;
         $this->commentRepository = $commentRepository;
         $this->commentTransformer = $commentTransformer;
     }
@@ -52,12 +58,11 @@ final class LeaveCommentAction
             'content' => 'required|string|max:255'
         ]);
 
-        /** @var User $user */
-        $user =  $request->user();
+        $user =  $this->authenticationService->getAuthenticatedUser();
 
         $comment = $this->commentRepository->leave($request->input('content'), $post->getId(), $user->getId());
 
-        $comment->setUser($user->toUserEntity());
+        $comment->setUser($user);
 
         return $this->commentTransformer->transform($comment);
     }

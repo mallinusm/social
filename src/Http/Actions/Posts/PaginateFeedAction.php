@@ -2,11 +2,11 @@
 
 namespace Social\Http\Actions\Posts;
 
-use Illuminate\Http\Request;
 use Social\Contracts\Repositories\{
     FollowerRepository,
     PostRepository
 };
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\PostTransformer;
 
 /**
@@ -15,6 +15,11 @@ use Social\Contracts\Transformers\PostTransformer;
  */
 final class PaginateFeedAction
 {
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
     /**
      * @var FollowerRepository
      */
@@ -32,27 +37,29 @@ final class PaginateFeedAction
 
     /**
      * PaginateFeedAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param FollowerRepository $followerRepository
      * @param PostRepository $postRepository
      * @param PostTransformer $postTransformer
      */
-    public function __construct(FollowerRepository $followerRepository,
+    public function __construct(AuthenticationService $authenticationService,
+                                FollowerRepository $followerRepository,
                                 PostRepository $postRepository,
                                 PostTransformer $postTransformer)
     {
 
+        $this->authenticationService = $authenticationService;
         $this->followerRepository = $followerRepository;
         $this->postRepository = $postRepository;
         $this->postTransformer = $postTransformer;
     }
 
     /**
-     * @param Request $request
      * @return array
      */
-    public function __invoke(Request $request): array
+    public function __invoke(): array
     {
-        $userId = $request->user()->getAuthIdentifier();
+        $userId = $this->authenticationService->getAuthenticatedUser()->getId();
 
         $userIds = $this->followerRepository->getFollowingIds($userId);
 

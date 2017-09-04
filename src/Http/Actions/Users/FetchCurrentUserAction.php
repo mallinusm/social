@@ -2,9 +2,8 @@
 
 namespace Social\Http\Actions\Users;
 
-use Illuminate\Http\Request;
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\UserTransformer;
-use Social\Models\User;
 
 /**
  * Class FetchCurrentUserAction
@@ -13,30 +12,34 @@ use Social\Models\User;
 final class FetchCurrentUserAction
 {
     /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
      * @var UserTransformer
      */
     private $userTransformer;
 
     /**
      * FetchCurrentUserAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param UserTransformer $userTransformer
      */
-    public function __construct(UserTransformer $userTransformer)
+    public function __construct(AuthenticationService $authenticationService,
+                                UserTransformer $userTransformer)
     {
+        $this->authenticationService = $authenticationService;
         $this->userTransformer = $userTransformer;
     }
 
     /**
-     * @param Request $request
-     * @return mixed
+     * @return array
      */
-    public function __invoke(Request $request): array
+    public function __invoke(): array
     {
-        /**
-         * @var User $user
-         */
-        $user = $request->user();
+        $user = $this->authenticationService->getAuthenticatedUser();
 
-        return $this->userTransformer->transformWithEmail($user->toUserEntity());
+        return $this->userTransformer->transformWithEmail($user);
     }
 }

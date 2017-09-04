@@ -9,6 +9,7 @@ use Social\Contracts\Repositories\{
     FollowerRepository,
     UserRepository
 };
+use Social\Contracts\Services\AuthenticationService;
 
 /**
  * Class FollowUserAction
@@ -17,6 +18,11 @@ use Social\Contracts\Repositories\{
 final class FollowUserAction
 {
     use ValidatesRequests;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
      * @var UserRepository
@@ -30,11 +36,15 @@ final class FollowUserAction
 
     /**
      * FollowUserAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
      * @param FollowerRepository $followerRepository
      */
-    public function __construct(UserRepository $userRepository, FollowerRepository $followerRepository)
+    public function __construct(AuthenticationService $authenticationService,
+                                UserRepository $userRepository,
+                                FollowerRepository $followerRepository)
     {
+        $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
         $this->followerRepository = $followerRepository;
     }
@@ -52,7 +62,7 @@ final class FollowUserAction
 
         $userId = $this->userRepository->findByUsername($request->input('username'))->getId();
 
-        $authorId = $request->user()->getAuthIdentifier();
+        $authorId = $this->authenticationService->getAuthenticatedUser()->getId();
 
         if ($this->followerRepository->isFollowing($authorId, $userId)) {
             throw new AuthorizationException('You are already following this user.');

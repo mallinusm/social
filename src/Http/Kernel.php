@@ -2,7 +2,22 @@
 
 namespace Social\Http;
 
+use Barryvdh\Cors\HandleCors;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\{
+    CheckForMaintenanceMode,
+    ConvertEmptyStringsToNull,
+    ValidatePostSize
+};
+use Illuminate\Routing\Middleware\{
+    SubstituteBindings,
+    ThrottleRequests
+};
+use Social\Http\Middleware\{
+    OnlyJsonAllowed,
+    TrimStrings
+};
 
 /**
  * Class Kernel
@@ -18,10 +33,10 @@ final class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \Social\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        CheckForMaintenanceMode::class,
+        ValidatePostSize::class,
+        TrimStrings::class,
+        ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -31,13 +46,13 @@ final class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'api' => [
-            \Barryvdh\Cors\HandleCors::class,
-            \Social\Http\Middleware\OnlyJsonAllowed::class,
+            'cors',
+            'json',
             'throttle:60,1',
             'bindings',
         ],
         'cdn' => [
-            \Barryvdh\Cors\HandleCors::class,
+            'cors'
         ]
     ];
 
@@ -49,11 +64,10 @@ final class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \Social\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'auth' => Authenticate::class,
+        'bindings' => SubstituteBindings::class,
+        'throttle' => ThrottleRequests::class,
+        'cors' => HandleCors::class,
+        'json' => OnlyJsonAllowed::class
     ];
 }

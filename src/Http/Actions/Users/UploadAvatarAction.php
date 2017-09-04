@@ -4,9 +4,9 @@ namespace Social\Http\Actions\Users;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Social\Contracts\Repositories\UserRepository;
+use Social\Contracts\Services\AuthenticationService;
 
 /**
  * Class UploadAvatarAction
@@ -22,6 +22,11 @@ final class UploadAvatarAction
     private $imageManager;
 
     /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
      * @var UserRepository
      */
     private $userRepository;
@@ -29,11 +34,15 @@ final class UploadAvatarAction
     /**
      * UploadAvatarAction constructor.
      * @param ImageManager $imageManager
+     * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
      */
-    public function __construct(ImageManager $imageManager, UserRepository $userRepository)
+    public function __construct(ImageManager $imageManager,
+                                AuthenticationService $authenticationService,
+                                UserRepository $userRepository)
     {
         $this->imageManager = $imageManager;
+        $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
     }
 
@@ -60,7 +69,9 @@ final class UploadAvatarAction
             ->resize(128, 128)
             ->save(storage_path('app/public/avatars/' . $hashName));
 
-        $this->userRepository->updateAvatar($request->user()->getAuthIdentifier(), $hashName);
+        $userId = $this->authenticationService->getAuthenticatedUser()->getId();
+
+        $this->userRepository->updateAvatar($userId, $hashName);
 
         return ['avatar' => $hashName];
     }

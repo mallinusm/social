@@ -5,6 +5,7 @@ namespace Social\Http\Actions\Reactionables;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\ReactionableRepository;
+use Social\Contracts\Services\AuthenticationService;
 
 /**
  * Class UndoReactAction
@@ -13,16 +14,24 @@ use Social\Contracts\Repositories\ReactionableRepository;
 final class UndoReactAction
 {
     /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
      * @var ReactionableRepository
      */
     private $reactionableRepository;
 
     /**
      * UndoReactAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param ReactionableRepository $reactionableRepository
      */
-    public function __construct(ReactionableRepository $reactionableRepository)
+    public function __construct(AuthenticationService $authenticationService,
+                                ReactionableRepository $reactionableRepository)
     {
+        $this->authenticationService = $authenticationService;
         $this->reactionableRepository = $reactionableRepository;
     }
 
@@ -36,7 +45,7 @@ final class UndoReactAction
     {
         $reactionable = $this->reactionableRepository->find($reactionableId);
 
-        if ($reactionable->getUserId() !== $request->user()->getId()) {
+        if ($reactionable->getUserId() !== $this->authenticationService->getAuthenticatedUser()->getId()) {
             throw new AuthorizationException('This reactionable does not belong to you.');
         }
 

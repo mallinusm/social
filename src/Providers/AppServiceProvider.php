@@ -2,8 +2,10 @@
 
 namespace Social\Providers;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\{
+    Collection,
+    ServiceProvider
+};
 use Social\Contracts\Repositories\{
     CommentRepository,
     FollowerRepository,
@@ -11,13 +13,14 @@ use Social\Contracts\Repositories\{
     ReactionableRepository,
     UserRepository
 };
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\{
-    CommentTransformer as CommentTransformerContract,
-    FollowerTransformer as FollowerTransformerContract,
-    PostTransformer as PostTransformerContract,
+    CommentTransformer      as CommentTransformerContract,
+    FollowerTransformer     as FollowerTransformerContract,
+    PostTransformer         as PostTransformerContract,
     ReactionableTransformer as ReactionableTransformerContract,
-    UserTransformer as UserTransformerContract,
-    VoteTransformer as VoteTransformerContract
+    UserTransformer         as UserTransformerContract,
+    VoteTransformer         as VoteTransformerContract
 };
 use Social\Repositories\{
     DoctrineCommentRepository,
@@ -26,6 +29,7 @@ use Social\Repositories\{
     DoctrineReactionableRepository,
     DoctrineUserRepository
 };
+use Social\Services\LaravelAuthenticationService;
 use Social\Transformers\{
     CommentTransformer,
     FollowerTransformer,
@@ -51,16 +55,20 @@ final class AppServiceProvider extends ServiceProvider
         CommentRepository::class      => DoctrineCommentRepository::class,
         FollowerRepository::class     => DoctrineFollowerRepository::class,
         PostRepository::class         => DoctrinePostRepository::class,
-        UserRepository::class         => DoctrineUserRepository::class,
         ReactionableRepository::class => DoctrineReactionableRepository::class,
+        UserRepository::class         => DoctrineUserRepository::class,
+        /**
+         * Services
+         */
+        AuthenticationService::class => LaravelAuthenticationService::class,
         /**
          * Transformers
          */
-        PostTransformerContract::class         => PostTransformer::class,
-        UserTransformerContract::class         => UserTransformer::class,
-        FollowerTransformerContract::class     => FollowerTransformer::class,
         CommentTransformerContract::class      => CommentTransformer::class,
+        FollowerTransformerContract::class     => FollowerTransformer::class,
+        PostTransformerContract::class         => PostTransformer::class,
         ReactionableTransformerContract::class => ReactionableTransformer::class,
+        UserTransformerContract::class         => UserTransformer::class,
         VoteTransformerContract::class         => VoteTransformer::class
     ];
 

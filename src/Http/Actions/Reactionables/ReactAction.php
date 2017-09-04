@@ -6,8 +6,8 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\ReactionableRepository;
+use Social\Contracts\Services\AuthenticationService;
 use Social\Contracts\Transformers\ReactionableTransformer;
-use Social\Models\User;
 
 /**
  * Class ReactAction
@@ -16,6 +16,11 @@ use Social\Models\User;
 final class ReactAction
 {
     use ValidatesRequests;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
      * @var ReactionableRepository
@@ -29,12 +34,15 @@ final class ReactAction
 
     /**
      * ReactAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param ReactionableRepository $reactionableRepository
      * @param ReactionableTransformer $reactionableTransformer
      */
-    public function __construct(ReactionableRepository $reactionableRepository,
+    public function __construct(AuthenticationService $authenticationService,
+                                ReactionableRepository $reactionableRepository,
                                 ReactionableTransformer $reactionableTransformer)
     {
+        $this->authenticationService = $authenticationService;
         $this->reactionableRepository = $reactionableRepository;
         $this->reactionableTransformer = $reactionableTransformer;
     }
@@ -54,21 +62,21 @@ final class ReactAction
             'reactionable_id' => "required|integer|exists:{$reactionableType},id"
         ]);
 
-        /**
-         * @var User $user
-         */
-        $user = $request->user();
+        $user = $this->authenticationService->getAuthenticatedUser();
+
         $userId = $user->getId();
+
         $reactionId = $request->input('reaction_id');
+
         $reactionableId = $request->input('reactionable_id');
 
         if ($this->reactionableRepository->hasReacted($reactionId, $userId, $reactionableId, $reactionableType)) {
             throw new AuthorizationException('Cannot react twice.');
         }
 
-        $reactionable = $this->reactionableRepository
-            ->react($reactionId, $userId, $reactionableId, $reactionableType)
-            ->setUser($user->toUserEntity());
+        $reactionable = $this->reactionableRepository->react($reactionId, $userId, $reactionableId, $reactionableType);
+
+        $reactionable->setUser($user);
 
         return $this->reactionableTransformer->transform($reactionable);
     }

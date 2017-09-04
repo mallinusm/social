@@ -9,6 +9,7 @@ use Social\Contracts\Repositories\{
     FollowerRepository,
     UserRepository
 };
+use Social\Contracts\Services\AuthenticationService;
 
 /**
  * Class UnfollowUserAction
@@ -17,6 +18,11 @@ use Social\Contracts\Repositories\{
 final class UnfollowUserAction
 {
     use ValidatesRequests;
+
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
 
     /**
      * @var UserRepository
@@ -30,11 +36,15 @@ final class UnfollowUserAction
 
     /**
      * UnfollowUserAction constructor.
+     * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
      * @param FollowerRepository $followerRepository
      */
-    public function __construct(UserRepository $userRepository, FollowerRepository $followerRepository)
+    public function __construct(AuthenticationService $authenticationService,
+                                UserRepository $userRepository,
+                                FollowerRepository $followerRepository)
     {
+        $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
         $this->followerRepository = $followerRepository;
     }
@@ -50,7 +60,7 @@ final class UnfollowUserAction
             'username' => 'required|string|max:255'
         ]);
 
-        $authorId = $request->user()->getAuthIdentifier();
+        $authorId = $this->authenticationService->getAuthenticatedUser()->getId();
 
         $userId = $this->userRepository->findByUsername($request->input('username'))->getId();
 
