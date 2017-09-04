@@ -63,7 +63,11 @@ final class UpdateUserAction
             'username' => 'required_without_all:name,email|string|max:255|unique:users,username,' . $userId,
         ]);
 
-        [$username, $name, $email] = array_values($request->only(['username', 'name', 'email']));
+        $username = $request->input('username');
+
+        $name = $request->input('name');
+
+        $email = $request->input('email');
 
         $this->userRepository->update($userId, $username, $name, $email);
 

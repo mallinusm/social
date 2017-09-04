@@ -23,32 +23,22 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class Handler extends ExceptionHandler
 {
     /**
-     * A list of the exception types that should not be reported.
+     * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
-        AuthenticationException::class,
-        AuthorizationException::class,
-        HttpException::class,
-        ModelNotFoundException::class,
-        TokenMismatchException::class,
-        ValidationException::class,
+        //
     ];
-
     /**
-     * @param Request $request
-     * @param AuthenticationException $exception
-     * @return Response
+     * A list of the inputs that are never flashed for validation exceptions.
+     *
+     * @var array
      */
-    protected function unauthenticated(Request $request, AuthenticationException $exception): Response
-    {
-        if ($request->expectsJson()) {
-            return new JsonResponse(['error' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
-        }
-
-        return redirect()->guest(route('login'));
-    }
+    protected $dontFlash = [
+        'password',
+        'password_confirmation',
+    ];
 
     /**
      * @param Request $request

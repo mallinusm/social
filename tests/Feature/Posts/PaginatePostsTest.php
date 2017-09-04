@@ -15,7 +15,7 @@ class PaginatePostsTest extends FeatureTestCase
     /** @test */
     function paginate_posts_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/posts')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,10 +24,10 @@ class PaginatePostsTest extends FeatureTestCase
     /** @test */
     function paginate_posts_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class PaginatePostsTest extends FeatureTestCase
         $username = str_random();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/posts?username={$username}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(User::class));
@@ -46,10 +46,10 @@ class PaginatePostsTest extends FeatureTestCase
     function paginate_posts_without_username()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username field is required.']]);
+            ->assertJsonFragment(['The username field is required.']);
     }
 
     /** @test */
@@ -58,10 +58,10 @@ class PaginatePostsTest extends FeatureTestCase
         $username = str_random(256);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/posts?username={$username}")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The username may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -118,7 +118,7 @@ class PaginatePostsTest extends FeatureTestCase
         ];
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/posts?username={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([

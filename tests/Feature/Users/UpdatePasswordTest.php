@@ -15,7 +15,7 @@ class UpdatePasswordTest extends FeatureTestCase
     /** @test */
     function update_password_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->patch('api/v1/password')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,17 +24,17 @@ class UpdatePasswordTest extends FeatureTestCase
     /** @test */
     function update_password_without_authentication()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->patchJson('api/v1/password')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function update_password_without_old_password()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['old_password' => ['The old password field is required.']]);
@@ -44,7 +44,7 @@ class UpdatePasswordTest extends FeatureTestCase
     function update_password_with_too_short_old_password()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', ['old_password' => str_random(5)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['old_password' => ['The old password must be at least 6 characters.']]);
@@ -54,7 +54,7 @@ class UpdatePasswordTest extends FeatureTestCase
     function update_password_with_too_long_old_password()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', ['old_password' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['old_password' => ['The old password may not be greater than 255 characters.']]);
@@ -64,7 +64,7 @@ class UpdatePasswordTest extends FeatureTestCase
     function update_password_without_password()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password field is required.']]);
@@ -76,7 +76,7 @@ class UpdatePasswordTest extends FeatureTestCase
         $password = str_random(5);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', [
                 'password' => $password,
                 'password_confirmation' => $password
@@ -91,7 +91,7 @@ class UpdatePasswordTest extends FeatureTestCase
         $password = str_random(256);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', [
                 'password' => $password,
                 'password_confirmation' => $password
@@ -106,7 +106,7 @@ class UpdatePasswordTest extends FeatureTestCase
         $password = str_random();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', [
                 'old_password' => str_random(),
                 'password' => $password,
@@ -125,7 +125,7 @@ class UpdatePasswordTest extends FeatureTestCase
         $user = $this->createUser(['password' => bcrypt($oldPassword)]);
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->patchJson('api/v1/password', [
                 'old_password' => $oldPassword,
                 'password' => $password,

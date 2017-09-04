@@ -33,7 +33,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_without_grant_type()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token')
             ->assertStatus(400)
             ->assertJsonFragment([
@@ -44,7 +44,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_with_unknown_grant_type()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', ['grant_type' => str_random()])
             ->assertStatus(400)
             ->assertJsonFragment([
@@ -55,7 +55,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_without_client_id()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', ['grant_type' => 'password'])
             ->assertStatus(400);
     }
@@ -63,7 +63,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_with_unknown_client_id()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', ['grant_type' => 'password', 'client_id' => str_random()])
             ->assertStatus(401)
             ->assertJsonFragment(['message' => 'Client authentication failed']);
@@ -72,7 +72,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_without_client_secret()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id')
@@ -84,7 +84,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_with_unknown_client_secret()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id'),
@@ -97,7 +97,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_without_credentials()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id'),
@@ -109,7 +109,7 @@ class LoginTest extends FeatureTestCase
     /** @test */
     function login_with_invalid_credentials()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id'),
@@ -128,7 +128,7 @@ class LoginTest extends FeatureTestCase
 
         $user = $this->createUser(['password' => bcrypt($password)]);
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id'),
@@ -147,7 +147,7 @@ class LoginTest extends FeatureTestCase
 
         $user = $this->createUser(['password' => bcrypt($password)]);
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/oauth/token', [
                 'grant_type' => 'password',
                 'client_id' => $this->client->getAttribute('id'),

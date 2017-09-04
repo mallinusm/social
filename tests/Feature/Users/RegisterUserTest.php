@@ -14,7 +14,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->post('api/v1/users')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -23,7 +23,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_name()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['name' => ['The name field is required.']]);
@@ -32,7 +32,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_with_too_long_name()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['name' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['name' => ['The name may not be greater than 255 characters.']]);
@@ -41,7 +41,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['email' => ['The email field is required.']]);
@@ -50,7 +50,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_with_invalid_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['email' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['email' => ['The email must be a valid email address.']]);
@@ -59,7 +59,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_with_taken_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['email' => $this->createUser()->getAttribute('email')])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['email' => ['The email has already been taken.']]);
@@ -68,7 +68,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_password()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password field is required.']]);
@@ -79,7 +79,7 @@ class RegisterUserTest extends FeatureTestCase
     {
         $password = str_random(256);
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['password' => $password, 'password_confirmation' => $password])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password may not be greater than 255 characters.']]);
@@ -88,7 +88,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_password_confirmation()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['password' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password confirmation does not match.']]);
@@ -99,7 +99,7 @@ class RegisterUserTest extends FeatureTestCase
     {
         $password = '12345';
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['password' => $password, 'password_confirmation' => $password])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password must be at least 6 characters.']]);
@@ -108,7 +108,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_without_username()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['username' => ['The username field is required.']]);
@@ -117,7 +117,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_with_taken_username()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['username' => $this->createUser()->getUsername()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['username' => ['The username has already been taken.']]);
@@ -126,7 +126,7 @@ class RegisterUserTest extends FeatureTestCase
     /** @test */
     function register_user_with_too_long_username()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', ['username' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['username' => ['The username may not be greater than 255 characters.']]);
@@ -137,7 +137,7 @@ class RegisterUserTest extends FeatureTestCase
     {
         [$name, $username, $password, $email] = [str_random(), str_random(), str_random(), str_random() . '@mail.com'];
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/users', [
                 'name' => $name,
                 'username' => $username,

@@ -15,7 +15,7 @@ class FollowerUserTest extends FeatureTestCase
     /** @test */
     function follow_user_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->post('api/v1/followers')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,20 +24,20 @@ class FollowerUserTest extends FeatureTestCase
     /** @test */
     function follow_user_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/followers')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function follow_user_without_username()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/followers')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username field is required.']]);
+            ->assertJsonFragment(['The username field is required.']);
     }
 
     /** @test */
@@ -46,10 +46,10 @@ class FollowerUserTest extends FeatureTestCase
         $random = str_random(256);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson("api/v1/followers?username={$random}")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The username may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -58,7 +58,7 @@ class FollowerUserTest extends FeatureTestCase
         $random = str_random();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson("api/v1/followers?username={$random}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(User::class));
@@ -74,7 +74,7 @@ class FollowerUserTest extends FeatureTestCase
         $this->createFollower(['author_id' => $author->getId(), 'user_id' => $user->getId()]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson("api/v1/followers?username={$user->getUsername()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertExactJson(['error' => 'You are already following this user.']);
@@ -88,7 +88,7 @@ class FollowerUserTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson("api/v1/followers?username={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['message'])

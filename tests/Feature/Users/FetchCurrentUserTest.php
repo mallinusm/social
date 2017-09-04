@@ -14,7 +14,7 @@ class FetchCurrentUserTest extends FeatureTestCase
     /** @test */
     function fetch_current_user_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/user')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -23,10 +23,10 @@ class FetchCurrentUserTest extends FeatureTestCase
     /** @test */
     function fetch_current_user_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/user')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
@@ -35,7 +35,7 @@ class FetchCurrentUserTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/user')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->userJsonStructure() + ['email'])

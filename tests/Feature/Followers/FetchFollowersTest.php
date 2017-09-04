@@ -15,7 +15,7 @@ class FetchFollowersTest extends FeatureTestCase
     /** @test */
     function fetch_followers_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/followers')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,10 +24,10 @@ class FetchFollowersTest extends FeatureTestCase
     /** @test */
     function fetch_followers_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/followers')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
@@ -36,10 +36,10 @@ class FetchFollowersTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/followers')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username field is required.']]);
+            ->assertJsonFragment(['The username field is required.']);
     }
 
     /** @test */
@@ -50,10 +50,10 @@ class FetchFollowersTest extends FeatureTestCase
         $username = str_random(256);
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/followers?username={$username}")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The username may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -64,7 +64,7 @@ class FetchFollowersTest extends FeatureTestCase
         $username = str_random();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/followers?username={$username}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(User::class));
@@ -83,7 +83,7 @@ class FetchFollowersTest extends FeatureTestCase
         ]);
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/followers?username={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([['author' => $this->userJsonStructure()]])

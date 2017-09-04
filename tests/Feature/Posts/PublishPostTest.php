@@ -15,7 +15,7 @@ class PublishPostTest extends FeatureTestCase
     /** @test */
     function publish_post_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->post('api/v1/posts')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,27 +24,27 @@ class PublishPostTest extends FeatureTestCase
     /** @test */
     function publish_post_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function publish_post_without_username()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonFragment(['username' => ['The username field is required.']]);
+            ->assertJsonFragment(['The username field is required.']);
     }
 
     /** @test */
     function publish_post_for_unknown_user()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/posts', ['username' => str_random(), 'content' => str_random()])
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(User::class));
@@ -54,10 +54,10 @@ class PublishPostTest extends FeatureTestCase
     function publish_post_without_content()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/posts')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonFragment(['content' => ['The content field is required.']]);
+            ->assertJsonFragment(['The content field is required.']);
     }
 
     /** @test */
@@ -66,10 +66,10 @@ class PublishPostTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/posts', ['content' => str_random(256)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonFragment(['content' => ['The content may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The content may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -85,7 +85,7 @@ class PublishPostTest extends FeatureTestCase
         $content = str_random();
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->postJson('api/v1/posts', [
                 'content' => $content,
                 'username' => $username

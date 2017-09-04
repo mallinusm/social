@@ -15,7 +15,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->post('api/v1/reset-password')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,7 +24,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_without_token()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['token' => ['The token field is required.']]);
@@ -33,7 +33,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_with_too_short_token()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', ['token' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['token' => ['The token must be at least 100 characters.']]);
@@ -42,7 +42,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_with_too_long_token()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', ['token' => str_random(101)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['token' => ['The token may not be greater than 100 characters.']]);
@@ -51,7 +51,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_with_non_existing_token()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', ['token' => str_random(100)])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['token' => ['The selected token is invalid.']]);
@@ -60,7 +60,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_without_password()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password field is required.']]);
@@ -71,7 +71,7 @@ class ResetPasswordTest extends FeatureTestCase
     {
         $random = str_random(5);
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', [
                 'password' => $random,
                 'password_confirmation' => $random
@@ -85,7 +85,7 @@ class ResetPasswordTest extends FeatureTestCase
     {
         $random = str_random(256);
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', [
                 'password' => $random,
                 'password_confirmation' => $random
@@ -97,7 +97,7 @@ class ResetPasswordTest extends FeatureTestCase
     /** @test */
     function reset_password_without_password_confirmation()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', ['password' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonFragment(['password' => ['The password confirmation does not match.']]);
@@ -112,7 +112,7 @@ class ResetPasswordTest extends FeatureTestCase
 
         $token = $this->createPasswordReset(['created_at' => $moreThanOneHourAgo])->getToken();
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', [
                 'token' => $token,
                 'password' => $password,
@@ -133,7 +133,7 @@ class ResetPasswordTest extends FeatureTestCase
 
         $password = str_random();
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/reset-password', [
                 'token' => $token,
                 'password' => $password,

@@ -15,7 +15,7 @@ class UnpublishPostTest extends FeatureTestCase
     /** @test */
     function unpublish_post_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->delete('api/v1/posts/1')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,17 +24,17 @@ class UnpublishPostTest extends FeatureTestCase
     /** @test */
     function unpublish_post_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->deleteJson('api/v1/posts/1')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function unpublish_unknown_post()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson('api/v1/posts/123456789')
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->modelNotFoundMessage(Post::class));
@@ -49,7 +49,7 @@ class UnpublishPostTest extends FeatureTestCase
         $postArray = $post->toArray();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertExactJson(['error' => 'This post does not belong to you.']);
@@ -65,7 +65,7 @@ class UnpublishPostTest extends FeatureTestCase
         $post = $this->createPost(['author_id' => $author->getAuthIdentifier()]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson("api/v1/posts/{$post->getId()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(['message' => 'The post was deleted.']);

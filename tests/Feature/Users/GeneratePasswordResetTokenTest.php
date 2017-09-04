@@ -17,7 +17,7 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
     /** @test */
     function password_reset_token_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->post('api/v1/password-reset-token')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -26,34 +26,28 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
     /** @test */
     function password_reset_token_without_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/password-reset-token')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson([
-                'email' => ['The email field is required.']
-            ]);
+            ->assertJsonFragment(['The email field is required.']);
     }
 
     /** @test */
     function password_reset_token_with_invalid_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/password-reset-token', ['email' => str_random()])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson([
-                'email' => ['The email must be a valid email address.']
-            ]);
+            ->assertJsonFragment(['The email must be a valid email address.']);
     }
 
     /** @test */
     function password_reset_token_with_non_existing_email()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/password-reset-token', ['email' => str_random() . '@mail.com'])
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson([
-                'email' => ['The selected email is invalid.']
-            ]);
+            ->assertJsonFragment(['The selected email is invalid.']);
     }
 
     /** @test */
@@ -66,7 +60,7 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
 
         $data = compact('email');
 
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->postJson('api/v1/password-reset-token', $data)
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson([

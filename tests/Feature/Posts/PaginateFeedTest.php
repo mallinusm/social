@@ -14,7 +14,7 @@ class PaginateFeedTest extends FeatureTestCase
     /** @test */
     function paginate_feed_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/feed')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -23,10 +23,10 @@ class PaginateFeedTest extends FeatureTestCase
     /** @test */
     function paginate_feed_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/feed')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class PaginateFeedTest extends FeatureTestCase
         ];
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/feed')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([

@@ -15,7 +15,7 @@ class UndoReactTest extends FeatureTestCase
     /** @test */
     function undo_react_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->delete('api/v1/reactionables/123456789')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,17 +24,17 @@ class UndoReactTest extends FeatureTestCase
     /** @test */
     function undo_react_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->deleteJson('api/v1/reactionables/123456789')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function undo_unknown_react()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson('api/v1/reactionables/123456789')
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(Reactionable::class));
@@ -44,7 +44,7 @@ class UndoReactTest extends FeatureTestCase
     function undo_react_when_not_owner()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson("api/v1/reactionables/{$this->createReactionable()->getId()}")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertExactJson(['error' => 'This reactionable does not belong to you.']);
@@ -60,7 +60,7 @@ class UndoReactTest extends FeatureTestCase
         ]);
 
         $this->actingAs($user, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->deleteJson("api/v1/reactionables/{$reactionable->getId()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(['message' => 'Undid react.']);

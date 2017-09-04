@@ -15,7 +15,7 @@ class VisitUserTest extends FeatureTestCase
     /** @test */
     function visit_user_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/users')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -24,20 +24,20 @@ class VisitUserTest extends FeatureTestCase
     /** @test */
     function visit_user_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function visit_user_without_username()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/users')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username field is required.']]);
+            ->assertJsonFragment(['The username field is required.']);
     }
 
     /** @test */
@@ -46,10 +46,10 @@ class VisitUserTest extends FeatureTestCase
         $random = str_random(256);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users?username={$random}")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['username' => ['The username may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The username may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -58,7 +58,7 @@ class VisitUserTest extends FeatureTestCase
         $random = str_random();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users?username={$random}")
             ->assertStatus(Response::HTTP_NOT_FOUND)
             ->assertExactJson($this->entityNotFound(User::class));
@@ -73,7 +73,7 @@ class VisitUserTest extends FeatureTestCase
         $username = $user->getUsername();
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->userWithFollowStateJsonStructure())
@@ -101,7 +101,7 @@ class VisitUserTest extends FeatureTestCase
         ]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->userWithFollowStateJsonStructure())
@@ -134,7 +134,7 @@ class VisitUserTest extends FeatureTestCase
         ]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users?username={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->userWithFollowStateJsonStructure())

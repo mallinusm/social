@@ -13,7 +13,7 @@ class ExampleTest extends FeatureTestCase
      */
     public function testBasicTest(): void
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1')
             ->assertStatus(200)
             ->assertJson(['message' => 'Social API v1']);

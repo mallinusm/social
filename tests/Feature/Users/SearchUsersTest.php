@@ -14,7 +14,7 @@ class SearchUsersTest extends FeatureTestCase
     /** @test */
     function search_users_without_json_format()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->get('api/v1/users/search')
             ->assertStatus(Response::HTTP_NOT_ACCEPTABLE)
             ->assertExactJson($this->onlyJsonSupported());
@@ -23,20 +23,20 @@ class SearchUsersTest extends FeatureTestCase
     /** @test */
     function search_users_when_unauthenticated()
     {
-        $this->dontSeeIsAuthenticated('api')
+        $this->assertGuest('api')
             ->getJson('api/v1/users/search')
             ->assertStatus(Response::HTTP_UNAUTHORIZED)
-            ->assertExactJson(['error' => 'Unauthenticated.']);
+            ->assertExactJson(['message' => 'Unauthenticated.']);
     }
 
     /** @test */
     function search_users_without_query()
     {
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson('api/v1/users/search')
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['query' => ['The query field is required.']]);
+            ->assertJsonFragment(['The query field is required.']);
     }
 
     /** @test */
@@ -45,10 +45,10 @@ class SearchUsersTest extends FeatureTestCase
         $query = str_random(256);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertExactJson(['query' => ['The query may not be greater than 255 characters.']]);
+            ->assertJsonFragment(['The query may not be greater than 255 characters.']);
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class SearchUsersTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getName()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -79,7 +79,7 @@ class SearchUsersTest extends FeatureTestCase
         $user = $this->createUser();
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$user->getUsername()}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -104,7 +104,7 @@ class SearchUsersTest extends FeatureTestCase
         $userTwo = $this->createUser(['username' => $query . str_random()]);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -137,7 +137,7 @@ class SearchUsersTest extends FeatureTestCase
         $userTwo = $this->createUser(['name' => $query . str_random()]);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -170,7 +170,7 @@ class SearchUsersTest extends FeatureTestCase
         $userTwo = $this->createUser(['username' => $query . str_random()]);
 
         $this->actingAs($this->createUser(), 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$query}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -208,7 +208,7 @@ class SearchUsersTest extends FeatureTestCase
         ]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
@@ -245,7 +245,7 @@ class SearchUsersTest extends FeatureTestCase
         ]);
 
         $this->actingAs($author, 'api')
-            ->seeIsAuthenticated('api')
+            ->assertAuthenticated('api')
             ->getJson("api/v1/users/search?query={$username}")
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure($this->usersWithFollowStatesJsonStructure())
