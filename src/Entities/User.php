@@ -57,26 +57,4 @@ class User
             ->addJoinColumn('id', 'author_id')
             ->build();
     }
-
-    /**
-     * @param string $driver
-     * @return string
-     * @throws Exception
-     */
-    public function routeNotificationFor(string $driver): string
-    {
-        if ($driver === 'mail') {
-            return $this->getEmail();
-        }
-
-        throw new Exception('Invalid driver [' . $driver . '].');
-    }
-
-    /**
-     * @return string
-     */
-    public function getKey(): string
-    {
-        return $this->getEmail();
-    }
 }

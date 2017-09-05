@@ -58,7 +58,8 @@ class GeneratePasswordResetTokenTest extends FeatureTestCase
         $email = $user->getEmail();
 
         $this->expectsNotification(
-            (new AnonymousNotifiable)->route('mail', $email), PasswordResetTokenNotification::class
+            (new AnonymousNotifiable)->route('mail', $email),
+            PasswordResetTokenNotification::class
         );
 
         $data = compact('email');
