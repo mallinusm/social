@@ -13,6 +13,7 @@ final class Comment extends Model
     use Attributes\Id,
         Attributes\PostId,
         Attributes\Content,
+        Attributes\UserId,
         Attributes\CreatedAt,
         Attributes\UpdatedAt;
 

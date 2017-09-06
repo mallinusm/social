@@ -49,4 +49,18 @@ final class DoctrineCommentRepository extends DoctrineRepository implements Comm
             ->setCreatedAt($now)
             ->setUpdatedAt($now);
     }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return (bool) $this->getDqlQueryBuilder()
+            ->delete(Comment::class, 'c')
+            ->where($this->getDqlExpression()->eq('c.id', ':id'))
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->execute();
+    }
 }

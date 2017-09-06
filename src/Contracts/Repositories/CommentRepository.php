@@ -17,4 +17,10 @@ interface CommentRepository
      * @return Comment
      */
     public function leave(string $content, int $postId, int $userId): Comment;
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
 }

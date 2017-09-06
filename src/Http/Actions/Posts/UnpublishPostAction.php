@@ -31,8 +31,7 @@ final class UnpublishPostAction
      * @param AuthenticationService $authenticationService
      * @param PostRepository $postRepository
      */
-    public function __construct(AuthenticationService $authenticationService,
-                                PostRepository $postRepository)
+    public function __construct(AuthenticationService $authenticationService, PostRepository $postRepository)
     {
         $this->authenticationService = $authenticationService;
         $this->postRepository = $postRepository;
