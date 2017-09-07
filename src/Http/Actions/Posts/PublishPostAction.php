@@ -87,7 +87,7 @@ final class PublishPostAction
             ->setAuthor($author)
             ->setUser($user);
 
-        $this->dispatcher->dispatch(new PostWasPublishedEvent($post, $this->postTransformer));
+        $this->dispatcher->dispatch(new PostWasPublishedEvent($post));
 
         return $this->postTransformer->transform($post);
     }

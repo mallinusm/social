@@ -19,19 +19,12 @@ final class PostWasPublishedEvent implements ShouldBroadcast
     private $post;
 
     /**
-     * @var PostTransformer
-     */
-    private $postTransformer;
-
-    /**
      * PostWasPublishedEvent constructor.
      * @param Post $post
-     * @param PostTransformer $postTransformer
      */
-    public function __construct(Post $post, PostTransformer $postTransformer)
+    public function __construct(Post $post)
     {
         $this->post = $post;
-        $this->postTransformer = $postTransformer;
     }
 
     /**
@@ -63,6 +56,20 @@ final class PostWasPublishedEvent implements ShouldBroadcast
      */
     public function broadcastWith(): array
     {
-        return $this->postTransformer->transform($this->post);
+        /**
+         * TODO Refactor using an OOP pattern.
+         *      DI via constructor is not possible here. Events should remain pure DTO's.
+         *
+         *      We cannot pass the transformed Post array directly via the constructor because:
+         *          - We need access to the Post entity getters (which might mutate the attribute value).
+         *          - Event listeners should use the Post entity and not the transformed Post array.
+         *
+         *      Passing both the Post entity and transformer Post array via constructor injection feels hackish.
+         *
+         * @var PostTransformer $postTransformer
+         */
+        $postTransformer = app()->make(PostTransformer::class);
+
+        return $postTransformer->transform($this->post);
     }
 }

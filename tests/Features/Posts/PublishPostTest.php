@@ -130,21 +130,20 @@ class PublishPostTest extends FeatureTestCase
             'user_id' => $userId
         ]);
 
-        $this->assertEventWasFired(
-            PostWasPublishedEvent::class,
-            function(PostWasPublishedEvent $event) use ($content, $authorId, $userId, $json): void {
-                $post = $event->getPost();
+        $event = function(PostWasPublishedEvent $event) use ($content, $authorId, $userId, $json): void {
+            $post = $event->getPost();
 
-                $this->assertEquals($content, $post->getContent());
-                $this->assertEquals($authorId, $post->getAuthorId());
-                $this->assertEquals($userId, $post->getUserId());
+            $this->assertEquals($content, $post->getContent());
+            $this->assertEquals($authorId, $post->getAuthorId());
+            $this->assertEquals($userId, $post->getUserId());
 
-                $this->assertEquals('post.created', $event->broadcastAs());
+            $this->assertEquals('post.created', $event->broadcastAs());
 
-                $this->assertArraySubset($json, $event->broadcastWith());
+            $this->assertArraySubset($json, $event->broadcastWith());
 
-                $this->assertEquals('private-user.' . $userId, $event->broadcastOn()->name);
-            }
-        );
+            $this->assertEquals('private-user.' . $userId, $event->broadcastOn()->name);
+        };
+
+        $this->assertEventWasFired(PostWasPublishedEvent::class, $event);
     }
 }

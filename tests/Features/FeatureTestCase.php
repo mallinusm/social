@@ -88,12 +88,13 @@ abstract class FeatureTestCase extends TestCase
 
     /**
      * @param string $className
+     * @param array $ids
      * @return array
      */
-    protected function entityNotFound(string $className): array
+    protected function entityNotFound(string $className, array $ids = []): array
     {
         return [
-            'error' => EntityNotFoundException::fromClassNameAndIdentifier($className, [])->getMessage()
+            'error' => EntityNotFoundException::fromClassNameAndIdentifier($className, $ids)->getMessage()
         ];
     }
 

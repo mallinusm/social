@@ -11,6 +11,7 @@ use Social\Http\Actions\Followers\{
     UnfollowUserAction
 };
 use Social\Http\Actions\Posts\{
+    FetchPostAction,
     PaginateFeedAction,
     PublishPostAction,
     PaginatePostsAction,
@@ -58,6 +59,7 @@ $router->group(['middleware' => 'auth:api'], function(Registrar $router) {
     $router->get('posts', PaginatePostsAction::class);
     $router->delete('posts/{post}', UnpublishPostAction::class);
     $router->get('feed', PaginateFeedAction::class);
+    $router->get('posts/{postId}', FetchPostAction::class);
 
     $router->post('posts/{post}/comments', LeaveCommentAction::class);
     $router->delete('comments/{comment}', RemoveCommentAction::class);

@@ -71,9 +71,10 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
 
     /**
      * @param array $userIds
+     * @param int $maxResults
      * @return Post[]
      */
-    public function paginate(array $userIds): array
+    public function paginate(array $userIds, int $maxResults = 10): array
     {
         $expression = $this->getDqlExpression();
 
@@ -95,7 +96,7 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
                 'posts' => ReactionableRepository::REACTIONABLE_TYPE_POSTS,
                 'comments' => ReactionableRepository::REACTIONABLE_TYPE_COMMENTS
             ])
-            ->setMaxResults(10)
+            ->setMaxResults($maxResults)
             ->getQuery()
             ->getResult();
     }
@@ -116,6 +117,45 @@ final class DoctrinePostRepository extends DoctrineRepository implements PostRep
         }
 
         /* @var Post $post */
+        return $post;
+    }
+
+    /**
+     * @param int $id
+     * @return Post
+     * @throws EntityNotFoundException
+     */
+    public function fetch(int $id): Post
+    {
+        $expression = $this->getDqlExpression();
+
+        $post = $this->getDqlQueryBuilder()
+            ->select(['p', 'a', 'u', 'c', 'cu', 'pr', 'cr', 'pru', 'cru'])
+            ->from(Post::class, 'p')
+            ->where($expression->eq('p.id', ':id'))
+            ->leftJoin('p.author', 'a')
+            ->leftJoin('p.comments', 'c')
+            ->leftJoin('p.user', 'u')
+            ->leftJoin('c.user', 'cu')
+            ->leftJoin('p.reactionables', 'pr', Join::WITH, $expression->eq('pr.reactionableType', ':posts'))
+            ->leftJoin('c.reactionables', 'cr', Join::WITH, $expression->eq('cr.reactionableType', ':comments'))
+            ->leftJoin('pr.user', 'pru')
+            ->leftJoin('cr.user', 'cru')
+            ->orderBy($expression->desc('p.createdAt'))
+            ->addOrderBy($expression->asc('c.createdAt'))
+            ->setParameters([
+                'id' => $id,
+                'posts' => ReactionableRepository::REACTIONABLE_TYPE_POSTS,
+                'comments' => ReactionableRepository::REACTIONABLE_TYPE_COMMENTS
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($post === null) {
+            throw EntityNotFoundException::fromClassNameAndIdentifier(Post::class, [$id]);
+        }
+
         return $post;
     }
 }

@@ -27,9 +27,10 @@ interface PostRepository
 
     /**
      * @param array $userIds
+     * @param int $maxResults
      * @return Post[]
      */
-    public function paginate(array $userIds): array;
+    public function paginate(array $userIds, int $maxResults = 10): array;
 
     /**
      * @param int $id
@@ -37,4 +38,11 @@ interface PostRepository
      * @throws EntityNotFoundException
      */
     public function find(int $id): Post;
+
+    /**
+     * @param int $id
+     * @return Post
+     * @throws EntityNotFoundException
+     */
+    public function fetch(int $id): Post;
 }
