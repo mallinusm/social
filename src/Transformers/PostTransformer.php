@@ -3,13 +3,14 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Services\TransformerService;
 use Social\Contracts\Transformers\{
     CommentTransformer as CommentTransformerContract,
     PostTransformer as PostTransformerContract,
-    UserTransformer as UserTransformerContract,
     VoteTransformer as VoteTransformerContract
 };
 use Social\Entities\Post;
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class PostTransformer
@@ -17,11 +18,6 @@ use Social\Entities\Post;
  */
 final class PostTransformer implements PostTransformerContract
 {
-    /**
-     * @var UserTransformerContract
-     */
-    private $userTransformer;
-
     /**
      * @var CommentTransformerContract
      */
@@ -33,18 +29,23 @@ final class PostTransformer implements PostTransformerContract
     private $voteTransformer;
 
     /**
+     * @var TransformerService
+     */
+    private $transformerService;
+
+    /**
      * PostTransformer constructor.
-     * @param UserTransformerContract $userTransformer
      * @param CommentTransformerContract $commentTransformer
      * @param VoteTransformerContract $voteTransformer
+     * @param TransformerService $transformerService
      */
-    public function __construct(UserTransformerContract $userTransformer,
-                                CommentTransformerContract $commentTransformer,
-                                VoteTransformerContract $voteTransformer)
+    public function __construct(CommentTransformerContract $commentTransformer,
+                                VoteTransformerContract $voteTransformer,
+                                TransformerService $transformerService)
     {
-        $this->userTransformer = $userTransformer;
         $this->commentTransformer = $commentTransformer;
         $this->voteTransformer = $voteTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
@@ -53,13 +54,23 @@ final class PostTransformer implements PostTransformerContract
      */
     public function transform(Post $post): array
     {
+        $this->transformerService->setTransformer(UserTransformer::class);
+
+        $user = $this->transformerService
+            ->setData($post->getUser())
+            ->toArray();
+
+        $author = $this->transformerService
+            ->setData($post->getAuthor())
+            ->toArray();
+
         return [
             'id' => $post->getId(),
             'content' => $post->getContent(),
             'created_at' => $post->getCreatedAt(),
             'updated_at' => $post->getUpdatedAt(),
-            'author' => $this->userTransformer->transform($post->getAuthor()),
-            'user' => $this->userTransformer->transform($post->getUser()),
+            'author' => $author,
+            'user' => $user,
             'comments' => $this->commentTransformer->transformMany($post->getComments()),
             'reactionables' => $this->voteTransformer->transformMany($post->getReactionables())
         ];

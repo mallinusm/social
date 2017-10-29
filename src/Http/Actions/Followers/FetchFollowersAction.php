@@ -8,7 +8,8 @@ use Social\Contracts\Repositories\{
     FollowerRepository,
     UserRepository
 };
-use Social\Contracts\Transformers\FollowerTransformer;
+use Social\Contracts\Services\TransformerService;
+use Social\Transformers\Followers\FollowerTransformer;
 
 /**
  * Class FetchFollowersAction
@@ -29,30 +30,30 @@ final class FetchFollowersAction
     private $followerRepository;
 
     /**
-     * @var FollowerTransformer
+     * @var TransformerService
      */
-    private $followerTransformer;
+    private $transformerService;
 
     /**
      * FetchFollowersAction constructor.
      * @param UserRepository $userRepository
      * @param FollowerRepository $followerRepository
-     * @param FollowerTransformer $followerTransformer
+     * @param TransformerService $transformerService
      */
     public function __construct(UserRepository $userRepository,
                                 FollowerRepository $followerRepository,
-                                FollowerTransformer $followerTransformer)
+                                TransformerService $transformerService)
     {
         $this->userRepository = $userRepository;
         $this->followerRepository = $followerRepository;
-        $this->followerTransformer = $followerTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return string
      */
-    public function __invoke(Request $request): array
+    public function __invoke(Request $request): string
     {
         $this->validate($request, [
             'username' => 'required|string|max:255'
@@ -62,6 +63,9 @@ final class FetchFollowersAction
 
         $followers = $this->followerRepository->getFollowers($userId);
 
-        return $this->followerTransformer->transformMany($followers);
+        return $this->transformerService
+                ->setData($followers)
+                ->setTransformer(FollowerTransformer::class)
+                ->toJson();
     }
 }

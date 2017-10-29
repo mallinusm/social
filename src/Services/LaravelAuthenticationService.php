@@ -43,4 +43,12 @@ final class LaravelAuthenticationService implements AuthenticationService
         /* @var EloquentUserModel $user */
         return $user->toUserEntity();
     }
+
+    /**
+     * @return int
+     */
+    public function getAuthenticatedUserId(): int
+    {
+        return $this->getAuthenticatedUser()->getId();
+    }
 }

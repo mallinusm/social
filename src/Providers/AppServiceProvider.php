@@ -13,13 +13,14 @@ use Social\Contracts\Repositories\{
     ReactionableRepository,
     UserRepository
 };
-use Social\Contracts\Services\AuthenticationService;
+use Social\Contracts\Services\{
+    AuthenticationService,
+    TransformerService
+};
 use Social\Contracts\Transformers\{
     CommentTransformer      as CommentTransformerContract,
-    FollowerTransformer     as FollowerTransformerContract,
     PostTransformer         as PostTransformerContract,
     ReactionableTransformer as ReactionableTransformerContract,
-    UserTransformer         as UserTransformerContract,
     VoteTransformer         as VoteTransformerContract
 };
 use Social\Repositories\{
@@ -29,13 +30,14 @@ use Social\Repositories\{
     DoctrineReactionableRepository,
     DoctrineUserRepository
 };
-use Social\Services\LaravelAuthenticationService;
+use Social\Services\{
+    FractalTransformerService,
+    LaravelAuthenticationService
+};
 use Social\Transformers\{
     CommentTransformer,
-    FollowerTransformer,
     PostTransformer,
     ReactionableTransformer,
-    UserTransformer,
     VoteTransformer
 };
 
@@ -61,14 +63,13 @@ final class AppServiceProvider extends ServiceProvider
          * Services
          */
         AuthenticationService::class => LaravelAuthenticationService::class,
+        TransformerService::class => FractalTransformerService::class,
         /**
          * Transformers
          */
         CommentTransformerContract::class      => CommentTransformer::class,
-        FollowerTransformerContract::class     => FollowerTransformer::class,
         PostTransformerContract::class         => PostTransformer::class,
         ReactionableTransformerContract::class => ReactionableTransformer::class,
-        UserTransformerContract::class         => UserTransformer::class,
         VoteTransformerContract::class         => VoteTransformer::class
     ];
 

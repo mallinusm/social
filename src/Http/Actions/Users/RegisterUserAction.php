@@ -6,7 +6,8 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\UserRepository;
-use Social\Contracts\Transformers\UserTransformer;
+use Social\Contracts\Services\TransformerService;
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class RegisterUserAction
@@ -22,33 +23,35 @@ final class RegisterUserAction
     private $userRepository;
 
     /**
-     * @var UserTransformer
-     */
-    private $userTransformer;
-
-    /**
      * @var Hasher
      */
     private $hasher;
 
     /**
+     * @var TransformerService
+     */
+    private $transformerService;
+
+    /**
      * RegisterUserAction constructor.
      * @param UserRepository $userRepository
-     * @param UserTransformer $userTransformer
      * @param Hasher $hasher
+     * @param TransformerService $transformerService
      */
-    public function __construct(UserRepository $userRepository, UserTransformer $userTransformer, Hasher $hasher)
+    public function __construct(UserRepository $userRepository,
+                                Hasher $hasher,
+                                TransformerService $transformerService)
     {
         $this->userRepository = $userRepository;
-        $this->userTransformer = $userTransformer;
         $this->hasher = $hasher;
+        $this->transformerService = $transformerService;
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return string
      */
-    public function __invoke(Request $request): array
+    public function __invoke(Request $request): string
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
@@ -67,6 +70,9 @@ final class RegisterUserAction
 
         $user = $this->userRepository->register($email, $name, $password, $username);
 
-        return $this->userTransformer->transform($user);
+        return $this->transformerService
+            ->setData($user)
+            ->setTransformer(UserTransformer::class)
+            ->toJson();
     }
 }

@@ -6,7 +6,7 @@ use Social\Entities\Follower;
 
 /**
  * Interface FollowerRepository
- * @package Social\Contracts
+ * @package Social\Contracts\Repositories
  */
 interface FollowerRepository
 {

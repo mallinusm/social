@@ -3,11 +3,10 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
-use Social\Contracts\Transformers\{
-    ReactionableTransformer as ReactionableTransformerContract,
-    UserTransformer as UserTransformerContract
-};
+use Social\Contracts\Services\TransformerService;
+use Social\Contracts\Transformers\ReactionableTransformer as ReactionableTransformerContract;
 use Social\Entities\Reactionable;
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class ReactionableTransformer
@@ -16,17 +15,17 @@ use Social\Entities\Reactionable;
 final class ReactionableTransformer implements ReactionableTransformerContract
 {
     /**
-     * @var UserTransformerContract
+     * @var TransformerService
      */
-    private $userTransformer;
+    private $transformerService;
 
     /**
      * ReactionableTransformer constructor.
-     * @param UserTransformerContract $userTransformer
+     * @param TransformerService $transformerService
      */
-    public function __construct(UserTransformerContract $userTransformer)
+    public function __construct(TransformerService $transformerService)
     {
-        $this->userTransformer = $userTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
@@ -35,6 +34,11 @@ final class ReactionableTransformer implements ReactionableTransformerContract
      */
     public function transform(Reactionable $reactionable): array
     {
+        $user = $this->transformerService
+            ->setTransformer(UserTransformer::class)
+            ->setData($reactionable->getUser())
+            ->toArray();
+
         return [
             'id' => $reactionable->getId(),
             'reaction_id' => $reactionable->getReactionId(),
@@ -42,7 +46,7 @@ final class ReactionableTransformer implements ReactionableTransformerContract
             'reactionable_id' => $reactionable->getReactionableId(),
             'created_at' => $reactionable->getCreatedAt(),
             'updated_at' => $reactionable->getUpdatedAt(),
-            'user' => $this->userTransformer->transform($reactionable->getUser())
+            'user' => $user
         ];
     }
 

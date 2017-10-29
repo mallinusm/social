@@ -2,8 +2,11 @@
 
 namespace Social\Http\Actions\Users;
 
-use Social\Contracts\Services\AuthenticationService;
-use Social\Contracts\Transformers\UserTransformer;
+use Social\Contracts\Services\{
+    AuthenticationService,
+    TransformerService
+};
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class FetchCurrentUserAction
@@ -17,29 +20,32 @@ final class FetchCurrentUserAction
     private $authenticationService;
 
     /**
-     * @var UserTransformer
+     * @var TransformerService
      */
-    private $userTransformer;
+    private $transformerService;
 
     /**
      * FetchCurrentUserAction constructor.
      * @param AuthenticationService $authenticationService
-     * @param UserTransformer $userTransformer
+     * @param TransformerService $transformerService
      */
     public function __construct(AuthenticationService $authenticationService,
-                                UserTransformer $userTransformer)
+                                TransformerService $transformerService)
     {
         $this->authenticationService = $authenticationService;
-        $this->userTransformer = $userTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function __invoke(): array
+    public function __invoke(): string
     {
         $user = $this->authenticationService->getAuthenticatedUser();
 
-        return $this->userTransformer->transformWithEmail($user);
+        return $this->transformerService
+            ->setData($user)
+            ->setTransformer((new UserTransformer)->withEmail())
+            ->toJson();
     }
 }

@@ -6,8 +6,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\UserRepository;
 use Social\Contracts\Services\AuthenticationService;
-use Social\Contracts\Transformers\UserTransformer;
-use Social\Models\User;
+use Social\Contracts\Services\TransformerService;
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class UpdateUserAction
@@ -28,30 +28,30 @@ final class UpdateUserAction
     private $userRepository;
 
     /**
-     * @var UserTransformer
+     * @var TransformerService
      */
-    private $userTransformer;
+    private $transformerService;
 
     /**
      * UpdateUserSettingsAction constructor.
      * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
-     * @param UserTransformer $userTransformer
+     * @param TransformerService $transformerService
      */
     public function __construct(AuthenticationService $authenticationService,
                                 UserRepository $userRepository,
-                                UserTransformer $userTransformer)
+                                TransformerService $transformerService)
     {
         $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
-        $this->userTransformer = $userTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return string
      */
-    public function __invoke(Request $request): array
+    public function __invoke(Request $request): string
     {
         $user = $this->authenticationService->getAuthenticatedUser();
 
@@ -83,6 +83,9 @@ final class UpdateUserAction
             $user->setEmail($email);
         }
 
-        return $this->userTransformer->transformWithEmail($user);
+        return $this->transformerService
+            ->setData($user)
+            ->setTransformer((new UserTransformer)->withEmail())
+            ->toJson();
     }
 }

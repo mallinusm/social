@@ -3,12 +3,13 @@
 namespace Social\Transformers;
 
 use Illuminate\Support\Collection;
+use Social\Contracts\Services\TransformerService;
 use Social\Contracts\Transformers\{
     CommentTransformer as CommentTransformerContract,
-    UserTransformer as UserTransformerContract,
     VoteTransformer as VoteTransformerContract
 };
 use Social\Entities\Comment;
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class CommentTransformer
@@ -17,9 +18,9 @@ use Social\Entities\Comment;
 final class CommentTransformer implements CommentTransformerContract
 {
     /**
-     * @var UserTransformerContract
+     * @var TransformerService
      */
-    private $userTransformer;
+    private $transformerService;
 
     /**
      * @var VoteTransformerContract
@@ -28,12 +29,13 @@ final class CommentTransformer implements CommentTransformerContract
 
     /**
      * CommentTransformer constructor.
-     * @param UserTransformerContract $userTransformer
+     * @param TransformerService $transformerService
      * @param VoteTransformerContract $voteTransformer
      */
-    public function __construct(UserTransformerContract $userTransformer, VoteTransformerContract $voteTransformer)
+    public function __construct(TransformerService $transformerService,
+                                VoteTransformerContract $voteTransformer)
     {
-        $this->userTransformer = $userTransformer;
+        $this->transformerService = $transformerService;
         $this->voteTransformer = $voteTransformer;
     }
 
@@ -43,13 +45,18 @@ final class CommentTransformer implements CommentTransformerContract
      */
     public function transform(Comment $comment): array
     {
+        $user = $this->transformerService
+            ->setTransformer(UserTransformer::class)
+            ->setData($comment->getUser())
+            ->toArray();
+
         return [
             'id' => $comment->getId(),
             'content' => $comment->getContent(),
             'created_at' => $comment->getCreatedAt(),
             'updated_at' => $comment->getUpdatedAt(),
             'post_id' => $comment->getPostId(),
-            'user' => $this->userTransformer->transform($comment->getUser()),
+            'user' => $user,
             'reactionables' => $this->voteTransformer->transformMany($comment->getReactionables())
         ];
     }

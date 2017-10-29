@@ -5,8 +5,11 @@ namespace Social\Http\Actions\Users;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Social\Contracts\Repositories\UserRepository;
-use Social\Contracts\Services\AuthenticationService;
-use Social\Contracts\Transformers\UserTransformer;
+use Social\Contracts\Services\{
+    AuthenticationService,
+    TransformerService
+};
+use Social\Transformers\Users\UserTransformer;
 
 /**
  * Class SearchUsersAction
@@ -27,30 +30,30 @@ final class SearchUsersAction
     private $userRepository;
 
     /**
-     * @var UserTransformer
+     * @var TransformerService
      */
-    private $userTransformer;
+    private $transformerService;
 
     /**
      * SearchUsersAction constructor.
      * @param AuthenticationService $authenticationService
      * @param UserRepository $userRepository
-     * @param UserTransformer $userTransformer
+     * @param TransformerService $transformerService
      */
     public function __construct(AuthenticationService $authenticationService,
                                 UserRepository $userRepository,
-                                UserTransformer $userTransformer)
+                                TransformerService $transformerService)
     {
         $this->authenticationService = $authenticationService;
         $this->userRepository = $userRepository;
-        $this->userTransformer = $userTransformer;
+        $this->transformerService = $transformerService;
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return string
      */
-    public function __invoke(Request $request): array
+    public function __invoke(Request $request): string
     {
         $this->validate($request, [
             'query' => 'required|string|max:255'
@@ -60,6 +63,9 @@ final class SearchUsersAction
 
         $users = $this->userRepository->search($request->input('query'), $userId);
 
-        return $this->userTransformer->transformManyWithFollowerStates($users);
+        return $this->transformerService
+            ->setData($users)
+            ->setTransformer((new UserTransformer)->withFollowerState())
+            ->toJson();
     }
 }

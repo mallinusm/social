@@ -16,4 +16,9 @@ interface AuthenticationService
      * @throws AuthenticationException
      */
     public function getAuthenticatedUser(): User;
+
+    /**
+     * @return int
+     */
+    public function getAuthenticatedUserId(): int;
 }
